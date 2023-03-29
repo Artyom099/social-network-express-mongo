@@ -17,11 +17,9 @@ const db = { videos: [
     ] };
 let errors = [];
 // testing:
-app.get('', (req, res) => {
-    res.send('Hello Incubator!!!');
-});
-app.get('/testing/all-data', (req, res) => {
-    res.send('Hello Incubator!!!');
+app.delete('/testing/all-data', (req, res) => {
+    // очистить db
+    res.status(204).send('All data is deleted');
 });
 // videos:
 app.get('/videos', (req, res) => {
@@ -91,6 +89,7 @@ app.put('/videos/:id', (req, res) => {
     const availableResolutions = req.body.availableResolutions;
     const foundVideo = db.videos.find(v => v.id === +req.params.id);
     let validation = true;
+    // здесть написать validation
     if (!foundVideo) {
         res.status(404);
         return;

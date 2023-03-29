@@ -18,11 +18,9 @@ const db = {videos: [
 let errors = []
 
 // testing:
-app.get('', (req: Request, res: Response) => {
-    res.send('Hello Incubator!!!')
-})
-app.get('/testing/all-data', (req: Request, res: Response) => {
-    res.send('Hello Incubator!!!')
+app.delete('/testing/all-data', (req: Request, res: Response) => {
+    // очистить db
+    res.status(204).send('All data is deleted')
 })
 
 // videos:
@@ -99,6 +97,8 @@ app.put('/videos/:id', (req: Request, res: Response) => {
     const foundVideo = db.videos.find(v => v.id === +req.params.id)
     let validation = true
 
+    // здесть написать validation
+
     if (!foundVideo) {
         res.status(404)
         return;
@@ -111,7 +111,7 @@ app.put('/videos/:id', (req: Request, res: Response) => {
     }
 })
 
-app.delete('/videos/:id', (req: Request, res: Response) => {   //добавить try/catch в этот эндпоинт??
+app.delete('/videos/:id', (req: Request, res: Response) => {
     db.videos = db.videos.filter(vid => vid.id !== +req.params.id)
 
     if (!req.params.id) {
