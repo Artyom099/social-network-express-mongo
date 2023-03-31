@@ -86,9 +86,9 @@ app.post('/videos', (req, res) => {
         return;
     }
     // если ставлю тип string[], ругается на метод .length
-    if (!availableResolutions && videoResolutions.includes(availableResolutions) && availableResolutions.length !== 0) {
+    if (!availableResolutions && videoResolutions.includes(availableResolutions)) {
         errors.push({
-            message: 'should be not nullable array',
+            message: 'should be an array',
             field: 'availableResolutions'
         });
         validation = false;
@@ -103,6 +103,7 @@ app.post('/videos', (req, res) => {
         res.status(HTTP_STATUS.BAD_REQUEST_400).send({ errorsMessages: errors });
     }
 });
+//в свагере id имеет тип integer, а в видео говорится, что надо типизировать как string, как быть?
 app.get('/videos/:id', (req, res) => {
     // если не нашли видео по id, то сразу выдаем ошибку not found
     const foundVideo = db.videos.find(v => v.id === +req.params.id);
@@ -112,7 +113,6 @@ app.get('/videos/:id', (req, res) => {
     }
     res.status(HTTP_STATUS.OK_200).json(foundVideo);
 });
-//в свагере id имеет тип integer, а в видео говорится, что надо типизировать как string, как быть?
 app.put('/videos/:id', (req, res) => {
     // если не нашли видео по id, то сразу выдаем ошибку not found
     const foundVideo = db.videos.find(v => v.id === +req.params.id);
@@ -125,7 +125,7 @@ app.put('/videos/:id', (req, res) => {
     const availableResolutions = req.body.availableResolutions;
     const canBeDownloaded = req.body.canBeDownloaded;
     const minAgeRestriction = req.body.minAgeRestriction;
-    const publicationDate = req.body.publicationDate;
+    const publicationDate = req.body.publicationDate; // где мы берем publicationDate при обновлении данных? если в body, тогда все ок
     const errors = [];
     // validation:
     let validation = true;
@@ -145,15 +145,14 @@ app.put('/videos/:id', (req, res) => {
         validation = false;
         return;
     }
-    // дописать validation для availableResolutions
-    if (!availableResolutions && videoResolutions.includes(availableResolutions) && availableResolutions.length !== 0) {
+    if (!availableResolutions && videoResolutions.includes(availableResolutions)) {
         errors.push({
             message: 'resolution should be a P144, P240, P360, P480, P720, P1080, P1440 or P2160',
             field: 'availableResolutions'
         });
         validation = false;
         return;
-    } // валидация через include
+    } // массив может быть пустой или нет? из свагера непонятно
     if (!canBeDownloaded) {
         errors.push({
             message: 'required property',
@@ -170,17 +169,9 @@ app.put('/videos/:id', (req, res) => {
         validation = false;
         return;
     }
-    if (!publicationDate) {
-        errors.push({
-            message: 'required property',
-            field: 'publicationDate'
-        });
-        validation = false;
-        return;
-    }
     // если данные прошли валидацию, то обновляем их, иначе отправляем массив с ошибками
     if (validation) {
-        foundVideo.title = title; // обновление всех получаемых параметров
+        foundVideo.title = title; // обновление всех полученных параметров
         foundVideo.author = author;
         foundVideo.availableResolutions = availableResolutions;
         foundVideo.canBeDownloaded = canBeDownloaded;
@@ -192,6 +183,7 @@ app.put('/videos/:id', (req, res) => {
         res.status(HTTP_STATUS.BAD_REQUEST_400).send({ errorsMessages: errors });
     }
 });
+// вроде выполняется, но постман выдает ошибку Error: read ECONNRESET
 app.delete('/videos/:id', (req, res) => {
     // если не нашли видео по id, то сразу выдаем ошибку not found
     db.videos = db.videos.filter(vid => vid.id !== +req.params.id);
