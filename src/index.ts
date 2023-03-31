@@ -9,6 +9,24 @@ const port = process.env.PORT || 3000
 const jsonBodyMiddleware = express.json()
 app.use(jsonBodyMiddleware)
 
+type TDataBase={
+    videos: TVideo[]
+}
+type TVideo = {
+    id: number,
+    title: string,
+    author: string,
+    canBeDownloaded: boolean,
+    minAgeRestriction: number | null,
+    createdAt: string,
+    publicationDate: string,
+    availableResolutions: string[]
+}
+type TBadRequestError ={
+    message: string
+    field: string
+}
+
 const HTTP_STATUS = {
     OK_200: 200,
     CREATED_201: 201,
@@ -16,27 +34,16 @@ const HTTP_STATUS = {
     BAD_REQUEST_400: 400,
     NOT_FOUND_404: 404
 }
-const videoResolutions = ['P144', 'P240', 'P360', 'P480', 'P720', 'P1080', 'P1440', 'P2160']
-type VideoType = {
-    id: number,
-    title: string,
-    author: string,
-    canBeDownloaded: boolean,
-    minAgeRestriction: any,
-    createdAt: string,
-    publicationDate: string,
-    availableResolutions: string
-}
-const db = {} = {       // videos: VideoType[] - выдает ошибку, почему?
+const db: TDataBase = {
     videos: [
         {
             id: 1,
             title: 'vid_1',
             author: 'writer_1',
-            canBeDownloaded: true,
+            canBeDownloaded: false,
             minAgeRestriction: null,
-            createdAt: new Date(),
-            publicationDate: new Date(),
+            createdAt: new Date().toISOString(),
+            publicationDate: new Date().toISOString(),
             availableResolutions: ['P144']
         },
         {
@@ -51,7 +58,8 @@ const db = {} = {       // videos: VideoType[] - выдает ошибку, по
         },
     ]
 }
-let errors = []
+const videoResolutions = ['P144', 'P240', 'P360', 'P480', 'P720', 'P1080', 'P1440', 'P2160']
+
 
 // testing:
 app.delete('/testing/all-data', (req: Request, res: Response) => {
@@ -63,23 +71,28 @@ app.delete('/testing/all-data', (req: Request, res: Response) => {
 app.get('/videos', (req: Request, res: Response) => {
     res.status(HTTP_STATUS.OK_200).send(db)
 })
+
 app.post('/videos', (req: Request<{},{},{title: string, author: string, availableResolutions: any}>,
                                  res: Response) => {
     const title = req.body.title
     const author = req.body.author
     const availableResolutions = req.body.availableResolutions
-    const createdVideo = {
+    const createdAt = new Date()
+    const publicationDate = createdAt.setDate(createdAt.getDate() + 1)      // ругется на тип, когда использую эту переменную
+    const createdVideo = {          // ругается на тип : TVideo
         id: +(new Date()),
         title: title,
         author: author,
-        canBeDownloaded: true,
+        canBeDownloaded: false,
         minAgeRestriction: null,
-        createdAt: new Date().toISOString(),
-        publicationDate: new Date().toISOString(),
+        createdAt: createdAt.toISOString(),
+        publicationDate:  new Date().toISOString(),                 // вот здесь ругается
         availableResolutions: availableResolutions
     }
-    let validation = true
+    const errors: TBadRequestError[] = []
 
+    // validation:
+    let validation = true
     if (!title && (title.length < 1 || title.length > 40)) {
         errors.push({
             message: 'should be a string, max 40 symbols',
@@ -96,8 +109,8 @@ app.post('/videos', (req: Request<{},{},{title: string, author: string, availabl
         validation = false
         return;
     }
-    // уточнить условие !availableResolutions.isArray()
-    if (!availableResolutions && !availableResolutions.isArray() && availableResolutions.length !== 0) {
+    // если ставлю тип string[], ругается на метод .length
+    if (!availableResolutions && videoResolutions.includes(availableResolutions) && availableResolutions.length !== 0) {
         errors.push({
             message: 'should be not nullable array',
             field: 'availableResolutions'
@@ -106,6 +119,7 @@ app.post('/videos', (req: Request<{},{},{title: string, author: string, availabl
         return;
     }
 
+    // если данные прошли валидацию, то добавляем их в БД, иначе отправляем массив с ошибками
     if (validation) {
         db.videos.push(createdVideo)
         res.status(HTTP_STATUS.CREATED_201).send(createdVideo)
@@ -114,51 +128,109 @@ app.post('/videos', (req: Request<{},{},{title: string, author: string, availabl
     }
 })
 
-// проверить этот эндпоинт
-app.get('/videos/:id', (req: Request<{id: string}>, res: Response) => {   //добавить try/catch в этот эндпоинт??
+app.get('/videos/:id', (req: Request<{id: string}>, res: Response) => {
+    // если не нашли видео по id, то сразу выдаем ошибку not found
     const foundVideo = db.videos.find(v => v.id === +req.params.id)
-
-    if (!foundVideo) {              // If video for passed id doesn't exist
+    if (!foundVideo) {
         res.status(HTTP_STATUS.NOT_FOUND_404)
         return;
     }
     res.status(HTTP_STATUS.OK_200).json(foundVideo)
 })
-// доделать этот эндпоинт
-app.put('/videos/:id', (req: Request<{id: string},{},{title: string, author: string, availableResolutions: any}>,
-                                    res: Response) => {     // надо ли здесь типизировать Response?
-    const title = req.body.title
-    const author = req.body.author
-    const availableResolutions = req.body.availableResolutions
 
+//в свагере id имеет тип integer, а в видео говорится, что надо типизировать как string, как быть?
+app.put('/videos/:id', (req: Request<{id: string},{},{title: string, author: string, availableResolutions: any,
+                            canBeDownloaded: boolean, minAgeRestriction: number | null, publicationDate: string}>, res: Response) => {
+    // если не нашли видео по id, то сразу выдаем ошибку not found
     const foundVideo = db.videos.find(v => v.id === +req.params.id)
-    let validation = true
-
-    // здесть написать validation !
-
     if (!foundVideo) {
         res.status(HTTP_STATUS.NOT_FOUND_404)
         return;
     }
+
+    const title = req.body.title
+    const author = req.body.author
+    const availableResolutions = req.body.availableResolutions
+    const canBeDownloaded = req.body.canBeDownloaded
+    const minAgeRestriction = req.body.minAgeRestriction
+    const publicationDate = req.body.publicationDate
+    const errors: TBadRequestError[] = []
+
+    // validation:
+    let validation = true
+    if (!title && (title.length < 1 || title.length > 40)) {
+        errors.push({
+            message: 'should be a string, max 40 symbols',
+            field: 'title'
+        })
+        validation = false
+        return;
+    }
+    if (!author && (author.length < 1 || author.length > 40)) {         //  && typeof author !== 'string'
+        errors.push({
+            message: 'should be a string, max 40 symbols',
+            field: 'author'
+        })
+        validation = false
+        return;
+    }
+    // дописать validation для availableResolutions
+    if (!availableResolutions && videoResolutions.includes(availableResolutions) && availableResolutions.length !== 0) {
+        errors.push({
+            message: 'resolution should be a P144, P240, P360, P480, P720, P1080, P1440 or P2160',
+            field: 'availableResolutions'
+        })
+        validation = false
+        return;
+    }   // валидация через include
+    if (!canBeDownloaded) {
+        errors.push({
+            message: 'required property',
+            field: 'canBeDownloaded'
+        })
+        validation = false
+        return;
+    }        // вроде ок
+    if (!minAgeRestriction && ((typeof minAgeRestriction === 'number' && (minAgeRestriction < 0 || minAgeRestriction > 18))   )){  // || typeof minAgeRestriction === 'null'
+        errors.push({
+            message: 'should be a number <= 18 or null',
+            field: 'minAgeRestriction'
+        })
+        validation = false
+        return;
+    }
+    if (!publicationDate) {
+        errors.push({
+            message: 'required property',
+            field: 'publicationDate'
+        })
+        validation = false
+        return;
+    }
+
+    // если данные прошли валидацию, то обновляем их, иначе отправляем массив с ошибками
     if (validation) {
-        foundVideo.title = req.body.title       // добавить обновление всех получаемых параметров
-        res.status(HTTP_STATUS.NO_CONTENT_204).json(foundVideo)    // почему мы получаем 204 no content? так написано в swagger
+        foundVideo.title = title                                   // обновление всех получаемых параметров
+        foundVideo.author = author
+        foundVideo.availableResolutions = availableResolutions
+        foundVideo.canBeDownloaded = canBeDownloaded
+        foundVideo.minAgeRestriction = minAgeRestriction
+        foundVideo.publicationDate = publicationDate
+        res.status(HTTP_STATUS.NO_CONTENT_204).json(foundVideo)
     } else {
         res.status(HTTP_STATUS.BAD_REQUEST_400).send({errorsMessages: errors})
     }
 })
 
 app.delete('/videos/:id', (req: Request<{id: string}>, res) => {
+    // если не нашли видео по id, то сразу выдаем ошибку not found
     db.videos = db.videos.filter(vid => vid.id !== +req.params.id)
-
     if (!req.params.id) {
         res.status(HTTP_STATUS.NOT_FOUND_404)
         return;
     }
     res.status(HTTP_STATUS.NO_CONTENT_204)
 })
-
-
 
 
 // start app
