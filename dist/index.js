@@ -47,6 +47,7 @@ app.post('/videos', (req, res) => {
     const errors = [];
     // validation:
     let validation = true;
+    let resolutionOK = false;
     if (!title || !title.trim() || title.length > 40) {
         errors.push({
             message: 'should be a string, max 40 symbols',
@@ -62,7 +63,19 @@ app.post('/videos', (req, res) => {
         validation = false;
     }
     // TODO: includes должен перебирать элементы массива, а не сам массив
-    if (!availableResolutions || availableResolutions.length > videoResolutions.length || videoResolutions.includes(availableResolutions.toString())) {
+    // for (let i in availableResolutions){
+    //     if (videoResolutions.includes(i)) {
+    //         resolutionOK = true
+    //     }
+    // }
+    for (let i in videoResolutions) {
+        for (let j in availableResolutions) {
+            if (i === j) {
+                resolutionOK = true;
+            }
+        }
+    }
+    if (!availableResolutions || !resolutionOK) {
         errors.push({
             message: 'should be an array',
             field: 'availableResolutions'
@@ -127,11 +140,11 @@ app.put('/videos/:id', (req, res) => {
     }
     if (!availableResolutions || !videoResolutions.includes(availableResolutions.toString())) {
         errors.push({
-            message: 'resolution should be a P144, P240, P360, P480, P720, P1080, P1440 or P2160',
+            message: 'should be an array',
             field: 'availableResolutions'
         });
         validation = false;
-    } // массив может быть пустой
+    }
     if (!canBeDownloaded) {
         errors.push({
             message: 'required property',
