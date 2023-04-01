@@ -85,7 +85,7 @@ app.post('/videos', (req: Request<{}, {}, {title: string, author: string, availa
         validation = false
     }
     // TODO: includes должен перебирать элементы массива, а не сам массив
-    if (!availableResolutions || availableResolutions.length > videoResolutions.length || videoResolutions.includes(availableResolutions.toString())) {
+    if (!availableResolutions || !videoResolutions.includes(availableResolutions.toString())) {
         errors.push({
             message: 'should be an array',
             field: 'availableResolutions'
