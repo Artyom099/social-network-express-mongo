@@ -78,7 +78,7 @@ app.post('/videos', (req: Request<{}, {}, {title: string, author: string, availa
         })
         validation = false
     }
-    if (!author || !author.trim() || author.length > 40) {         //  && typeof author !== 'string'
+    if (!author || !author.trim() || author.length > 20) {         //  && typeof author !== 'string'
         errors.push({
             message: 'should be a string, max 40 symbols',
             field: 'author'
@@ -161,7 +161,7 @@ app.put('/videos/:id', (req: Request<{ id: string }, {}, {title: string, author:
         })
         validation = false
     }
-    if (!author || !author.trim() || author.length > 40) {         //  && typeof author !== 'string'
+    if (!author || !author.trim() || author.length > 20) {         //  && typeof author !== 'string'
         errors.push({
             message: 'should be a string, max 40 symbols',
             field: 'author'
