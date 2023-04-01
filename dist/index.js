@@ -27,17 +27,7 @@ const db = {
             createdAt: new Date().toISOString(),
             publicationDate: new Date().toISOString(),
             availableResolutions: ['P144']
-        },
-        {
-            id: 2,
-            title: 'vid_2',
-            author: 'writer_2',
-            canBeDownloaded: true,
-            minAgeRestriction: null,
-            createdAt: '2023-03-30T14:56:02.264Z',
-            publicationDate: '2023-03-30T14:56:02.264Z',
-            availableResolutions: ['P144']
-        },
+        }
     ]
 };
 const videoResolutions = ['P144', 'P240', 'P360', 'P480', 'P720', 'P1080', 'P1440', 'P2160'];
@@ -69,7 +59,7 @@ app.post('/videos', (req, res) => {
     const errors = [];
     // validation:
     let validation = true;
-    if (!title && (title.length < 1 || title.length > 40)) {
+    if (!title || !title.trim() || title.length > 40) {
         errors.push({
             message: 'should be a string, max 40 symbols',
             field: 'title'
@@ -77,7 +67,7 @@ app.post('/videos', (req, res) => {
         validation = false;
         return;
     }
-    if (!author && (author.length < 1 || author.length > 40)) { //  && typeof author !== 'string'
+    if (!author || !author.trim() || author.length > 40) { //  && typeof author !== 'string'
         errors.push({
             message: 'should be a string, max 40 symbols',
             field: 'author'
@@ -95,9 +85,11 @@ app.post('/videos', (req, res) => {
         return;
     }
     // если данные прошли валидацию, то добавляем их в БД, иначе отправляем массив с ошибками
+    // в каком месте if/else надо ставить return, а в каком - нет?
     if (validation) {
         db.videos.push(createdVideo);
         res.status(HTTP_STATUS.CREATED_201).send(createdVideo);
+        return;
     }
     else {
         res.status(HTTP_STATUS.BAD_REQUEST_400).send({ errorsMessages: errors });
@@ -129,7 +121,7 @@ app.put('/videos/:id', (req, res) => {
     const errors = [];
     // validation:
     let validation = true;
-    if (!title && (title.length < 1 || title.length > 40)) {
+    if (!title || !title.trim() || title.length > 40) {
         errors.push({
             message: 'should be a string, max 40 symbols',
             field: 'title'
@@ -137,7 +129,7 @@ app.put('/videos/:id', (req, res) => {
         validation = false;
         return;
     }
-    if (!author && (author.length < 1 || author.length > 40)) { //  && typeof author !== 'string'
+    if (!author || !author.trim() || author.length > 40) { //  && typeof author !== 'string'
         errors.push({
             message: 'should be a string, max 40 symbols',
             field: 'author'
