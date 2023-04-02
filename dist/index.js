@@ -17,18 +17,7 @@ const HTTP_STATUS = {
     NOT_FOUND_404: 404
 };
 const db = {
-    videos: [
-        {
-            id: 1,
-            title: 'vid_1',
-            author: 'writer_1',
-            canBeDownloaded: false,
-            minAgeRestriction: null,
-            createdAt: new Date().toISOString(),
-            publicationDate: new Date().toISOString(),
-            availableResolutions: ['P144']
-        }
-    ]
+    videos: []
 };
 const videoResolutions = ['P144', 'P240', 'P360', 'P480', 'P720', 'P1080', 'P1440', 'P2160'];
 // если существующий массив НЕ включается в себя элемент полученного массива ф-я выдает false
