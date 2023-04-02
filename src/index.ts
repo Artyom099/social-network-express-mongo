@@ -35,16 +35,7 @@ const HTTP_STATUS = {
 }
 const db: TDataBase = {
     videos: [
-        {
-            id: 1,
-            title: 'vid_1',
-            author: 'writer_1',
-            canBeDownloaded: false,
-            minAgeRestriction: null,
-            createdAt: new Date().toISOString(),
-            publicationDate: new Date().toISOString(),
-            availableResolutions: ['P144']
-        }
+
     ]
 }
 const videoResolutions = ['P144', 'P240', 'P360', 'P480', 'P720', 'P1080', 'P1440', 'P2160']
