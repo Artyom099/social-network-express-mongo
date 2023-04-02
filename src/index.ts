@@ -59,7 +59,7 @@ function checkArrayValues (existArray: Array<string>, receivedArray: Array<strin
 
 // testing:
 app.delete('/testing/all-data', (req: Request, res: Response) => {
-    res.status(HTTP_STATUS.NO_CONTENT_204).send('All data is deleted')
+    res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
 })
 
 // videos:
@@ -99,6 +99,7 @@ app.post('/videos', (req: Request<{},{},{title: string, author: string, availabl
     }
 
     // если валидция не прошла, отправляем массив с ошибками и выходим из эндпоинта
+    // TODO возможно где-то здесь ошибка...
     if (!validation) {
         res.status(HTTP_STATUS.BAD_REQUEST_400).send({errorsMessages: errors})
     } else {
@@ -191,7 +192,7 @@ app.put('/videos/:id', (req: Request<{id: string}, {}, {title: string, author: s
     if (!validation) {
         res.status(HTTP_STATUS.BAD_REQUEST_400).send({errorsMessages: errors})
     } else {
-        foundVideo.title = title                                   // обновление всех полученных параметров
+        foundVideo.title = title
         foundVideo.author = author
         foundVideo.availableResolutions = availableResolutions
         foundVideo.canBeDownloaded = canBeDownloaded

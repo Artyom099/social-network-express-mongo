@@ -4,7 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-//import {log} from "util";
 // create express app
 const app = (0, express_1.default)();
 const port = process.env.PORT || 3000;
@@ -42,7 +41,7 @@ function checkArrayValues(existArray, receivedArray) {
 }
 // testing:
 app.delete('/testing/all-data', (req, res) => {
-    res.status(HTTP_STATUS.NO_CONTENT_204).send('All data is deleted');
+    res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
 });
 // videos:
 app.get('/videos', (req, res) => {
@@ -55,7 +54,6 @@ app.post('/videos', (req, res) => {
     const errors = [];
     // validation:
     let validation = true;
-    let resolutionOK = false;
     if (!title || !title.trim() || title.length > 40 || typeof title !== 'string') {
         errors.push({
             message: 'should be a string',
@@ -71,8 +69,6 @@ app.post('/videos', (req, res) => {
         validation = false;
     }
     // если availableResolutions НЕ существует ИЛИ (длина не равна нулю И данные НЕ савпадают с допустимыми значениями)
-    // !true || (true && !false)
-    // false || (true && true)
     if (!availableResolutions || (availableResolutions.length !== 0 && !checkArrayValues)) {
         errors.push({
             message: 'should be an array',
@@ -81,6 +77,7 @@ app.post('/videos', (req, res) => {
         validation = false;
     }
     // если валидция не прошла, отправляем массив с ошибками и выходим из эндпоинта
+    // TODO возможно где-то здесь ошибка...
     if (!validation) {
         res.status(HTTP_STATUS.BAD_REQUEST_400).send({ errorsMessages: errors });
     }
@@ -97,7 +94,7 @@ app.post('/videos', (req, res) => {
             availableResolutions
         };
         db.videos.push(createdVideo);
-        res.status(HTTP_STATUS.CREATED_201).send(createdVideo);
+        res.status(HTTP_STATUS.CREATED_201).json(createdVideo);
     }
 });
 app.get('/videos/:id', (req, res) => {
@@ -170,7 +167,7 @@ app.put('/videos/:id', (req, res) => {
         res.status(HTTP_STATUS.BAD_REQUEST_400).send({ errorsMessages: errors });
     }
     else {
-        foundVideo.title = title; // обновление всех полученных параметров
+        foundVideo.title = title;
         foundVideo.author = author;
         foundVideo.availableResolutions = availableResolutions;
         foundVideo.canBeDownloaded = canBeDownloaded;
