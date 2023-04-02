@@ -32,13 +32,22 @@ const db = {
     ]
 };
 const videoResolutions = ['P144', 'P240', 'P360', 'P480', 'P720', 'P1080', 'P1440', 'P2160'];
+// функция проверки вхождения элементов в массива в другой массив
+// TODO почему не работвет метод values? в JS фйале работает
+function checkArrayValues(existArray, receivedArray) {
+    for (let i of receivedArray) {
+        if (!existArray.includes(i))
+            return false;
+    }
+    return true;
+}
 // testing:
 app.delete('/testing/all-data', (req, res) => {
     res.status(HTTP_STATUS.NO_CONTENT_204).send('All data is deleted');
 });
 // videos:
 app.get('/videos', (req, res) => {
-    res.status(HTTP_STATUS.OK_200).send(db);
+    res.status(HTTP_STATUS.OK_200).send(db.videos);
 });
 app.post('/videos', (req, res) => {
     const title = req.body.title;
@@ -48,14 +57,14 @@ app.post('/videos', (req, res) => {
     // validation:
     let validation = true;
     let resolutionOK = false;
-    if (!title || !title.trim() || title.length > 40) {
+    if (!title || !title.trim() || title.length > 40 || typeof title !== 'string') {
         errors.push({
             message: 'should be a string, max 40 symbols',
             field: 'title'
         });
         validation = false;
     }
-    if (!author || !author.trim() || author.length > 40) { //  && typeof author !== 'string'
+    if (!author || !author.trim() || author.length > 20 || typeof author !== 'string') { //  && typeof author !== 'string'
         errors.push({
             message: 'should be a string, max 40 symbols',
             field: 'author'
@@ -63,19 +72,8 @@ app.post('/videos', (req, res) => {
         validation = false;
     }
     // TODO: includes должен перебирать элементы массива, а не сам массив
-    // for (let i in availableResolutions){
-    //     if (videoResolutions.includes(i)) {
-    //         resolutionOK = true
-    //     }
-    // }
-    for (let i in videoResolutions) {
-        for (let j in availableResolutions) {
-            if (i === j) {
-                resolutionOK = true;
-            }
-        }
-    }
-    if (!availableResolutions || !resolutionOK) {
+    // если availableResolutions не существует ИЛИ (длина не равна нулю И данные не савпадают с допустимыми значениями)
+    if (!availableResolutions || (availableResolutions.length !== 0 && !checkArrayValues)) {
         errors.push({
             message: 'should be an array',
             field: 'availableResolutions'
@@ -113,8 +111,7 @@ app.put('/videos/:id', (req, res) => {
     const foundVideo = db.videos.find(v => v.id === +req.params.id);
     if (!foundVideo)
         return res.sendStatus(HTTP_STATUS.NOT_FOUND_404);
-    //TODO: destructure
-    // const {title, author} = req.body
+    //TODO: прочитать про destructure – const {title, author} = req.body
     const title = req.body.title;
     const author = req.body.author;
     const availableResolutions = req.body.availableResolutions;
@@ -124,35 +121,36 @@ app.put('/videos/:id', (req, res) => {
     const errors = [];
     // validation:
     let validation = true;
-    if (!title || !title.trim() || title.length > 40) {
+    if (!title || !title.trim() || title.length > 40 || typeof title !== 'string') {
         errors.push({
             message: 'should be a string, max 40 symbols',
             field: 'title'
         });
         validation = false;
-    }
-    if (!author || !author.trim() || author.length > 40) { //  && typeof author !== 'string'
+    } //  && typeof title !== 'string'
+    if (!author || !author.trim() || author.length > 20 || typeof author !== 'string') { //  && typeof author !== 'string'
         errors.push({
             message: 'should be a string, max 40 symbols',
             field: 'author'
         });
         validation = false;
     }
-    if (!availableResolutions || !videoResolutions.includes(availableResolutions.toString())) {
+    // TODO не забыть здесь ОБНОВИТЬ функцию проверки availableResolutions
+    if (!availableResolutions || (availableResolutions.length !== 0 && !checkArrayValues)) {
         errors.push({
             message: 'should be an array',
             field: 'availableResolutions'
         });
         validation = false;
     }
-    if (!canBeDownloaded) {
+    if (!canBeDownloaded || typeof canBeDownloaded !== 'boolean') {
         errors.push({
             message: 'required property',
             field: 'canBeDownloaded'
         });
         validation = false;
     }
-    if (!minAgeRestriction || typeof minAgeRestriction === 'number' || minAgeRestriction > 18) { // || typeof minAgeRestriction === 'null'
+    if (!minAgeRestriction || minAgeRestriction > 18 || typeof minAgeRestriction !== 'number') { // || typeof minAgeRestriction === 'null'
         errors.push({
             message: 'should be a number <= 18 or null',
             field: 'minAgeRestriction'

@@ -51,6 +51,14 @@ const db: TDataBase = {
 }
 const videoResolutions = ['P144', 'P240', 'P360', 'P480', 'P720', 'P1080', 'P1440', 'P2160']
 
+// функция проверки вхождения элементов в массива в другой массив
+// TODO почему не работвет метод values? в JS фйале работает
+function checkArrayValues (existArray: Array<string>, receivedArray: Array<string>) {
+    for( let i of receivedArray) {
+        if (!existArray.includes(i)) return false
+    }
+    return true
+}
 
 // testing:
 app.delete('/testing/all-data', (req: Request, res: Response) => {
@@ -59,10 +67,10 @@ app.delete('/testing/all-data', (req: Request, res: Response) => {
 
 // videos:
 app.get('/videos', (req: Request, res: Response) => {
-    res.status(HTTP_STATUS.OK_200).send(db)
+    res.status(HTTP_STATUS.OK_200).send(db.videos)
 })
 
-app.post('/videos', (req: Request<{}, {}, {title: string, author: string, availableResolutions: string[]}>, res: Response) => {
+app.post('/videos', (req: Request<{},{},{title: string, author: string, availableResolutions: string[]}>, res: Response) => {
     const title = req.body.title
     const author = req.body.author
     const availableResolutions = req.body.availableResolutions
@@ -71,37 +79,24 @@ app.post('/videos', (req: Request<{}, {}, {title: string, author: string, availa
     // validation:
     let validation = true
     let resolutionOK = false
-    if (!title || !title.trim() || title.length > 40) {
+    if (!title || !title.trim() || title.length > 40 || typeof title !== 'string') {
         errors.push({
             message: 'should be a string, max 40 symbols',
             field: 'title'
         })
         validation = false
     }
-    if (!author || !author.trim() || author.length > 20) {         //  && typeof author !== 'string'
+    if (!author || !author.trim() || author.length > 20 || typeof author !== 'string') {         //  && typeof author !== 'string'
         errors.push({
             message: 'should be a string, max 40 symbols',
             field: 'author'
         })
         validation = false
     }
+
     // TODO: includes должен перебирать элементы массива, а не сам массив
-
-    // for (let i in availableResolutions){
-    //     if (videoResolutions.includes(i)) {
-    //         resolutionOK = true
-    //     }
-    // }
-
-    for (let i in videoResolutions) {
-        for (let j in availableResolutions) {
-            if (i === j) {
-                resolutionOK = true
-            }
-        }
-    }
-
-    if (!availableResolutions || !resolutionOK) {
+    // если availableResolutions не существует ИЛИ (длина не равна нулю И данные не савпадают с допустимыми значениями)
+    if (!availableResolutions || (availableResolutions.length !== 0 && !checkArrayValues)) {
         errors.push({
             message: 'should be an array',
             field: 'availableResolutions'
@@ -128,7 +123,7 @@ app.post('/videos', (req: Request<{}, {}, {title: string, author: string, availa
 })
 
 //TODO: в свагере id имеет тип integer, а в видео говорится, что надо типизировать как string, как быть?
-app.get('/videos/:id', (req: Request<{ id: string }>, res: Response) => {
+app.get('/videos/:id', (req: Request<{id: string}>, res: Response) => {
     // если не нашли видео по id, то сразу выдаем ошибку not found и выходим из эндпоинта
     const foundVideo = db.videos.find(v => v.id === +req.params.id)
     if (!foundVideo) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
@@ -136,14 +131,13 @@ app.get('/videos/:id', (req: Request<{ id: string }>, res: Response) => {
     res.sendStatus(HTTP_STATUS.OK_200).json(foundVideo)
 })
 
-app.put('/videos/:id', (req: Request<{ id: string }, {}, {title: string, author: string, availableResolutions: string[],
+app.put('/videos/:id', (req: Request<{id: string}, {}, {title: string, author: string, availableResolutions: string[],
     canBeDownloaded: boolean, minAgeRestriction: number | null, publicationDate: string}>, res: Response) => {
     // если не нашли видео по id, сразу выдаем ошибку not found и выходим из эндпоинта
     const foundVideo = db.videos.find(v => v.id === +req.params.id)
     if (!foundVideo)  return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
 
-    //TODO: destructure
-    // const {title, author} = req.body
+    //TODO: прочитать про destructure – const {title, author} = req.body
     const title = req.body.title
     const author = req.body.author
     const availableResolutions = req.body.availableResolutions
@@ -154,36 +148,36 @@ app.put('/videos/:id', (req: Request<{ id: string }, {}, {title: string, author:
 
     // validation:
     let validation = true
-    if (!title || !title.trim() || title.length > 40) {
+    if (!title || !title.trim() || title.length > 40 || typeof title !== 'string') {
         errors.push({
             message: 'should be a string, max 40 symbols',
             field: 'title'
         })
         validation = false
-    }
-    if (!author || !author.trim() || author.length > 20) {         //  && typeof author !== 'string'
+    }        //  && typeof title !== 'string'
+    if (!author || !author.trim() || author.length > 20 || typeof author !== 'string') {         //  && typeof author !== 'string'
         errors.push({
             message: 'should be a string, max 40 symbols',
             field: 'author'
         })
         validation = false
     }
-
-    if (!availableResolutions || !videoResolutions.includes(availableResolutions.toString())) {
+    // TODO не забыть здесь ОБНОВИТЬ функцию проверки availableResolutions
+    if (!availableResolutions || (availableResolutions.length !== 0 && !checkArrayValues)) {
         errors.push({
             message: 'should be an array',
             field: 'availableResolutions'
         })
         validation = false
     }
-    if (!canBeDownloaded) {
+    if (!canBeDownloaded || typeof canBeDownloaded !== 'boolean') {
         errors.push({
             message: 'required property',
             field: 'canBeDownloaded'
         })
         validation = false
     }
-    if (!minAgeRestriction || typeof minAgeRestriction === 'number' ||  minAgeRestriction > 18) {  // || typeof minAgeRestriction === 'null'
+    if (!minAgeRestriction ||  minAgeRestriction > 18 || typeof minAgeRestriction !== 'number') {  // || typeof minAgeRestriction === 'null'
         errors.push({
             message: 'should be a number <= 18 or null',
             field: 'minAgeRestriction'
