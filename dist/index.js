@@ -81,30 +81,32 @@ app.post('/videos', (req, res) => {
         validation = false;
     }
     // если валидция не прошла, отправляем массив с ошибками и выходим из эндпоинта
-    if (!validation)
-        return res.status(HTTP_STATUS.BAD_REQUEST_400).send({ errorsMessages: errors });
-    const dateNow = new Date();
-    const createdVideo = {
-        id: +dateNow,
-        title: title,
-        author,
-        canBeDownloaded: false,
-        minAgeRestriction: null,
-        createdAt: dateNow.toISOString(),
-        publicationDate: new Date(dateNow.setDate(dateNow.getDate() + 1)).toISOString(),
-        availableResolutions
-    };
-    db.videos.push(createdVideo);
-    return res.status(HTTP_STATUS.CREATED_201).send(createdVideo);
+    if (!validation) {
+        res.status(HTTP_STATUS.BAD_REQUEST_400).send({ errorsMessages: errors });
+    }
+    else {
+        const dateNow = new Date();
+        const createdVideo = {
+            id: +dateNow,
+            title: title,
+            author,
+            canBeDownloaded: false,
+            minAgeRestriction: null,
+            createdAt: dateNow.toISOString(),
+            publicationDate: new Date(dateNow.setDate(dateNow.getDate() + 1)).toISOString(),
+            availableResolutions
+        };
+        db.videos.push(createdVideo);
+        res.status(HTTP_STATUS.CREATED_201).send(createdVideo);
+    }
 });
-//TODO: в свагере id имеет тип integer, а в видео говорится, что надо типизировать как string, как быть?
 app.get('/videos/:id', (req, res) => {
     // если не нашли видео по id, то сразу выдаем ошибку not found и выходим из эндпоинта
     const foundVideo = db.videos.find(v => v.id === +req.params.id);
     if (!foundVideo)
         return res.sendStatus(HTTP_STATUS.NOT_FOUND_404);
     // иначе возвращаем найденное видео
-    res.sendStatus(HTTP_STATUS.OK_200).json(foundVideo);
+    res.status(HTTP_STATUS.OK_200).json(foundVideo);
 });
 app.put('/videos/:id', (req, res) => {
     // если не нашли видео по id, сразу выдаем ошибку not found и выходим из эндпоинта

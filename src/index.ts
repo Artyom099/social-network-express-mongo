@@ -104,24 +104,26 @@ app.post('/videos', (req: Request<{},{},{title: string, author: string, availabl
     }
 
     // если валидция не прошла, отправляем массив с ошибками и выходим из эндпоинта
-    if (!validation) return res.status(HTTP_STATUS.BAD_REQUEST_400).send({errorsMessages: errors})
-
-    const dateNow = new Date()
-    const createdVideo: TVideo = {
-        id: +dateNow,
-        title: title,
-        author,
-        canBeDownloaded: false,
-        minAgeRestriction: null,
-        createdAt: dateNow.toISOString(),
-        publicationDate: new Date(dateNow.setDate(dateNow.getDate() + 1)).toISOString(),
-        availableResolutions
+    if (!validation) {
+        res.status(HTTP_STATUS.BAD_REQUEST_400).send({errorsMessages: errors})
+    } else {
+        const dateNow = new Date()
+        const createdVideo: TVideo = {
+            id: +dateNow,
+            title: title,
+            author,
+            canBeDownloaded: false,
+            minAgeRestriction: null,
+            createdAt: dateNow.toISOString(),
+            publicationDate: new Date(dateNow.setDate(dateNow.getDate() + 1)).toISOString(),
+            availableResolutions
+        }
+        db.videos.push(createdVideo)
+        res.status(HTTP_STATUS.CREATED_201).send(createdVideo)
     }
-    db.videos.push(createdVideo)
-    return res.status(HTTP_STATUS.CREATED_201).send(createdVideo)
+
 })
 
-//TODO: в свагере id имеет тип integer, а в видео говорится, что надо типизировать как string, как быть?
 app.get('/videos/:id', (req: Request<{id: string}>, res: Response) => {
     // если не нашли видео по id, то сразу выдаем ошибку not found и выходим из эндпоинта
     const foundVideo = db.videos.find(v => v.id === +req.params.id)
