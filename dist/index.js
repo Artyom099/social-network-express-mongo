@@ -32,8 +32,7 @@ const db = {
     ]
 };
 const videoResolutions = ['P144', 'P240', 'P360', 'P480', 'P720', 'P1080', 'P1440', 'P2160'];
-// функция проверки вхождения элементов в массива в другой массив
-// TODO почему не работвет метод values? в JS фйале работает
+// если существующий массив НЕ включается в себя элемент полученного массива ф-я выдает false
 function checkArrayValues(existArray, receivedArray) {
     for (let i of receivedArray) {
         if (!existArray.includes(i))
@@ -71,9 +70,8 @@ app.post('/videos', (req, res) => {
         });
         validation = false;
     }
-    // TODO: includes должен перебирать элементы массива, а не сам массив
-    // если availableResolutions не существует ИЛИ (длина не равна нулю И данные не савпадают с допустимыми значениями)
-    if (!availableResolutions || (availableResolutions.length !== 0 && !checkArrayValues)) {
+    // если availableResolutions НЕ существует ИЛИ (длина не равна нулю И данные НЕ савпадают с допустимыми значениями)
+    if (!availableResolutions || (availableResolutions.length !== 0 && checkArrayValues)) {
         errors.push({
             message: 'should be an array',
             field: 'availableResolutions'
@@ -135,8 +133,7 @@ app.put('/videos/:id', (req, res) => {
         });
         validation = false;
     }
-    // TODO не забыть здесь ОБНОВИТЬ функцию проверки availableResolutions
-    if (!availableResolutions || (availableResolutions.length !== 0 && !checkArrayValues)) {
+    if (!availableResolutions || (availableResolutions.length !== 0 && checkArrayValues)) {
         errors.push({
             message: 'should be an array',
             field: 'availableResolutions'
@@ -154,6 +151,13 @@ app.put('/videos/:id', (req, res) => {
         errors.push({
             message: 'should be a number <= 18 or null',
             field: 'minAgeRestriction'
+        });
+        validation = false;
+    }
+    if (!publicationDate || typeof publicationDate !== 'string') {
+        errors.push({
+            message: 'should be a string',
+            field: 'publicationDate'
         });
         validation = false;
     }
