@@ -58,7 +58,7 @@ app.post('/videos', (req, res) => {
     let resolutionOK = false;
     if (!title || !title.trim() || title.length > 40 || typeof title !== 'string') {
         errors.push({
-            message: 'should be a string, max 40 symbols',
+            message: 'should be a string',
             field: 'title'
         });
         validation = false;
@@ -71,7 +71,9 @@ app.post('/videos', (req, res) => {
         validation = false;
     }
     // если availableResolutions НЕ существует ИЛИ (длина не равна нулю И данные НЕ савпадают с допустимыми значениями)
-    if (!availableResolutions || (availableResolutions.length !== 0 && checkArrayValues)) {
+    // !true || (true && !false)
+    // false || (true && true)
+    if (!availableResolutions || (availableResolutions.length !== 0 && !checkArrayValues)) {
         errors.push({
             message: 'should be an array',
             field: 'availableResolutions'
@@ -121,7 +123,7 @@ app.put('/videos/:id', (req, res) => {
     let validation = true;
     if (!title || !title.trim() || title.length > 40 || typeof title !== 'string') {
         errors.push({
-            message: 'should be a string, max 40 symbols',
+            message: 'should be a string',
             field: 'title'
         });
         validation = false;
@@ -133,7 +135,7 @@ app.put('/videos/:id', (req, res) => {
         });
         validation = false;
     }
-    if (!availableResolutions || (availableResolutions.length !== 0 && checkArrayValues)) {
+    if (!availableResolutions || (availableResolutions.length !== 0 && !checkArrayValues)) {
         errors.push({
             message: 'should be an array',
             field: 'availableResolutions'
