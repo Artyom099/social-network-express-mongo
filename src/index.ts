@@ -127,7 +127,7 @@ app.get('/videos/:id', (req: Request<{id: string}>, res: Response) => {
     const foundVideo = db.videos.find(v => v.id === +req.params.id)
     if (!foundVideo) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
     // иначе возвращаем найденное видео
-    res.sendStatus(HTTP_STATUS.OK_200).json(foundVideo)
+    res.status(HTTP_STATUS.OK_200).json(foundVideo)
 })
 
 app.put('/videos/:id', (req: Request<{id: string}, {}, {title: string, author: string, availableResolutions: string[],
