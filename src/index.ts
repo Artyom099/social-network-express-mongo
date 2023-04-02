@@ -1,7 +1,5 @@
 import express, {Request, Response} from 'express'
 import bodyParser from 'body-parser'
-import exp from "constants";
-//import {log} from "util";
 
 // create express app
 const app = express()
@@ -77,7 +75,6 @@ app.post('/videos', (req: Request<{},{},{title: string, author: string, availabl
 
     // validation:
     let validation = true
-    let resolutionOK = false
     if (!title || !title.trim() || title.length > 40 || typeof title !== 'string') {
         errors.push({
             message: 'should be a string',
@@ -93,8 +90,6 @@ app.post('/videos', (req: Request<{},{},{title: string, author: string, availabl
         validation = false
     }
     // если availableResolutions НЕ существует ИЛИ (длина не равна нулю И данные НЕ савпадают с допустимыми значениями)
-    // !true || (true && !false)
-    // false || (true && true)
     if (!availableResolutions || (availableResolutions.length !== 0 && !checkArrayValues)) {
         errors.push({
             message: 'should be an array',
@@ -119,7 +114,7 @@ app.post('/videos', (req: Request<{},{},{title: string, author: string, availabl
             availableResolutions
         }
         db.videos.push(createdVideo)
-        res.status(HTTP_STATUS.CREATED_201).send(createdVideo)
+        res.status(HTTP_STATUS.CREATED_201).json(createdVideo)
     }
 
 })
@@ -136,7 +131,7 @@ app.put('/videos/:id', (req: Request<{id: string}, {}, {title: string, author: s
     canBeDownloaded: boolean, minAgeRestriction: number | null, publicationDate: string}>, res: Response) => {
     // если не нашли видео по id, сразу выдаем ошибку not found и выходим из эндпоинта
     const foundVideo = db.videos.find(v => v.id === +req.params.id)
-    if (!foundVideo)  return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
+    if (!foundVideo) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
 
     //TODO: прочитать про destructure – const {title, author} = req.body
     const title = req.body.title
