@@ -34,15 +34,13 @@ const HTTP_STATUS = {
     NOT_FOUND_404: 404
 }
 const db: TDataBase = {
-    videos: [
-
-    ]
+    videos: []
 }
 const videoResolutions = ['P144', 'P240', 'P360', 'P480', 'P720', 'P1080', 'P1440', 'P2160']
 
 // если существующий массив НЕ включается в себя элемент полученного массива ф-я выдает false
 function checkArrayValues (existArray: Array<string>, receivedArray: Array<string>) {
-    for( let i of receivedArray) {
+    for(let i of receivedArray) {
         if (!existArray.includes(i)) return false
     }
     return true
@@ -59,9 +57,10 @@ app.get('/videos', (req: Request, res: Response) => {
 })
 
 app.post('/videos', (req: Request<{},{},{title: string, author: string, availableResolutions: string[]}>, res: Response) => {
-    const title = req.body.title
-    const author = req.body.author
-    const availableResolutions = req.body.availableResolutions
+    const {title, author, availableResolutions} = req.body
+    // const title = req.body.title
+    // const author = req.body.author
+    // const availableResolutions = req.body.availableResolutions
     const errors: TBadRequestError[] = []
 
     // validation:
@@ -108,7 +107,6 @@ app.post('/videos', (req: Request<{},{},{title: string, author: string, availabl
         db.videos.push(createdVideo)
         res.status(HTTP_STATUS.CREATED_201).json(createdVideo)
     }
-
 })
 
 app.get('/videos/:id', (req: Request<{id: string}>, res: Response) => {
@@ -125,13 +123,13 @@ app.put('/videos/:id', (req: Request<{id: string}, {}, {title: string, author: s
     const foundVideo = db.videos.find(v => v.id === +req.params.id)
     if (!foundVideo) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
 
-    //TODO: прочитать про destructure – const {title, author} = req.body
-    const title = req.body.title
-    const author = req.body.author
-    const availableResolutions = req.body.availableResolutions
-    const canBeDownloaded = req.body.canBeDownloaded
-    const minAgeRestriction = req.body.minAgeRestriction
-    const publicationDate = req.body.publicationDate
+    const {title, author, availableResolutions, canBeDownloaded, minAgeRestriction, publicationDate} = req.body
+    // const title = req.body.title
+    // const author = req.body.author
+    // const availableResolutions = req.body.availableResolutions
+    // const canBeDownloaded = req.body.canBeDownloaded
+    // const minAgeRestriction = req.body.minAgeRestriction
+    // const publicationDate = req.body.publicationDate
     const errors: TBadRequestError[] = []
 
     // validation:
