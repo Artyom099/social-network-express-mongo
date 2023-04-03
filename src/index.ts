@@ -156,7 +156,7 @@ app.put('/videos/:id', (req: Request<{id: string}, {}, {title: string, author: s
         })
         //validation = false
     }
-    if (!minAgeRestriction || typeof minAgeRestriction !== 'number' | 'null' ||  minAgeRestriction > 18) {
+    if (!minAgeRestriction || typeof minAgeRestriction !== 'number' ||  minAgeRestriction > 18) {
         errors.push({
             message: 'should be a number <= 18 or null',
             field: 'minAgeRestriction'
