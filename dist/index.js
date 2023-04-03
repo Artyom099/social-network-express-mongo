@@ -125,7 +125,6 @@ exports.app.put('/videos/:id', (req, res) => {
         });
         //validation = false
     }
-    // добавил 'null'
     if (!minAgeRestriction || typeof minAgeRestriction !== 'number' | 'null' || minAgeRestriction > 18) {
         errors.push({
             message: 'should be a number <= 18 or null',
@@ -138,7 +137,7 @@ exports.app.put('/videos/:id', (req, res) => {
             message: 'should be a string',
             field: 'publicationDate'
         });
-        validation = false;
+        //validation = false
     }
     // если данные НЕ прошли валидацию, отправляем массив с ошибками, иначе обновляем их
     if (errors.length > 0) {
