@@ -12,13 +12,13 @@ type TDataBase = {
     videos: TVideo[]
 }
 type TVideo = {
-    id: number,
-    title: string,
-    author: string,
-    canBeDownloaded: boolean,
-    minAgeRestriction: number | null,
-    createdAt: string,
-    publicationDate: string,
+    id: number
+    title: string
+    author: string
+    canBeDownloaded: boolean
+    minAgeRestriction: number | null
+    createdAt: string
+    publicationDate: string
     availableResolutions: string[]
 }
 type TBadRequestError = {
@@ -39,8 +39,8 @@ const db: TDataBase = {
 const videoResolutions = ['P144', 'P240', 'P360', 'P480', 'P720', 'P1080', 'P1440', 'P2160']
 
 // если существующий массив НЕ включается в себя элемент полученного массива ф-я выдает false
-function checkArrayValues (existArray: Array<string>, receivedArray: Array<string>) {
-    for(let i of receivedArray) {
+function checkArrayValues (existArray: string[], receivedArray: string[]): boolean {
+    for(let i in receivedArray) {
         if (!existArray.includes(i)) return false
     }
     return true
@@ -58,9 +58,6 @@ app.get('/videos', (req: Request, res: Response) => {
 
 app.post('/videos', (req: Request<{},{},{title: string, author: string, availableResolutions: string[]}>, res: Response) => {
     const {title, author, availableResolutions} = req.body
-    // const title = req.body.title
-    // const author = req.body.author
-    // const availableResolutions = req.body.availableResolutions
     const errors: TBadRequestError[] = []
 
     // validation:
@@ -80,7 +77,7 @@ app.post('/videos', (req: Request<{},{},{title: string, author: string, availabl
         validation = false
     }
     // если availableResolutions НЕ существует ИЛИ (длина не равна нулю И данные НЕ савпадают с допустимыми значениями)
-    if (!availableResolutions || (availableResolutions.length !== 0 && !checkArrayValues)) {
+    if (!availableResolutions || (availableResolutions.length !== 0 && !checkArrayValues(videoResolutions, availableResolutions))) {
         errors.push({
             message: 'should be an array',
             field: 'availableResolutions'
@@ -89,7 +86,6 @@ app.post('/videos', (req: Request<{},{},{title: string, author: string, availabl
     }
 
     // если валидция не прошла, отправляем массив с ошибками и выходим из эндпоинта
-    // TODO возможно где-то здесь ошибка...
     if (!validation) {
         res.status(HTTP_STATUS.BAD_REQUEST_400).send({errorsMessages: errors})
     } else {
@@ -124,12 +120,6 @@ app.put('/videos/:id', (req: Request<{id: string}, {}, {title: string, author: s
     if (!foundVideo) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
 
     const {title, author, availableResolutions, canBeDownloaded, minAgeRestriction, publicationDate} = req.body
-    // const title = req.body.title
-    // const author = req.body.author
-    // const availableResolutions = req.body.availableResolutions
-    // const canBeDownloaded = req.body.canBeDownloaded
-    // const minAgeRestriction = req.body.minAgeRestriction
-    // const publicationDate = req.body.publicationDate
     const errors: TBadRequestError[] = []
 
     // validation:
@@ -148,7 +138,7 @@ app.put('/videos/:id', (req: Request<{id: string}, {}, {title: string, author: s
         })
         validation = false
     }
-    if (!availableResolutions || (availableResolutions.length !== 0 && !checkArrayValues)) {
+    if (!availableResolutions || (availableResolutions.length !== 0 && !checkArrayValues(videoResolutions, availableResolutions))) {
         errors.push({
             message: 'should be an array',
             field: 'availableResolutions'

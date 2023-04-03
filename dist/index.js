@@ -22,7 +22,7 @@ const db = {
 const videoResolutions = ['P144', 'P240', 'P360', 'P480', 'P720', 'P1080', 'P1440', 'P2160'];
 // если существующий массив НЕ включается в себя элемент полученного массива ф-я выдает false
 function checkArrayValues(existArray, receivedArray) {
-    for (let i of receivedArray) {
+    for (let i in receivedArray) {
         if (!existArray.includes(i))
             return false;
     }
@@ -38,9 +38,6 @@ app.get('/videos', (req, res) => {
 });
 app.post('/videos', (req, res) => {
     const { title, author, availableResolutions } = req.body;
-    // const title = req.body.title
-    // const author = req.body.author
-    // const availableResolutions = req.body.availableResolutions
     const errors = [];
     // validation:
     let validation = true;
@@ -59,7 +56,7 @@ app.post('/videos', (req, res) => {
         validation = false;
     }
     // если availableResolutions НЕ существует ИЛИ (длина не равна нулю И данные НЕ савпадают с допустимыми значениями)
-    if (!availableResolutions || (availableResolutions.length !== 0 && !checkArrayValues)) {
+    if (!availableResolutions || (availableResolutions.length !== 0 && !checkArrayValues(videoResolutions, availableResolutions))) {
         errors.push({
             message: 'should be an array',
             field: 'availableResolutions'
@@ -67,7 +64,6 @@ app.post('/videos', (req, res) => {
         validation = false;
     }
     // если валидция не прошла, отправляем массив с ошибками и выходим из эндпоинта
-    // TODO возможно где-то здесь ошибка...
     if (!validation) {
         res.status(HTTP_STATUS.BAD_REQUEST_400).send({ errorsMessages: errors });
     }
@@ -101,12 +97,6 @@ app.put('/videos/:id', (req, res) => {
     if (!foundVideo)
         return res.sendStatus(HTTP_STATUS.NOT_FOUND_404);
     const { title, author, availableResolutions, canBeDownloaded, minAgeRestriction, publicationDate } = req.body;
-    // const title = req.body.title
-    // const author = req.body.author
-    // const availableResolutions = req.body.availableResolutions
-    // const canBeDownloaded = req.body.canBeDownloaded
-    // const minAgeRestriction = req.body.minAgeRestriction
-    // const publicationDate = req.body.publicationDate
     const errors = [];
     // validation:
     let validation = true;
@@ -124,7 +114,7 @@ app.put('/videos/:id', (req, res) => {
         });
         validation = false;
     }
-    if (!availableResolutions || (availableResolutions.length !== 0 && !checkArrayValues)) {
+    if (!availableResolutions || (availableResolutions.length !== 0 && !checkArrayValues(videoResolutions, availableResolutions))) {
         errors.push({
             message: 'should be an array',
             field: 'availableResolutions'
