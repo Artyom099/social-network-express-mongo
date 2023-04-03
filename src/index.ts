@@ -2,7 +2,7 @@ import express, {Request, Response} from 'express'
 import bodyParser from 'body-parser'
 
 // create express app
-const app = express()
+export const app = express()
 const port = process.env.PORT || 3000
 
 const jsonBodyMiddleware = express.json()
@@ -10,7 +10,7 @@ app.use(jsonBodyMiddleware)
 
 type TDataBase = {
     videos: TVideo[]
-}
+}   //
 type TVideo = {
     id: number
     title: string
@@ -46,6 +46,14 @@ function checkArrayValues (existArray: string[], receivedArray: string[]): boole
     return true
 }
 
+type VideoPostDTO = {
+    title: string,
+    author: string,
+    availableResolutions: string[]
+}
+
+type RequestType<T> = Request<{},{},T>
+
 // testing:
 app.delete('/testing/all-data', (req: Request, res: Response) => {
     res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
@@ -56,20 +64,20 @@ app.get('/videos', (req: Request, res: Response) => {
     res.status(HTTP_STATUS.OK_200).send(db.videos)
 })
 
-app.post('/videos', (req: Request<{},{},{title: string, author: string, availableResolutions: string[]}>, res: Response) => {
+app.post('/videos', (req: RequestType<VideoPostDTO>, res: Response) => {
     const {title, author, availableResolutions} = req.body
     const errors: TBadRequestError[] = []
 
     // validation:
-    let validation = true
-    if (!title || !title.trim() || title.length > 40 || typeof title !== 'string') {
+    let validation = true   //TODO заменить флаг на длину массива errors
+    if (!title || typeof title !== 'string' || !title.trim() || title.length > 40) {
         errors.push({
             message: 'should be a string',
             field: 'title'
         })
         validation = false
     }
-    if (!author || !author.trim() || author.length > 20 || typeof author !== 'string') {         //  && typeof author !== 'string'
+    if (!author || typeof author !== 'string' || !author.trim() || author.length > 20) {
         errors.push({
             message: 'should be a string, max 40 symbols',
             field: 'author'
@@ -86,7 +94,7 @@ app.post('/videos', (req: Request<{},{},{title: string, author: string, availabl
     }
 
     // если валидция не прошла, отправляем массив с ошибками и выходим из эндпоинта
-    if (!validation) {
+    if (errors.length > 0) {
         res.status(HTTP_STATUS.BAD_REQUEST_400).send({errorsMessages: errors})
     } else {
         const dateNow = new Date()
@@ -124,14 +132,14 @@ app.put('/videos/:id', (req: Request<{id: string}, {}, {title: string, author: s
 
     // validation:
     let validation = true
-    if (!title || !title.trim() || title.length > 40 || typeof title !== 'string') {
+    if (!title || typeof title !== 'string' || !title.trim() || title.length > 40) {
         errors.push({
             message: 'should be a string',
             field: 'title'
         })
         validation = false
     }
-    if (!author || !author.trim() || author.length > 20 || typeof author !== 'string') {         //  && typeof author !== 'string'
+    if (!author || typeof author !== 'string' || !author.trim() || author.length > 20) {         //  && typeof author !== 'string'
         errors.push({
             message: 'should be a string, max 40 symbols',
             field: 'author'
@@ -152,7 +160,8 @@ app.put('/videos/:id', (req: Request<{id: string}, {}, {title: string, author: s
         })
         validation = false
     }
-    if (!minAgeRestriction ||  minAgeRestriction > 18 || typeof minAgeRestriction !== 'number') {  // || typeof minAgeRestriction === 'null'
+    // добавил 'null'
+    if (!minAgeRestriction || typeof minAgeRestriction !== 'number' | 'null' ||  minAgeRestriction > 18) {
         errors.push({
             message: 'should be a number <= 18 or null',
             field: 'minAgeRestriction'
@@ -183,13 +192,12 @@ app.put('/videos/:id', (req: Request<{id: string}, {}, {title: string, author: s
 
 app.delete('/videos/:id', (req: Request<{id: string}>, res: Response) => {
     // если не нашли видео по id, то сразу выдаем ошибку not found и выходим из эндпоинта
-    const videoForDelete = db.videos.find(v => v.id === +req.params.id)
+    const videoForDelete = db.videos.find(v => v.id === +req.params.id)         // TODO можно сделат ьчерез findIndex + split?
     if (!videoForDelete) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
 
     db.videos = db.videos.filter(vid => vid.id !== +req.params.id)
     res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
 })
-
 
 // start app
 app.listen(port, () => {

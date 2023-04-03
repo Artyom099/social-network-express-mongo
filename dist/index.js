@@ -3,12 +3,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.app = void 0;
 const express_1 = __importDefault(require("express"));
 // create express app
-const app = (0, express_1.default)();
+exports.app = (0, express_1.default)();
 const port = process.env.PORT || 3000;
 const jsonBodyMiddleware = express_1.default.json();
-app.use(jsonBodyMiddleware);
+exports.app.use(jsonBodyMiddleware);
 const HTTP_STATUS = {
     OK_200: 200,
     CREATED_201: 201,
@@ -29,26 +30,26 @@ function checkArrayValues(existArray, receivedArray) {
     return true;
 }
 // testing:
-app.delete('/testing/all-data', (req, res) => {
+exports.app.delete('/testing/all-data', (req, res) => {
     res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
 });
 // videos:
-app.get('/videos', (req, res) => {
+exports.app.get('/videos', (req, res) => {
     res.status(HTTP_STATUS.OK_200).send(db.videos);
 });
-app.post('/videos', (req, res) => {
+exports.app.post('/videos', (req, res) => {
     const { title, author, availableResolutions } = req.body;
     const errors = [];
     // validation:
-    let validation = true;
-    if (!title || !title.trim() || title.length > 40 || typeof title !== 'string') {
+    let validation = true; //TODO заменить флаг на длину массива errors
+    if (!title || typeof title !== 'string' || !title.trim() || title.length > 40) {
         errors.push({
             message: 'should be a string',
             field: 'title'
         });
         validation = false;
     }
-    if (!author || !author.trim() || author.length > 20 || typeof author !== 'string') { //  && typeof author !== 'string'
+    if (!author || typeof author !== 'string' || !author.trim() || author.length > 20) {
         errors.push({
             message: 'should be a string, max 40 symbols',
             field: 'author'
@@ -64,7 +65,7 @@ app.post('/videos', (req, res) => {
         validation = false;
     }
     // если валидция не прошла, отправляем массив с ошибками и выходим из эндпоинта
-    if (!validation) {
+    if (errors.length > 0) {
         res.status(HTTP_STATUS.BAD_REQUEST_400).send({ errorsMessages: errors });
     }
     else {
@@ -83,7 +84,7 @@ app.post('/videos', (req, res) => {
         res.status(HTTP_STATUS.CREATED_201).json(createdVideo);
     }
 });
-app.get('/videos/:id', (req, res) => {
+exports.app.get('/videos/:id', (req, res) => {
     // если не нашли видео по id, то сразу выдаем ошибку not found и выходим из эндпоинта
     const foundVideo = db.videos.find(v => v.id === +req.params.id);
     if (!foundVideo)
@@ -91,7 +92,7 @@ app.get('/videos/:id', (req, res) => {
     // иначе возвращаем найденное видео
     res.status(HTTP_STATUS.OK_200).json(foundVideo);
 });
-app.put('/videos/:id', (req, res) => {
+exports.app.put('/videos/:id', (req, res) => {
     // если не нашли видео по id, сразу выдаем ошибку not found и выходим из эндпоинта
     const foundVideo = db.videos.find(v => v.id === +req.params.id);
     if (!foundVideo)
@@ -100,14 +101,14 @@ app.put('/videos/:id', (req, res) => {
     const errors = [];
     // validation:
     let validation = true;
-    if (!title || !title.trim() || title.length > 40 || typeof title !== 'string') {
+    if (!title || typeof title !== 'string' || !title.trim() || title.length > 40) {
         errors.push({
             message: 'should be a string',
             field: 'title'
         });
         validation = false;
     }
-    if (!author || !author.trim() || author.length > 20 || typeof author !== 'string') { //  && typeof author !== 'string'
+    if (!author || typeof author !== 'string' || !author.trim() || author.length > 20) { //  && typeof author !== 'string'
         errors.push({
             message: 'should be a string, max 40 symbols',
             field: 'author'
@@ -128,7 +129,8 @@ app.put('/videos/:id', (req, res) => {
         });
         validation = false;
     }
-    if (!minAgeRestriction || minAgeRestriction > 18 || typeof minAgeRestriction !== 'number') { // || typeof minAgeRestriction === 'null'
+    // добавил 'null'
+    if (!minAgeRestriction || typeof minAgeRestriction !== 'number' | 'null' || minAgeRestriction > 18) {
         errors.push({
             message: 'should be a number <= 18 or null',
             field: 'minAgeRestriction'
@@ -156,15 +158,15 @@ app.put('/videos/:id', (req, res) => {
         res.status(HTTP_STATUS.NO_CONTENT_204).json(foundVideo);
     }
 });
-app.delete('/videos/:id', (req, res) => {
+exports.app.delete('/videos/:id', (req, res) => {
     // если не нашли видео по id, то сразу выдаем ошибку not found и выходим из эндпоинта
-    const videoForDelete = db.videos.find(v => v.id === +req.params.id);
+    const videoForDelete = db.videos.find(v => v.id === +req.params.id); // TODO можно сделат ьчерез findIndex + split?
     if (!videoForDelete)
         return res.sendStatus(HTTP_STATUS.NOT_FOUND_404);
     db.videos = db.videos.filter(vid => vid.id !== +req.params.id);
     res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
 });
 // start app
-app.listen(port, () => {
+exports.app.listen(port, () => {
     console.log(`Server running on: http://localhost/${port}`);
 });
