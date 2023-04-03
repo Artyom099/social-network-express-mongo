@@ -22,7 +22,7 @@ const db = {
 const videoResolutions = ['P144', 'P240', 'P360', 'P480', 'P720', 'P1080', 'P1440', 'P2160'];
 // если существующий массив НЕ включается в себя элемент полученного массива ф-я выдает false
 function checkArrayValues(existArray, receivedArray) {
-    for (let i in receivedArray) {
+    for (let i of receivedArray) {
         if (!existArray.includes(i))
             return false;
     }
@@ -106,7 +106,7 @@ app.put('/videos/:id', (req, res) => {
             field: 'title'
         });
         validation = false;
-    } //  && typeof title !== 'string'
+    }
     if (!author || !author.trim() || author.length > 20 || typeof author !== 'string') { //  && typeof author !== 'string'
         errors.push({
             message: 'should be a string, max 40 symbols',

@@ -40,7 +40,7 @@ const videoResolutions = ['P144', 'P240', 'P360', 'P480', 'P720', 'P1080', 'P144
 
 // если существующий массив НЕ включается в себя элемент полученного массива ф-я выдает false
 function checkArrayValues (existArray: string[], receivedArray: string[]): boolean {
-    for(let i in receivedArray) {
+    for(let i of receivedArray) {
         if (!existArray.includes(i)) return false
     }
     return true
@@ -130,7 +130,7 @@ app.put('/videos/:id', (req: Request<{id: string}, {}, {title: string, author: s
             field: 'title'
         })
         validation = false
-    }        //  && typeof title !== 'string'
+    }
     if (!author || !author.trim() || author.length > 20 || typeof author !== 'string') {         //  && typeof author !== 'string'
         errors.push({
             message: 'should be a string, max 40 symbols',
@@ -181,7 +181,7 @@ app.put('/videos/:id', (req: Request<{id: string}, {}, {title: string, author: s
     }
 })
 
-app.delete('/videos/:id', (req: Request<{ id: string }>, res: Response) => {
+app.delete('/videos/:id', (req: Request<{id: string}>, res: Response) => {
     // если не нашли видео по id, то сразу выдаем ошибку not found и выходим из эндпоинта
     const videoForDelete = db.videos.find(v => v.id === +req.params.id)
     if (!videoForDelete) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
