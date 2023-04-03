@@ -96,48 +96,41 @@ exports.app.put('/videos/:id', (req, res) => {
     const { title, author, availableResolutions, canBeDownloaded, minAgeRestriction, publicationDate } = req.body;
     const errors = [];
     // validation:
-    //let validation = true
     if (!title || typeof title !== 'string' || !title.trim() || title.length > 40) {
         errors.push({
             message: 'should be a string',
             field: 'title'
         });
-        //validation = false
     }
     if (!author || typeof author !== 'string' || !author.trim() || author.length > 20) { //  && typeof author !== 'string'
         errors.push({
             message: 'should be a string, max 40 symbols',
             field: 'author'
         });
-        //validation = false
     }
     if (!availableResolutions || (availableResolutions.length !== 0 && !checkArrayValues(videoResolutions, availableResolutions))) {
         errors.push({
             message: 'should be an array',
             field: 'availableResolutions'
         });
-        //validation = false
     }
     if (!canBeDownloaded || typeof canBeDownloaded !== 'boolean') {
         errors.push({
             message: 'required property',
             field: 'canBeDownloaded'
         });
-        //validation = false
     }
     if (!minAgeRestriction || typeof minAgeRestriction !== 'number' || minAgeRestriction > 18) {
         errors.push({
             message: 'should be a number <= 18 or null',
             field: 'minAgeRestriction'
         });
-        //validation = false
     }
     if (!publicationDate || typeof publicationDate !== 'string') {
         errors.push({
             message: 'should be a string',
             field: 'publicationDate'
         });
-        //validation = false
     }
     // если данные НЕ прошли валидацию, отправляем массив с ошибками, иначе обновляем их
     if (errors.length > 0) {
@@ -155,7 +148,7 @@ exports.app.put('/videos/:id', (req, res) => {
 });
 exports.app.delete('/videos/:id', (req, res) => {
     // если не нашли видео по id, то сразу выдаем ошибку not found и выходим из эндпоинта
-    const videoForDelete = db.videos.find(v => v.id === +req.params.id); // TODO можно сделат ьчерез findIndex + split?
+    const videoForDelete = db.videos.find(v => v.id === +req.params.id); // TODO можно сделать через findIndex + split?
     if (!videoForDelete)
         return res.sendStatus(HTTP_STATUS.NOT_FOUND_404);
     db.videos = db.videos.filter(vid => vid.id !== +req.params.id);

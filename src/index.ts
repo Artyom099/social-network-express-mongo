@@ -25,6 +25,25 @@ type TBadRequestError = {
     message: string
     field: string
 }
+type VideoPostDTO = {
+    title: string
+    author: string
+    availableResolutions: string[]
+}
+type VideoPutDTO = {
+    title: string
+    author: string
+    availableResolutions: string[]
+    canBeDownloaded: boolean
+    minAgeRestriction: number | null
+    publicationDate: string
+}
+type VideoIdDTO = {
+    id: string
+}
+
+type RequestBodyType<T> = Request<{},{},T>
+type RequestHeadBodyType<U, Y> = Request<U,{},Y>
 
 const HTTP_STATUS = {
     OK_200: 200,
@@ -46,13 +65,6 @@ function checkArrayValues (existArray: string[], receivedArray: string[]): boole
     return true
 }
 
-type VideoPostDTO = {
-    title: string,
-    author: string,
-    availableResolutions: string[]
-}
-
-type RequestType<T> = Request<{},{},T>
 
 // testing:
 app.delete('/testing/all-data', (req: Request, res: Response) => {
@@ -64,7 +76,7 @@ app.get('/videos', (req: Request, res: Response) => {
     res.status(HTTP_STATUS.OK_200).send(db.videos)
 })
 
-app.post('/videos', (req: RequestType<VideoPostDTO>, res: Response) => {
+app.post('/videos', (req: RequestBodyType<VideoPostDTO>, res: Response) => {
     const {title, author, availableResolutions} = req.body
     const errors: TBadRequestError[] = []
 
@@ -117,8 +129,7 @@ app.get('/videos/:id', (req: Request<{id: string}>, res: Response) => {
     res.status(HTTP_STATUS.OK_200).json(foundVideo)
 })
 
-app.put('/videos/:id', (req: Request<{id: string}, {}, {title: string, author: string, availableResolutions: string[],
-    canBeDownloaded: boolean, minAgeRestriction: number | null, publicationDate: string}>, res: Response) => {
+app.put('/videos/:id', (req: RequestHeadBodyType<VideoIdDTO, VideoPutDTO>, res: Response) => {
     // если не нашли видео по id, сразу выдаем ошибку not found и выходим из эндпоинта
     const foundVideo = db.videos.find(v => v.id === +req.params.id)
     if (!foundVideo) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
@@ -127,48 +138,41 @@ app.put('/videos/:id', (req: Request<{id: string}, {}, {title: string, author: s
     const errors: TBadRequestError[] = []
 
     // validation:
-    //let validation = true
     if (!title || typeof title !== 'string' || !title.trim() || title.length > 40) {
         errors.push({
             message: 'should be a string',
             field: 'title'
         })
-        //validation = false
     }
     if (!author || typeof author !== 'string' || !author.trim() || author.length > 20) {         //  && typeof author !== 'string'
         errors.push({
             message: 'should be a string, max 40 symbols',
             field: 'author'
         })
-        //validation = false
     }
     if (!availableResolutions || (availableResolutions.length !== 0 && !checkArrayValues(videoResolutions, availableResolutions))) {
         errors.push({
             message: 'should be an array',
             field: 'availableResolutions'
         })
-        //validation = false
     }
     if (!canBeDownloaded || typeof canBeDownloaded !== 'boolean') {
         errors.push({
             message: 'required property',
             field: 'canBeDownloaded'
         })
-        //validation = false
     }
     if (!minAgeRestriction || typeof minAgeRestriction !== 'number' ||  minAgeRestriction > 18) {
         errors.push({
             message: 'should be a number <= 18 or null',
             field: 'minAgeRestriction'
         })
-        //validation = false
     }
     if (!publicationDate || typeof publicationDate !== 'string') {
         errors.push({
             message: 'should be a string',
             field: 'publicationDate'
         })
-        //validation = false
     }
 
     // если данные НЕ прошли валидацию, отправляем массив с ошибками, иначе обновляем их
@@ -187,7 +191,7 @@ app.put('/videos/:id', (req: Request<{id: string}, {}, {title: string, author: s
 
 app.delete('/videos/:id', (req: Request<{id: string}>, res: Response) => {
     // если не нашли видео по id, то сразу выдаем ошибку not found и выходим из эндпоинта
-    const videoForDelete = db.videos.find(v => v.id === +req.params.id)         // TODO можно сделат ьчерез findIndex + split?
+    const videoForDelete = db.videos.find(v => v.id === +req.params.id)         // TODO можно сделать через findIndex + split?
     if (!videoForDelete) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
 
     db.videos = db.videos.filter(vid => vid.id !== +req.params.id)
