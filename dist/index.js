@@ -41,20 +41,17 @@ exports.app.post('/videos', (req, res) => {
     const { title, author, availableResolutions } = req.body;
     const errors = [];
     // validation:
-    let validation = true; //TODO заменить флаг на длину массива errors
     if (!title || typeof title !== 'string' || !title.trim() || title.length > 40) {
         errors.push({
             message: 'should be a string',
             field: 'title'
         });
-        validation = false;
     }
     if (!author || typeof author !== 'string' || !author.trim() || author.length > 20) {
         errors.push({
             message: 'should be a string, max 40 symbols',
             field: 'author'
         });
-        validation = false;
     }
     // если availableResolutions НЕ существует ИЛИ (длина не равна нулю И данные НЕ савпадают с допустимыми значениями)
     if (!availableResolutions || (availableResolutions.length !== 0 && !checkArrayValues(videoResolutions, availableResolutions))) {
@@ -62,7 +59,6 @@ exports.app.post('/videos', (req, res) => {
             message: 'should be an array',
             field: 'availableResolutions'
         });
-        validation = false;
     }
     // если валидция не прошла, отправляем массив с ошибками и выходим из эндпоинта
     if (errors.length > 0) {
@@ -100,34 +96,34 @@ exports.app.put('/videos/:id', (req, res) => {
     const { title, author, availableResolutions, canBeDownloaded, minAgeRestriction, publicationDate } = req.body;
     const errors = [];
     // validation:
-    let validation = true;
+    //let validation = true
     if (!title || typeof title !== 'string' || !title.trim() || title.length > 40) {
         errors.push({
             message: 'should be a string',
             field: 'title'
         });
-        validation = false;
+        //validation = false
     }
     if (!author || typeof author !== 'string' || !author.trim() || author.length > 20) { //  && typeof author !== 'string'
         errors.push({
             message: 'should be a string, max 40 symbols',
             field: 'author'
         });
-        validation = false;
+        //validation = false
     }
     if (!availableResolutions || (availableResolutions.length !== 0 && !checkArrayValues(videoResolutions, availableResolutions))) {
         errors.push({
             message: 'should be an array',
             field: 'availableResolutions'
         });
-        validation = false;
+        //validation = false
     }
     if (!canBeDownloaded || typeof canBeDownloaded !== 'boolean') {
         errors.push({
             message: 'required property',
             field: 'canBeDownloaded'
         });
-        validation = false;
+        //validation = false
     }
     // добавил 'null'
     if (!minAgeRestriction || typeof minAgeRestriction !== 'number' | 'null' || minAgeRestriction > 18) {
@@ -135,7 +131,7 @@ exports.app.put('/videos/:id', (req, res) => {
             message: 'should be a number <= 18 or null',
             field: 'minAgeRestriction'
         });
-        validation = false;
+        //validation = false
     }
     if (!publicationDate || typeof publicationDate !== 'string') {
         errors.push({
@@ -145,7 +141,7 @@ exports.app.put('/videos/:id', (req, res) => {
         validation = false;
     }
     // если данные НЕ прошли валидацию, отправляем массив с ошибками, иначе обновляем их
-    if (!validation) {
+    if (errors.length > 0) {
         res.status(HTTP_STATUS.BAD_REQUEST_400).send({ errorsMessages: errors });
     }
     else {
