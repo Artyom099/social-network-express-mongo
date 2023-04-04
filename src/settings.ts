@@ -1,48 +1,17 @@
 import express, {Request, Response} from 'express'
 import bodyParser from 'body-parser'
+import './types'    // эта строка не работает
+import {
+    RequestBodyType, RequestParamsBodyType, RequestParamsType,
+    VideoIdDTO, VideoPostDTO, VideoPutDTO,
+    TDataBase, TVideo,
+    TBadRequestError
+} from "./types"
 
 export const app = express()
 
 const jsonBodyMiddleware = express.json()
 app.use(jsonBodyMiddleware)
-
-type TDataBase = {
-    videos: TVideo[]
-}
-type TVideo = {
-    id: number
-    title: string
-    author: string
-    canBeDownloaded: boolean
-    minAgeRestriction: number | null
-    createdAt: string
-    publicationDate: string
-    availableResolutions: string[]
-}
-type TBadRequestError = {
-    message: string
-    field: string
-}
-type VideoPostDTO = {
-    title: string
-    author: string
-    availableResolutions: string[]
-}
-type VideoPutDTO = {
-    title: string
-    author: string
-    availableResolutions: string[]
-    canBeDownloaded: boolean
-    minAgeRestriction: number | null
-    publicationDate: string
-}
-type VideoIdDTO = {
-    id: string
-}
-
-type RequestHeadType<T> = Request<T, {},{}>
-type RequestBodyType<T> = Request<{},{},T>
-type RequestHeadBodyType<T, Y> = Request<T,{},Y>
 
 const HTTP_STATUS = {
     OK_200: 200,
@@ -67,6 +36,7 @@ function checkArrayValues (existArray: string[], receivedArray: string[]): boole
 
 // testing:
 app.delete('/testing/all-data', (req: Request, res: Response) => {
+    db.videos = []
     res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
 })
 
@@ -120,15 +90,15 @@ app.post('/videos', (req: RequestBodyType<VideoPostDTO>, res: Response) => {
     }
 })
 
-app.get('/videos/:id', (req: RequestHeadType<VideoIdDTO>, res: Response) => {
+app.get('/videos/:id', (req: RequestParamsType<VideoIdDTO>, res: Response) => {
     // если не нашли видео по id, то сразу выдаем ошибку not found и выходим из эндпоинта
     const foundVideo = db.videos.find(v => v.id === +req.params.id)
     if (!foundVideo) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
     // иначе возвращаем найденное видео
     res.status(HTTP_STATUS.OK_200).json(foundVideo)
-})
+})  //TODO добавить типизацию на Response
 
-app.put('/videos/:id', (req: RequestHeadBodyType<VideoIdDTO, VideoPutDTO>, res: Response) => {
+app.put('/videos/:id', (req: RequestParamsBodyType<VideoIdDTO, VideoPutDTO>, res: Response) => {
     // если не нашли видео по id, сразу выдаем ошибку not found и выходим из эндпоинта
     const foundVideo = db.videos.find(v => v.id === +req.params.id)
     if (!foundVideo) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
@@ -188,16 +158,11 @@ app.put('/videos/:id', (req: RequestHeadBodyType<VideoIdDTO, VideoPutDTO>, res: 
     }
 })
 
-app.delete('/videos/:id', (req: RequestHeadType<VideoIdDTO>, res: Response) => {
+app.delete('/videos/:id', (req: RequestParamsType<VideoIdDTO>, res: Response) => {
     // если не нашли видео по id, то сразу выдаем ошибку not found и выходим из эндпоинта
     const videoForDelete = db.videos.find(v => v.id === +req.params.id)         // TODO можно сделать через findIndex + split?
     if (!videoForDelete) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
 
     db.videos = db.videos.filter(vid => vid.id !== +req.params.id)
-    res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
-})
-
-app.delete('/__test__/data', (req, res) => {
-    db.videos = []
     res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
 })
