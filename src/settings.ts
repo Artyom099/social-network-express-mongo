@@ -196,3 +196,8 @@ app.delete('/videos/:id', (req: RequestHeadType<VideoIdDTO>, res: Response) => {
     db.videos = db.videos.filter(vid => vid.id !== +req.params.id)
     res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
 })
+
+app.delete('/__test__/data', (req, res) => {
+    db.videos = []
+    res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
+})
