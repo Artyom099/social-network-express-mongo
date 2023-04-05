@@ -22,8 +22,8 @@ export function checkArrayValues(existArray: string[], receivedArray: string[]):
 export const getVideosRouter = (db: TDataBase) => {
     const router = express.Router()
     router.get('/', (req: Request, res: Response) => {
-        //const foundVideos = videosRepository.findVideos()
-        res.status(HTTP_STATUS.OK_200).send(db.videos)
+        const foundVideos = videosRepository.findVideos()
+        res.status(HTTP_STATUS.OK_200).send(foundVideos)
     })
     router.post('/', (req: RequestBodyType<VideoPostDTO>, res: Response) => {
         const {title, author, availableResolutions} = req.body
@@ -50,7 +50,6 @@ export const getVideosRouter = (db: TDataBase) => {
             })
         }
 
-        // если ошибки есть, отправляем их и выходим из эндпоинта
         if (errors.length > 0) {
             res.status(HTTP_STATUS.BAD_REQUEST_400).send({errorsMessages: errors})
         } else {
@@ -65,8 +64,8 @@ export const getVideosRouter = (db: TDataBase) => {
                 publicationDate: new Date(dateNow.setDate(dateNow.getDate() + 1)).toISOString(),
                 availableResolutions
             }
-            db.videos.push(createdVideo)
-            res.status(HTTP_STATUS.CREATED_201).json(createdVideo)
+            const createVideo = videosRepository.createVideos(createdVideo)
+            res.status(HTTP_STATUS.CREATED_201).json(createVideo)
         }
     })
     router.get('/:id', (req: RequestParamsType<VideoIdDTO>, res: Response) => {
