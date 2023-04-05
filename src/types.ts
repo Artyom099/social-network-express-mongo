@@ -3,6 +3,7 @@ import {Request} from 'express'
 export type TDataBase = {
     videos: TVideo[]
     blogs: TBlog[]
+    posts: TPost[]
 }
 export type TVideo = {
     id: number
@@ -19,6 +20,14 @@ export type TBlog = {
     name: string
     description: string
     websiteUrl: string
+}
+export type TPost = {
+    id: string
+    title: string
+    shortDescription: string
+    content: string
+    blogId: string
+    blogName: string
 }
 export type TBadRequestError = {
     message: string

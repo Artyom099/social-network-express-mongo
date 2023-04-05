@@ -1,20 +1,21 @@
 import {db} from "../db/db";
 import {TBlog} from "../types";
-import {foundBlog} from "../routes/blogs-router";
+import {blogId, foundBlog} from "../routes/blogs-router";
 
 
 export const blogsRepository = {
-    findBlogs() {
+    findExistsBlogs() {
         return db.blogs
     },
     createBlog(createdBlog: TBlog) {
         db.blogs.push(createdBlog)
         return createdBlog
     },
-    findOneBlog() {
-        return db.blogs.id
+    findBlogById(blogId) {
+        const foundBlog = db.blogs.find(b => b.id === blogId)
+        return foundBlog
     },
     updateBlog(foundBlog: TBlog) {
-        return
+        return foundBlog
     }
 }
