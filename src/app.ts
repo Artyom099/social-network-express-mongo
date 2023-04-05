@@ -8,5 +8,6 @@ export const jsonBodyMiddleware = express.json()
 
 app.use(jsonBodyMiddleware)
 
-app.use('/videos', getVideosRouter(db))
 app.use('/testing', getTestsRouter(db))
+app.use('/videos', getVideosRouter(db))
+//app.use('/blogs', getBlogsRouter(db))
