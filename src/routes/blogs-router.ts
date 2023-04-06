@@ -1,12 +1,12 @@
-import {TDataBase, TBlog} from "../types";
+import {body} from "express-validator";
 import express, {Request, Response} from "express";
 import {HTTP_STATUS} from "../utils";
-import {body} from "express-validator";
+import {TDataBase, TBlog} from "../types";
 import {blogsRepository} from "../repositories/blogs-repository";
 import {inputValidationMiddleware} from "../middleware/input-validation-middleware";
 
 
-const titleValidation = body('name').isString().isLength({min: 3, max: 15})
+const nameValidation = body('name').isString().isLength({min: 3, max: 15})
 const descriptionValidation = body('description').isString().isLength({min: 3, max: 500})
 const websiteUrlValidation = body('websiteUrl').isURL().isLength({min: 8, max: 100})
 // TODO добавить валидацию согласно шаблону: ^https://([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$
@@ -14,11 +14,10 @@ const websiteUrlValidation = body('websiteUrl').isURL().isLength({min: 8, max: 1
 export const getBlogsRouter = (db: TDataBase) => {
     const router = express.Router()
     router.get('/', (req: express.Request, res: express.Response) => {
-        const foundBlogs = blogsRepository.findExistsBlogs()
+        const foundBlogs = blogsRepository.findExistBlogs()
         res.status(HTTP_STATUS.OK_200).send(foundBlogs)
     })
-    router.post('/',
-        titleValidation, descriptionValidation, websiteUrlValidation, inputValidationMiddleware,
+    router.post('/', nameValidation, descriptionValidation, websiteUrlValidation, inputValidationMiddleware,
         (req: express.Request, res: express.Response) => {
 
         const {name, description, websiteUrl} = req.body
@@ -45,7 +44,7 @@ export const getBlogsRouter = (db: TDataBase) => {
         res.status(HTTP_STATUS.OK_200).json(findBlog)
 
     })  //TODO добавить типизацию на Response
-    router.put('/:id', titleValidation, descriptionValidation, websiteUrlValidation,inputValidationMiddleware,
+    router.put('/:id', nameValidation, descriptionValidation, websiteUrlValidation,inputValidationMiddleware,
         (req: Request, res: Response) => {
 
         // если не нашли блог по id, выдаем ошибку и выходим из эндпоинта

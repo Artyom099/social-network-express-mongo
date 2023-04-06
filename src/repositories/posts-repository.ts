@@ -3,10 +3,10 @@ import {TPost} from "../types";
 
 
 export const postsRepository = {
-    findPosts() {
+    findExistPosts() {
         return db.posts
     },
-    createPosts(createdPost: TPost) {
+    createPost(createdPost: TPost) {
         return db.posts.push(createdPost)
     }
 }
