@@ -6,7 +6,7 @@ export type TDataBase = {
     posts: TPost[]
 }
 export type TVideo = {
-    id: number
+    id: string
     title: string
     author: string
     canBeDownloaded: boolean
@@ -51,6 +51,14 @@ export type VideoIdDTO = {
     id: string
 }
 
+export type PostDTO = {
+    title: string
+    shortDescription: string
+    content: string
+    blogId: string
+}
+
 export type RequestParamsType<T> = Request<T>
 export type RequestBodyType<T> = Request<{},{},T>  //или так - Request<{},{},{},T> ? TODO проверить
 export type RequestParamsBodyType<T, Y> = Request<T,{},Y>
+
