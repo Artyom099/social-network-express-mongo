@@ -53,19 +53,8 @@ export const getVideosRouter = () => {
         if (errors.length > 0) {
             res.status(HTTP_STATUS.BAD_REQUEST_400).send({errorsMessages: errors})
         } else {
-            const dateNow = new Date()
-            const createdVideo: TVideo = {
-                id: (+dateNow).toString(),
-                title,
-                author,
-                canBeDownloaded: false,
-                minAgeRestriction: null,
-                createdAt: dateNow.toISOString(),
-                publicationDate: new Date(dateNow.setDate(dateNow.getDate() + 1)).toISOString(),
-                availableResolutions
-            }
-            const createVideo = videosRepository.createVideos(createdVideo)
-            res.status(HTTP_STATUS.CREATED_201).json(createVideo)
+            const createdVideo = videosRepository.createVideos(title, author, availableResolutions)
+            res.status(HTTP_STATUS.CREATED_201).json(createdVideo)
         }
     })
     router.get('/:id', (req: RequestParamsType<VideoIdDTO>, res: Response) => {
@@ -118,17 +107,10 @@ export const getVideosRouter = () => {
             })
         }
 
-        // если ошибки есть, отправляем их и выходим из эндпоинта
         if (errors.length > 0) {
             res.status(HTTP_STATUS.BAD_REQUEST_400).send({errorsMessages: errors})
         } else {
-            foundVideo.title = title
-            foundVideo.author = author
-            foundVideo.availableResolutions = availableResolutions
-            foundVideo.canBeDownloaded = canBeDownloaded
-            foundVideo.minAgeRestriction = minAgeRestriction
-            foundVideo.publicationDate = publicationDate
-            const updatedVideo = videosRepository.updateVideo(foundVideo)
+            const updatedVideo = videosRepository.updateVideo(foundVideo, title, author, availableResolutions, canBeDownloaded, minAgeRestriction, publicationDate)
             res.status(HTTP_STATUS.NO_CONTENT_204).json(updatedVideo)
         }
     })
