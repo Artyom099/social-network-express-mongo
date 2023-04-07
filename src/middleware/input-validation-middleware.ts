@@ -2,6 +2,8 @@ import {HTTP_STATUS} from "../utils";
 import {Request, Response, NextFunction} from "express";
 import {ValidationError, validationResult} from "express-validator";
 
+
+
 export const inputValidationMiddleware = (req: Request, res: Response, next: NextFunction) => {
     const errorFormatter = ({ param }: ValidationError) => {
         return {
@@ -16,3 +18,14 @@ export const inputValidationMiddleware = (req: Request, res: Response, next: Nex
         next()
     }
 }
+
+
+// export const auth = (req: Request, res: Response, next: NextFunction) => {
+//     app.use(basicAuth( { authorizer: myAuthorizer } ))
+//     const result = ()
+//     if (user === 'admin' && pass === 'qwerty')
+//
+//
+//
+//     // next(null, result);
+// }

@@ -7,7 +7,8 @@ export const postsRepository = {
         return db.posts
     },
     createPost(createdPost: TPost) {    // post
-        return db.posts.push(createdPost)
+        db.posts.push(createdPost)
+        return createdPost
     },
     findPostById(postId: string) {      // get, put, delete
         return db.posts.find(p => p.id === postId)

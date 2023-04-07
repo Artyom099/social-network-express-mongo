@@ -10,29 +10,38 @@ import {inputValidationMiddleware} from "../middleware/input-validation-middlewa
 const titleValidation = body('title').isString().isLength({min: 3, max: 30})
 const shortDescriptionValidation = body('shortDescription').isString().isLength({min: 10, max: 100})
 const contentValidation = body('content').isString().isLength({min: 20, max: 1000})
-//TODO добавить проверку наличия blogId
-const blogIdValidation = body('blogId').isString().custom((req: express.Request) => {
-    if (!blogsRepository.findBlogById(req.body.blogId)) return
+
+const blogIdValidation = body('blogId').isString()
+    .custom((req: express.Request) => {
+    const blog = blogsRepository.findBlogById(req.body.blogId)
+    if (!blog) return {
+        throw: new Error('blog not found')  // todo без ':'
+    }
+    return true
 })
 
-export const getPostsRouter = (db: TDataBase) => {
+export const getPostsRouter = () => {
     const router = express.Router()
     router.get('/', (req: express.Request, res: express.Response) => {
         const foundPosts = postsRepository.findExistPosts()
         res.status(HTTP_STATUS.OK_200).send(foundPosts)
     })
-    router.post('/', titleValidation, shortDescriptionValidation, contentValidation, blogIdValidation, inputValidationMiddleware,
+    router.post('/',
+        titleValidation,
+        shortDescriptionValidation,
+        contentValidation,
+        blogIdValidation,
+        inputValidationMiddleware,
     (req: express.Request, res: express.Response) => {
         const {title, shortDescription, content, blogId} = req.body
-        const blogName = blogsRepository.findBlogById(req.body.blogId).name
-        const dateNow = new Date()
+        const blog = blogsRepository.findBlogById(req.body.blogId)
         const createdPost: TPost = {
-            id: (+dateNow).toString(),
+            id: (+new Date()).toString(),
             title,
             shortDescription,
             content,
             blogId,
-            blogName: blogName.toString()
+            blogName: blog!.name
         }
 
         const createPost = postsRepository.createPost(createdPost)
@@ -43,7 +52,12 @@ export const getPostsRouter = (db: TDataBase) => {
         if (!findPost) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)     // если не нашли блог по id, то выдаем ошибку и выходим из эндпоинта
         res.status(HTTP_STATUS.OK_200).json(findPost)
     })
-    router.put('/:id', titleValidation, shortDescriptionValidation, contentValidation, blogIdValidation, inputValidationMiddleware,
+    router.put('/:id',
+        titleValidation,
+        shortDescriptionValidation,
+        contentValidation,
+        blogIdValidation,
+        inputValidationMiddleware,
     (req: Request, res: Response) => {
         const foundPost = postsRepository.findPostById(req.params.id)
         if (!foundPost) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)    // если не нашли блог по id, выдаем ошибку и выходим из эндпоинта

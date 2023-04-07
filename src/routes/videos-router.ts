@@ -19,7 +19,7 @@ export function checkArrayValues(existArray: string[], receivedArray: string[]):
     return true
 }
 
-export const getVideosRouter = (db: TDataBase) => {
+export const getVideosRouter = () => {
     const router = express.Router()
     router.get('/', (req: Request, res: Response) => {
         const foundVideos = videosRepository.findVideos()
@@ -69,15 +69,12 @@ export const getVideosRouter = (db: TDataBase) => {
         }
     })
     router.get('/:id', (req: RequestParamsType<VideoIdDTO>, res: Response) => {
-        // если не нашли видео по id, то сразу выдаем ошибку not found и выходим из эндпоинта
-        const foundVideo = db.videos.find(v => v.id === req.params.id)
+        const foundVideo = videosRepository.findVideoById(req.params.id)
         if (!foundVideo) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
-        // иначе возвращаем найденное видео
         res.status(HTTP_STATUS.OK_200).json(foundVideo)
     })  //TODO добавить типизацию на Response
     router.put('/:id', (req: RequestParamsBodyType<VideoIdDTO, VideoPutDTO>, res: Response) => {
-        // если не нашли видео по id, сразу выдаем ошибку not found и выходим из эндпоинта
-        const foundVideo = db.videos.find(v => v.id === req.params.id)
+        const foundVideo = videosRepository.findVideoById(req.params.id)
         if (!foundVideo) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
 
         const {title, author, availableResolutions, canBeDownloaded, minAgeRestriction, publicationDate} = req.body
@@ -131,14 +128,15 @@ export const getVideosRouter = (db: TDataBase) => {
             foundVideo.canBeDownloaded = canBeDownloaded
             foundVideo.minAgeRestriction = minAgeRestriction
             foundVideo.publicationDate = publicationDate
-            res.status(HTTP_STATUS.NO_CONTENT_204).json(foundVideo)
+            const updatedVideo = videosRepository.updateVideo(foundVideo)
+            res.status(HTTP_STATUS.NO_CONTENT_204).json(updatedVideo)
         }
     })
     router.delete('/:id', (req: RequestParamsType<VideoIdDTO>, res: Response) => {
-        const videoForDelete = db.videos.find(v => v.id === req.params.id)         // TODO можно сделать через findIndex + split?
+        const videoForDelete = videosRepository.findVideoById(req.params.id)
         if (!videoForDelete) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
 
-        db.videos = db.videos.filter(vid => vid.id !== req.params.id)
+        videosRepository.deleteVideoById(req.params.id)
         res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
     })
     return router

@@ -8,22 +8,28 @@ import {inputValidationMiddleware} from "../middleware/input-validation-middlewa
 
 const nameValidation = body('name').isString().isLength({min: 3, max: 15})
 const descriptionValidation = body('description').isString().isLength({min: 3, max: 500})
+
+const regex = new RegExp('^https://([a-zA-Z0-9_-]+\\.)+[a-zA-Z0-9_-]+(\\/[a-zA-Z0-9_-]+)*\\/?$')
+
 const websiteUrlValidation = body('websiteUrl').isURL().isLength({min: 8, max: 100})
 // TODO добавить валидацию согласно шаблону: ^https://([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$
 
-export const getBlogsRouter = (db: TDataBase) => {
+export const getBlogsRouter = () => {
     const router = express.Router()
     router.get('/', (req: express.Request, res: express.Response) => {
         const foundBlogs = blogsRepository.findExistBlogs()
         res.status(HTTP_STATUS.OK_200).send(foundBlogs)
     })
-    router.post('/', nameValidation, descriptionValidation, websiteUrlValidation, inputValidationMiddleware,
+    router.post('/',
+        nameValidation,
+        descriptionValidation,
+        websiteUrlValidation,
+        inputValidationMiddleware,
         (req: express.Request, res: express.Response) => {
-
         const {name, description, websiteUrl} = req.body
-        const dateNow = new Date()
+            // todo переместить эту логику в репозиторий как сделал в put?
         const createdBlog: TBlog = {
-            id: (+dateNow).toString(),
+            id: (+new Date()).toString(),
             name,
             description,
             websiteUrl
@@ -32,15 +38,17 @@ export const getBlogsRouter = (db: TDataBase) => {
         const createBlog = blogsRepository.createBlog(createdBlog)
         res.status(HTTP_STATUS.CREATED_201).json(createBlog)
     })
-    router.get('/:id', (req: Request, res: Response) => {
-        // const foundBlog = db.blogs.find(b => b.id === req.params.id)
+    router.get('/:id', (req: Request, res: Response) => {     // TODO добавить типизацию на Response !
         const findBlog = blogsRepository.findBlogById(req.params.id)
         if (!findBlog) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)     // если не нашли блог по id, то выдаем ошибку и выходим из эндпоинта
         res.status(HTTP_STATUS.OK_200).json(findBlog)
-    })  //TODO добавить типизацию на Response !
-    router.put('/:id', nameValidation, descriptionValidation, websiteUrlValidation,inputValidationMiddleware,
-        (req: Request, res: Response) => {
-        // const foundBlog = db.blogs.find(b => b.id === req.params.id)
+    })
+    router.put('/:id',
+        nameValidation,
+        descriptionValidation,
+        websiteUrlValidation,
+        inputValidationMiddleware,
+    (req: Request, res: Response) => {
         const foundBlog = blogsRepository.findBlogById(req.params.id)
         if (!foundBlog) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)    // если не нашли блог по id, выдаем ошибку и выходим из эндпоинта
 
