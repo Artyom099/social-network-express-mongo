@@ -24,7 +24,7 @@ export const getPostsRouter = (db: TDataBase) => {
     router.post('/', titleValidation, shortDescriptionValidation, contentValidation, blogIdValidation, inputValidationMiddleware,
     (req: express.Request, res: express.Response) => {
         const {title, shortDescription, content, blogId} = req.body
-        const blogName = blogsRepository.findBlogById(req.body.blogId)?.name
+        const blogName = blogsRepository.findBlogById(req.body.blogId).name
         const dateNow = new Date()
         const createdPost: TPost = {
             id: (+dateNow).toString(),
