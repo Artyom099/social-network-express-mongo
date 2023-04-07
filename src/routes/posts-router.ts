@@ -4,7 +4,7 @@ import {HTTP_STATUS} from "../utils";
 import {PostDTO, RequestBodyType, TDataBase, TPost} from "../types";
 import {postsRepository} from "../repositories/posts-repository";
 import {blogsRepository} from "../repositories/blogs-repository";
-import {inputValidationMiddleware} from "../middleware/input-validation-middleware";
+import {authMiddleware, inputValidationMiddleware} from "../middleware/input-validation-middleware";
 
 
 const titleValidation = body('title').isString().isLength({min: 3, max: 30})
@@ -32,19 +32,12 @@ export const getPostsRouter = () => {
         contentValidation,
         blogIdValidation,
         inputValidationMiddleware,
+        authMiddleware,
     (req: express.Request, res: express.Response) => {
         const {title, shortDescription, content, blogId} = req.body
         const blog = blogsRepository.findBlogById(req.body.blogId)
-        const createdPost: TPost = {
-            id: (+new Date()).toString(),
-            title,
-            shortDescription,
-            content,
-            blogId,
-            blogName: blog!.name
-        }
 
-        const createPost = postsRepository.createPost(createdPost)
+        const createPost = postsRepository.createPost(title, shortDescription, content, blogId, blog)
         res.status(HTTP_STATUS.CREATED_201).json(createPost)
     })
     router.get('/:id', (req: Request, res: Response) => {       //TODO добавить типизацию на Response !
@@ -58,6 +51,7 @@ export const getPostsRouter = () => {
         contentValidation,
         blogIdValidation,
         inputValidationMiddleware,
+        authMiddleware,
     (req: Request, res: Response) => {
         const foundPost = postsRepository.findPostById(req.params.id)
         if (!foundPost) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)    // если не нашли блог по id, выдаем ошибку и выходим из эндпоинта
@@ -66,7 +60,7 @@ export const getPostsRouter = () => {
         const updatedPost = postsRepository.updatePost(foundPost, title, shortDescription, content)
         res.status(HTTP_STATUS.NO_CONTENT_204).json(updatedPost)
     })
-    router.delete('/:id', (req: Request, res: Response) => {
+    router.delete('/:id', authMiddleware, (req: Request, res: Response) => {
         const postForDelete = postsRepository.findPostById(req.params.id)
         if (!postForDelete) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
 

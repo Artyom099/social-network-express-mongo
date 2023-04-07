@@ -3,7 +3,6 @@ import {Request, Response, NextFunction} from "express";
 import {ValidationError, validationResult} from "express-validator";
 
 
-
 export const inputValidationMiddleware = (req: Request, res: Response, next: NextFunction) => {
     const errorFormatter = ({ param }: ValidationError) => {
         return {
@@ -19,13 +18,11 @@ export const inputValidationMiddleware = (req: Request, res: Response, next: Nex
     }
 }
 
-
-// export const auth = (req: Request, res: Response, next: NextFunction) => {
-//     app.use(basicAuth( { authorizer: myAuthorizer } ))
-//     const result = ()
-//     if (user === 'admin' && pass === 'qwerty')
-//
-//
-//
-//     // next(null, result);
-// }
+export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
+    const auth = req.headers.authorization!.split(':')
+    if (!auth || auth[1] !== 'YWRtaW46cXdlcnR5') {
+        res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
+    } else {
+        next ()
+    }
+}

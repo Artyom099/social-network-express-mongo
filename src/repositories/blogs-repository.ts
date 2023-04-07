@@ -3,11 +3,16 @@ import {TBlog} from "../types";
 
 
 export const blogsRepository = {
-    findExistBlogs() {                  // get
+    findExistBlogs() {      // get
         return db.blogs
     },
-    createBlog(createdBlog: TBlog): TBlog {    // post
-        // todo вот сюда
+    createBlog(name: string, description: string, websiteUrl: string): TBlog {    // post
+        const createdBlog: TBlog = {
+            id: (+new Date()).toString(),
+            name,
+            description,
+            websiteUrl
+        }
         db.blogs.push(createdBlog)
         return createdBlog
     },

@@ -3,7 +3,7 @@ import express, {Request, Response} from "express";
 import {HTTP_STATUS} from "../utils";
 import {TDataBase, TBlog} from "../types";
 import {blogsRepository} from "../repositories/blogs-repository";
-import {inputValidationMiddleware} from "../middleware/input-validation-middleware";
+import {authMiddleware, inputValidationMiddleware} from "../middleware/input-validation-middleware";
 
 
 const nameValidation = body('name').isString().isLength({min: 3, max: 15})
@@ -25,17 +25,10 @@ export const getBlogsRouter = () => {
         descriptionValidation,
         websiteUrlValidation,
         inputValidationMiddleware,
-        (req: express.Request, res: express.Response) => {
+        authMiddleware,
+    (req: express.Request, res: express.Response) => {
         const {name, description, websiteUrl} = req.body
-            // todo переместить эту логику в репозиторий как сделал в put?
-        const createdBlog: TBlog = {
-            id: (+new Date()).toString(),
-            name,
-            description,
-            websiteUrl
-        }
-
-        const createBlog = blogsRepository.createBlog(createdBlog)
+        const createBlog = blogsRepository.createBlog(name, description, websiteUrl)
         res.status(HTTP_STATUS.CREATED_201).json(createBlog)
     })
     router.get('/:id', (req: Request, res: Response) => {     // TODO добавить типизацию на Response !
@@ -48,6 +41,7 @@ export const getBlogsRouter = () => {
         descriptionValidation,
         websiteUrlValidation,
         inputValidationMiddleware,
+        authMiddleware,
     (req: Request, res: Response) => {
         const foundBlog = blogsRepository.findBlogById(req.params.id)
         if (!foundBlog) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)    // если не нашли блог по id, выдаем ошибку и выходим из эндпоинта
@@ -56,7 +50,7 @@ export const getBlogsRouter = () => {
         const updatedBlog = blogsRepository.updateBlog(foundBlog, name, description, websiteUrl)
         res.status(HTTP_STATUS.NO_CONTENT_204).json(updatedBlog)
     })
-    router.delete('/:id', (req: Request, res: Response) => {
+    router.delete('/:id', authMiddleware, (req: Request, res: Response) => {
         // можно сделать через findIndex + split
         // const idBlogForDelete = db.videos.findIndex(b => b.id === req.params.id)
 
