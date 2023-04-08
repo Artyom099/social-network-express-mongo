@@ -1,7 +1,7 @@
 import express, {Request, Response} from "express";
 import {body} from "express-validator";
 import {HTTP_STATUS} from "../utils";
-import {PostDTO, RequestBodyType, TDataBase, TPost} from "../types";
+import {RequestBodyType, TPost} from "../types";
 import {postsRepository} from "../repositories/posts-repository";
 import {blogsRepository} from "../repositories/blogs-repository";
 import {authMiddleware, inputValidationMiddleware} from "../middleware/input-validation-middleware";

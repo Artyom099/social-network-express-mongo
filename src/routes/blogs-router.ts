@@ -9,8 +9,7 @@ import {authMiddleware, inputValidationMiddleware} from "../middleware/input-val
 const nameValidation = body('name').isString().isLength({min: 3, max: 15})
 const descriptionValidation = body('description').isString().isLength({min: 3, max: 500})
 
-const regex = new RegExp('https://([a-zA-Z0-9_-]+\\.)+[a-zA-Z0-9_-]+(\\/[a-zA-Z0-9_-]+)*\\/?$')
-// TODO добавить валидацию
+const regex = new RegExp('^https://([a-zA-Z0-9_-]+\\.)+[a-zA-Z0-9_-]+(\\/[a-zA-Z0-9_-]+)*\\/?$')
 const websiteUrlValidation = body('websiteUrl').isURL().isLength({min: 8, max: 100})
     .custom((req: express.Request) => {
         if (!regex.test(req.body.websiteUrl)) {
