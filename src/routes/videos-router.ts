@@ -3,7 +3,7 @@ import {
     RequestBodyType,
     RequestParamsBodyType,
     RequestParamsType,
-    TBadRequestError, TDataBase,
+    TBadRequestError,
     TVideo,
     VideoIdDTO,
     VideoPostDTO, VideoPutDTO
@@ -57,11 +57,11 @@ export const getVideosRouter = () => {
             res.status(HTTP_STATUS.CREATED_201).json(createdVideo)
         }
     })
-    router.get('/:id', (req: RequestParamsType<VideoIdDTO>, res: Response) => {
+    router.get('/:id', (req: RequestParamsType<VideoIdDTO>, res: Response<TVideo>) => {
         const foundVideo = videosRepository.findVideoById(req.params.id)
         if (!foundVideo) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
         res.status(HTTP_STATUS.OK_200).json(foundVideo)
-    })  //TODO добавить типизацию на Response
+    })
     router.put('/:id', (req: RequestParamsBodyType<VideoIdDTO, VideoPutDTO>, res: Response) => {
         const foundVideo = videosRepository.findVideoById(req.params.id)
         if (!foundVideo) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)

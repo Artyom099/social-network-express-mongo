@@ -1,5 +1,5 @@
 import {db} from "../db/db";
-import {TBlog, TPost} from "../types";
+import {TBlog, TDataBase, TPost} from "../types";
 
 
 export const postsRepository = {
@@ -8,7 +8,7 @@ export const postsRepository = {
     },
     createPost(title: string, shortDescription: string,
                content: string, blogId:
-               string, blog: TBlog | null) {    // post
+               string, blog: TBlog | null): TPost {    // post
         const createdPost: TPost = {
             id: (+new Date()).toString(),
             title,

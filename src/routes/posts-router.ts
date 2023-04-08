@@ -14,8 +14,8 @@ const contentValidation = body('content').isString().isLength({min: 20, max: 100
 const blogIdValidation = body('blogId').isString()
     .custom((req: express.Request) => {
     const blog = blogsRepository.findBlogById(req.body.blogId)
-    if (!blog) return {
-        throw: new Error('blog not found')  // todo без ':'
+    if (!blog) {
+        throw new Error('blog not found')
     }
     return true
 })
@@ -40,7 +40,7 @@ export const getPostsRouter = () => {
         const createPost = postsRepository.createPost(title, shortDescription, content, blogId, blog)
         res.status(HTTP_STATUS.CREATED_201).json(createPost)
     })
-    router.get('/:id', (req: Request, res: Response) => {       //TODO добавить типизацию на Response !
+    router.get('/:id', (req: Request, res: Response<TPost>) => {
         const findPost = postsRepository.findPostById(req.params.id)
         if (!findPost) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)     // если не нашли блог по id, то выдаем ошибку и выходим из эндпоинта
         res.status(HTTP_STATUS.OK_200).json(findPost)
