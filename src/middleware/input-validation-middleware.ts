@@ -4,9 +4,9 @@ import {ValidationError, validationResult} from "express-validator";
 
 
 export const inputValidationMiddleware = (req: Request, res: Response, next: NextFunction) => {
-    const errorFormatter = ({ param }: ValidationError) => {
+    const errorFormatter = ({ param, msg }: ValidationError) => {
         return {
-            message: 'incorrect input data',
+            message: `${msg}`,
             field: `${param}`
         }
     }

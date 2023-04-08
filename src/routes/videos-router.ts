@@ -3,7 +3,7 @@ import {
     RequestBodyType,
     RequestParamsBodyType,
     RequestParamsType,
-    TBadRequestError, TDataBase,
+    TBadRequestError,
     TVideo,
     VideoIdDTO,
     VideoPostDTO, VideoPutDTO
@@ -53,26 +53,15 @@ export const getVideosRouter = () => {
         if (errors.length > 0) {
             res.status(HTTP_STATUS.BAD_REQUEST_400).send({errorsMessages: errors})
         } else {
-            const dateNow = new Date()
-            const createdVideo: TVideo = {
-                id: (+dateNow).toString(),
-                title,
-                author,
-                canBeDownloaded: false,
-                minAgeRestriction: null,
-                createdAt: dateNow.toISOString(),
-                publicationDate: new Date(dateNow.setDate(dateNow.getDate() + 1)).toISOString(),
-                availableResolutions
-            }
-            const createVideo = videosRepository.createVideos(createdVideo)
-            res.status(HTTP_STATUS.CREATED_201).json(createVideo)
+            const createdVideo = videosRepository.createVideos(title, author, availableResolutions)
+            res.status(HTTP_STATUS.CREATED_201).json(createdVideo)
         }
     })
-    router.get('/:id', (req: RequestParamsType<VideoIdDTO>, res: Response) => {
+    router.get('/:id', (req: RequestParamsType<VideoIdDTO>, res: Response<TVideo>) => {
         const foundVideo = videosRepository.findVideoById(req.params.id)
         if (!foundVideo) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
         res.status(HTTP_STATUS.OK_200).json(foundVideo)
-    })  //TODO добавить типизацию на Response
+    })
     router.put('/:id', (req: RequestParamsBodyType<VideoIdDTO, VideoPutDTO>, res: Response) => {
         const foundVideo = videosRepository.findVideoById(req.params.id)
         if (!foundVideo) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
@@ -118,17 +107,10 @@ export const getVideosRouter = () => {
             })
         }
 
-        // если ошибки есть, отправляем их и выходим из эндпоинта
         if (errors.length > 0) {
             res.status(HTTP_STATUS.BAD_REQUEST_400).send({errorsMessages: errors})
         } else {
-            foundVideo.title = title
-            foundVideo.author = author
-            foundVideo.availableResolutions = availableResolutions
-            foundVideo.canBeDownloaded = canBeDownloaded
-            foundVideo.minAgeRestriction = minAgeRestriction
-            foundVideo.publicationDate = publicationDate
-            const updatedVideo = videosRepository.updateVideo(foundVideo)
+            const updatedVideo = videosRepository.updateVideo(foundVideo, title, author, availableResolutions, canBeDownloaded, minAgeRestriction, publicationDate)
             res.status(HTTP_STATUS.NO_CONTENT_204).json(updatedVideo)
         }
     })

@@ -1,7 +1,7 @@
 import {body} from "express-validator";
 import express, {Request, Response} from "express";
+import {TBlog} from "../types";
 import {HTTP_STATUS} from "../utils";
-import {TDataBase, TBlog} from "../types";
 import {blogsRepository} from "../repositories/blogs-repository";
 import {authMiddleware, inputValidationMiddleware} from "../middleware/input-validation-middleware";
 
@@ -9,10 +9,17 @@ import {authMiddleware, inputValidationMiddleware} from "../middleware/input-val
 const nameValidation = body('name').isString().isLength({min: 3, max: 15})
 const descriptionValidation = body('description').isString().isLength({min: 3, max: 500})
 
-const regex = new RegExp('^https://([a-zA-Z0-9_-]+\\.)+[a-zA-Z0-9_-]+(\\/[a-zA-Z0-9_-]+)*\\/?$')
-
+const regex = new RegExp('https://([a-zA-Z0-9_-]+\\.)+[a-zA-Z0-9_-]+(\\/[a-zA-Z0-9_-]+)*\\/?$')
+// TODO добавить валидацию
 const websiteUrlValidation = body('websiteUrl').isURL().isLength({min: 8, max: 100})
-// TODO добавить валидацию согласно шаблону: ^https://([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$
+    .custom((req: express.Request) => {
+        if (!regex.test(req.body.websiteUrl)) {
+            throw new Error('blog not found')
+        } else {
+            return true
+        }
+    })
+
 
 export const getBlogsRouter = () => {
     const router = express.Router()
@@ -31,7 +38,7 @@ export const getBlogsRouter = () => {
         const createBlog = blogsRepository.createBlog(name, description, websiteUrl)
         res.status(HTTP_STATUS.CREATED_201).json(createBlog)
     })
-    router.get('/:id', (req: Request, res: Response) => {     // TODO добавить типизацию на Response !
+    router.get('/:id', (req: Request, res: Response<TBlog>) => {
         const findBlog = blogsRepository.findBlogById(req.params.id)
         if (!findBlog) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)     // если не нашли блог по id, то выдаем ошибку и выходим из эндпоинта
         res.status(HTTP_STATUS.OK_200).json(findBlog)
@@ -51,9 +58,6 @@ export const getBlogsRouter = () => {
         res.status(HTTP_STATUS.NO_CONTENT_204).json(updatedBlog)
     })
     router.delete('/:id', authMiddleware, (req: Request, res: Response) => {
-        // можно сделать через findIndex + split
-        // const idBlogForDelete = db.videos.findIndex(b => b.id === req.params.id)
-
         const blogForDelete = blogsRepository.findBlogById(req.params.id)
         if (!blogForDelete) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)    // если не нашли блог по id, то выдаем ошибку и выходим из эндпоинта
 

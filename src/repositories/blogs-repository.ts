@@ -6,7 +6,8 @@ export const blogsRepository = {
     findExistBlogs() {      // get
         return db.blogs
     },
-    createBlog(name: string, description: string, websiteUrl: string): TBlog {    // post
+    createBlog(name: string, description: string,
+               websiteUrl: string): TBlog {    // post
         const createdBlog: TBlog = {
             id: (+new Date()).toString(),
             name,
@@ -21,7 +22,8 @@ export const blogsRepository = {
         if (blog) return blog
         else return null
     },
-    updateBlog(foundBlog: TBlog, name: string, description: string, websiteUrl: string): TBlog {      // put
+    updateBlog(foundBlog: TBlog, name: string,
+               description: string, websiteUrl: string): TBlog {   // put
         foundBlog.name = name
         foundBlog.description = description
         foundBlog.websiteUrl = websiteUrl
