@@ -1,5 +1,5 @@
 import {db} from "../db/db";
-import {TBlog, TDataBase, TPost} from "../types";
+import {TBlog, TPost} from "../types";
 
 
 export const postsRepository = {

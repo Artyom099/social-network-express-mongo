@@ -12,13 +12,13 @@ const shortDescriptionValidation = body('shortDescription').isString().isLength(
 const contentValidation = body('content').isString().isLength({min: 20, max: 1000})
 
 const blogIdValidation = body('blogId').isString()
-    .custom((req: express.Request) => {
-    const blog = blogsRepository.findBlogById(req.body.blogId)
-    if (!blog) {
-        throw new Error('blog not found')
-    }
-    return true
-})
+    .custom((value) => {
+        const blog = blogsRepository.findBlogById(value)
+        if (!blog) {
+            throw new Error('blog not found')
+        }
+        return true
+    })
 
 export const getPostsRouter = () => {
     const router = express.Router()
@@ -33,13 +33,13 @@ export const getPostsRouter = () => {
         blogIdValidation,
         inputValidationMiddleware,
         authMiddleware,
-    (req: express.Request, res: express.Response) => {
-        const {title, shortDescription, content, blogId} = req.body
-        const blog = blogsRepository.findBlogById(req.body.blogId)
+        (req: express.Request, res: express.Response) => {
+            const {title, shortDescription, content, blogId} = req.body
+            const blog = blogsRepository.findBlogById(req.body.blogId)
 
-        const createPost = postsRepository.createPost(title, shortDescription, content, blogId, blog)
-        res.status(HTTP_STATUS.CREATED_201).json(createPost)
-    })
+            const createPost = postsRepository.createPost(title, shortDescription, content, blogId, blog)
+            res.status(HTTP_STATUS.CREATED_201).json(createPost)
+        })
     router.get('/:id', (req: Request, res: Response<TPost>) => {
         const findPost = postsRepository.findPostById(req.params.id)
         if (!findPost) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)     // если не нашли блог по id, то выдаем ошибку и выходим из эндпоинта
@@ -52,14 +52,14 @@ export const getPostsRouter = () => {
         blogIdValidation,
         inputValidationMiddleware,
         authMiddleware,
-    (req: Request, res: Response) => {
-        const foundPost = postsRepository.findPostById(req.params.id)
-        if (!foundPost) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)    // если не нашли блог по id, выдаем ошибку и выходим из эндпоинта
+        (req: Request, res: Response) => {
+            const foundPost = postsRepository.findPostById(req.params.id)
+            if (!foundPost) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)    // если не нашли блог по id, выдаем ошибку и выходим из эндпоинта
 
-        const {title, shortDescription, content} = req.body
-        const updatedPost = postsRepository.updatePost(foundPost, title, shortDescription, content)
-        res.status(HTTP_STATUS.NO_CONTENT_204).json(updatedPost)
-    })
+            const {title, shortDescription, content} = req.body
+            const updatedPost = postsRepository.updatePost(foundPost, title, shortDescription, content)
+            res.status(HTTP_STATUS.NO_CONTENT_204).json(updatedPost)
+        })
     router.delete('/:id', authMiddleware, (req: Request, res: Response) => {
         const postForDelete = postsRepository.findPostById(req.params.id)
         if (!postForDelete) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
