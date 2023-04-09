@@ -9,7 +9,7 @@ import {authMiddleware, inputValidationMiddleware} from "../middleware/input-val
 
 const validationPost = [
     body('title').isString().isLength({min: 3, max: 30}).trim().not().isEmpty(),
-    body('shortDescription').isString().isLength({min: 10, max: 100}),
+    body('shortDescription').isString().isLength({min: 3, max: 100}),
     body('content').isString().isLength({min: 3, max: 1000}),
     body('blogId').isString()
     .custom((value) => {
