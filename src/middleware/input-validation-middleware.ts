@@ -1,6 +1,7 @@
 import {HTTP_STATUS} from "../utils";
 import {Request, Response, NextFunction} from "express";
 import {ValidationError, validationResult} from "express-validator";
+import {TErrors} from "../types";
 
 
 export const inputValidationMiddleware = (req: Request, res: Response, next: NextFunction) => {
@@ -10,9 +11,10 @@ export const inputValidationMiddleware = (req: Request, res: Response, next: Nex
             field: param
         }
     }
-    const errors = validationResult(req).formatWith(errorFormatter);
-    if (!errors.isEmpty()) {
-        res.status(HTTP_STATUS.BAD_REQUEST_400).json({errorsMessages: errors.array()})
+    let errors = {}
+    errors = validationResult(req).formatWith(errorFormatter)
+    if (Object.keys(errors).length == 0) {  //!errors.isEmpty()  |  !errors.length > 0  |  Object.keys(errors).length == 0
+        res.status(HTTP_STATUS.BAD_REQUEST_400).json({errorsMessages: errors})  // .array()
     } else {
         next()
     }

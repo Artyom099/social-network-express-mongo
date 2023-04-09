@@ -33,6 +33,10 @@ export type TBadRequestError = {
     message: string
     field: string
 }
+export type TErrors = [
+    field: "_error" | string,
+    message: any
+]
 
 export type VideoPostDTO = {
     title: string
