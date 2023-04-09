@@ -1,20 +1,18 @@
 import {HTTP_STATUS} from "../utils";
 import {Request, Response, NextFunction} from "express";
-import {ValidationError, validationResult} from "express-validator";
-import {TErrors} from "../types";
+import {validationResult} from "express-validator";
 
 
 export const inputValidationMiddleware = (req: Request, res: Response, next: NextFunction) => {
-    const errorFormatter = ({param, msg}: ValidationError) => {
-        return {
-            message: msg,
-            field: param
-        }
-    }
-    let errors = {}
-    errors = validationResult(req).formatWith(errorFormatter)
-    if (Object.keys(errors).length == 0) {  //!errors.isEmpty()  |  !errors.length > 0  |  Object.keys(errors).length == 0
-        res.status(HTTP_STATUS.BAD_REQUEST_400).json({errorsMessages: errors})  // .array()
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+        const err = errors.array({onlyFirstError: true}).map(e => {
+            return {
+                message: e.msg,
+                field: e.param
+            }
+        })
+        res.status(400).json({errorsMessages: err})
     } else {
         next()
     }

@@ -7,33 +7,30 @@ import {blogsRepository} from "../repositories/blogs-repository";
 import {authMiddleware, inputValidationMiddleware} from "../middleware/input-validation-middleware";
 
 
-const titleValidation = body('title').isString().isLength({min: 3, max: 30})
-const shortDescriptionValidation = body('shortDescription').isString().isLength({min: 10, max: 100})
-const contentValidation = body('content').isString().isLength({min: 20, max: 1000})
-
-const blogIdValidation = body('blogId').isString()
+const validationPost = [
+    body('title').isString().isLength({min: 3, max: 30}).trim().not().isEmpty(),
+    body('shortDescription').isString().isLength({min: 10, max: 100}),
+    body('content').isString().isLength({min: 20, max: 1000}),
+    body('blogId').isString()
     .custom((value) => {
         const blog = blogsRepository.findBlogById(value)
         if (!blog) {
             throw new Error('blog not found')
         }
         return true
-    })
+    })]
 
 export const getPostsRouter = () => {
     const router = express.Router()
-    router.get('/', (req: express.Request, res: express.Response) => {
+    router.get('/', (req: Request, res: Response) => {
         const foundPosts = postsRepository.findExistPosts()
         res.status(HTTP_STATUS.OK_200).send(foundPosts)
     })
     router.post('/',
-        titleValidation,
-        shortDescriptionValidation,
-        contentValidation,
-        blogIdValidation,
-        inputValidationMiddleware,
+        validationPost,
         authMiddleware,
-        (req: express.Request, res: express.Response) => {
+        inputValidationMiddleware,
+        (req: Request, res: Response) => {
             const {title, shortDescription, content, blogId} = req.body
             const blog = blogsRepository.findBlogById(req.body.blogId)
 
@@ -46,12 +43,9 @@ export const getPostsRouter = () => {
         res.status(HTTP_STATUS.OK_200).json(findPost)
     })
     router.put('/:id',
-        titleValidation,
-        shortDescriptionValidation,
-        contentValidation,
-        blogIdValidation,
-        inputValidationMiddleware,
+        validationPost,
         authMiddleware,
+        inputValidationMiddleware,
         (req: Request, res: Response) => {
             const foundPost = postsRepository.findPostById(req.params.id)
             if (!foundPost) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)    // если не нашли блог по id, выдаем ошибку и выходим из эндпоинта
