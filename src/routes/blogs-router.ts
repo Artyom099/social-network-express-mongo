@@ -7,7 +7,7 @@ import {authMiddleware, inputValidationMiddleware} from "../middleware/input-val
 
 
 const nameValidation = body('name').isString().isLength({min: 3, max: 15}).trim().not().isEmpty()
-const descriptionValidation = body('description').isString().isLength({min: 3, max: 500})
+const descriptionValidation = body('description').isString().isLength({min: 3, max: 500}).trim().notEmpty()
 
 const regex = new RegExp('^https://([a-zA-Z0-9_-]+\\.)+[a-zA-Z0-9_-]+(\\/[a-zA-Z0-9_-]+)*\\/?$')
 const websiteUrlValidation = body('websiteUrl').isURL().isLength({min: 4, max: 100})  // .isURL()
