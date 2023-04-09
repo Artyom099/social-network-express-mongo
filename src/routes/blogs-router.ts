@@ -6,7 +6,7 @@ import {blogsRepository} from "../repositories/blogs-repository";
 import {authMiddleware, inputValidationMiddleware} from "../middleware/input-validation-middleware";
 
 
-const nameValidation = body('name').isString().isLength({min: 3, max: 15})
+const nameValidation = body('name').isString().isLength({min: 3, max: 15}).trim().not().isEmpty()
 const descriptionValidation = body('description').isString().isLength({min: 3, max: 500})
 
 const regex = new RegExp('^https://([a-zA-Z0-9_-]+\\.)+[a-zA-Z0-9_-]+(\\/[a-zA-Z0-9_-]+)*\\/?$')
