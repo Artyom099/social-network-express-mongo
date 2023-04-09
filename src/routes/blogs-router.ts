@@ -10,7 +10,7 @@ const nameValidation = body('name').isString().isLength({min: 3, max: 15})
 const descriptionValidation = body('description').isString().isLength({min: 3, max: 500})
 
 const regex = new RegExp('^https://([a-zA-Z0-9_-]+\\.)+[a-zA-Z0-9_-]+(\\/[a-zA-Z0-9_-]+)*\\/?$')
-const websiteUrlValidation = body('websiteUrl').isLength({min: 4, max: 100}).isURL({protocols:['https']})    // .isURL({protocols:['https']})
+const websiteUrlValidation = body('websiteUrl').isURL().isLength({min: 4, max: 100})  // .isURL()
     // .custom((value) => {
     //     if (!regex.test(value)) {
     //         throw new Error('incorrect websiteUrl')
