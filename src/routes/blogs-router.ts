@@ -27,11 +27,12 @@ export const getBlogsRouter = () => {
         res.status(HTTP_STATUS.OK_200).send(foundBlogs)
     })
     router.post('/',
+        authMiddleware,
         nameValidation,
         descriptionValidation,
         websiteUrlValidation,
         inputValidationMiddleware,
-        authMiddleware,
+        // authMiddleware,
     (req: express.Request, res: express.Response) => {
         const {name, description, websiteUrl} = req.body
         const createBlog = blogsRepository.createBlog(name, description, websiteUrl)
@@ -43,11 +44,12 @@ export const getBlogsRouter = () => {
         res.status(HTTP_STATUS.OK_200).json(findBlog)
     })
     router.put('/:id',
+        authMiddleware,
         nameValidation,
         descriptionValidation,
         websiteUrlValidation,
         inputValidationMiddleware,
-        authMiddleware,
+        // authMiddleware,
     (req: Request, res: Response) => {
         const foundBlog = blogsRepository.findBlogById(req.params.id)
         if (!foundBlog) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)    // если не нашли блог по id, выдаем ошибку и выходим из эндпоинта
