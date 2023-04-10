@@ -21,6 +21,7 @@ const validationPost = [
 
 export const getPostsRouter = () => {
     const router = express.Router()
+
     router.get('/', async (req: Request, res: Response) => {
         const foundPosts = await postsRepository.findExistPosts()
         res.status(HTTP_STATUS.OK_200).send(foundPosts)
@@ -33,6 +34,7 @@ export const getPostsRouter = () => {
             const createPost = await postsRepository.createPost(title, shortDescription, content, blogId, blog)
             res.status(HTTP_STATUS.CREATED_201).json(createPost)
         })
+
     router.get('/:id', async (req: Request, res: Response<TPost>) => {
         const findPost = await postsRepository.findPostById(req.params.id)
         if (!findPost) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)     // если не нашли блог по id, то выдаем ошибку и выходим из эндпоинта

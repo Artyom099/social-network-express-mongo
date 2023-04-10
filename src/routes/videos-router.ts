@@ -29,10 +29,12 @@ const publicationDateValidation = body('publicationDate').isDate()
 
 export const getVideosRouter = () => {
     const router = express.Router()
+
     router.get('/', async (req: Request, res: Response) => {
         const foundVideos = await videosRepository.findVideos()
         res.status(HTTP_STATUS.OK_200).send(foundVideos)
     })
+
     router.post('/',
         titleValidation,
         authorValidation,
@@ -70,11 +72,13 @@ export const getVideosRouter = () => {
         //     res.status(HTTP_STATUS.CREATED_201).json(createdVideo)
         // }
     })
+
     router.get('/:id', async (req: RequestParamsType<VideoIdDTO>, res: Response<TVideo>) => {
         const foundVideo = await videosRepository.findVideoById(req.params.id)
         if (!foundVideo) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
         res.status(HTTP_STATUS.OK_200).json(foundVideo)
     })
+
     router.put('/:id',
         titleValidation,
         authorValidation,
@@ -136,6 +140,7 @@ export const getVideosRouter = () => {
         //     res.status(HTTP_STATUS.NO_CONTENT_204).json(updatedVideo)
         // }
     })
+
     router.delete('/:id', async (req: RequestParamsType<VideoIdDTO>, res: Response) => {
         const videoForDelete = await videosRepository.findVideoById(req.params.id)
         if (!videoForDelete) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
@@ -143,5 +148,6 @@ export const getVideosRouter = () => {
         await videosRepository.deleteVideoById(req.params.id)
         res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
     })
+
     return router
 }

@@ -1,9 +1,10 @@
-import {db} from "../db/db";
+import {client, db} from "../db/db";
 import {TVideo} from "../types";
 
 
 export const videosRepository = {
     async findVideos(): Promise<TVideo[]> {
+        //client.db('network').collection<TVideo[]>('videos').toArray
         return db.videos
     },
     async createVideos(title: string, author: string,
@@ -23,7 +24,7 @@ export const videosRepository = {
         return createdVideo
     },
     async findVideoById(videoId: string): Promise<TVideo | null> {
-        const video = db.videos.find(v => v.id === videoId)
+        const video = await db.videos.find(v => v.id === videoId)
         if (video) return video
         else return null
     },

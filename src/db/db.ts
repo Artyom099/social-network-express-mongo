@@ -8,13 +8,17 @@ export const db: TDataBase = {
 }
 
 const mongoUri = process.env.mongoUri || 'mongodb://0.0.0.0:27017'
-
 export const client = new MongoClient(mongoUri)
+
+const database = client.db('network');
+export const videoCollection = database.collection('videos')
+export const blogCollection = database.collection('blogs')
+export const postCollection = database.collection('posts')
 
 export async function runDb() {
     try {
         await client.connect()
-        await client.db('videos').command({ ping: 1 })
+        await client.db('network').command({ ping: 1 })
         console.log('Connected successfully to mongo server')
     } catch {
         console.log('Can\'t connect to mongo server')

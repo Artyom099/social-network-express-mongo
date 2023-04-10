@@ -1,10 +1,10 @@
-import {db} from "../db/db";
+import {blogCollection, db} from "../db/db";
 import {TBlog} from "../types";
 
 
 export const blogsRepository = {
-    async findExistBlogs(): Promise<TBlog[]> {      // get
-        return db.blogs
+    async findExistBlogs() {      // get
+        return await blogCollection.find({}).toArray();
     },
     async createBlog(name: string, description: string,
                websiteUrl: string): Promise<TBlog> {    // post
