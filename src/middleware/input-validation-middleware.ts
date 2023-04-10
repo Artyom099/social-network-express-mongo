@@ -1,6 +1,6 @@
 import {HTTP_STATUS} from "../utils";
-import {Request, Response, NextFunction} from "express";
 import {validationResult} from "express-validator";
+import {Request, Response, NextFunction} from "express";
 
 
 export const inputValidationMiddleware = (req: Request, res: Response, next: NextFunction) => {
@@ -12,7 +12,7 @@ export const inputValidationMiddleware = (req: Request, res: Response, next: Nex
                 field: e.param
             }
         })
-        res.status(400).json({errorsMessages: err})
+        res.status(HTTP_STATUS.BAD_REQUEST_400).json({errorsMessages: err})
     } else {
         next()
     }
