@@ -4,7 +4,7 @@ import {TVideo} from "../types";
 
 export const videosRepository = {
     async findVideos(): Promise<TVideo[]> {
-        //client.db('network').collection<TVideo[]>('videos').toArray
+        client.db('network').collection<TVideo[]>('videos').toArray
         return db.videos
     },
     async createVideos(title: string, author: string,

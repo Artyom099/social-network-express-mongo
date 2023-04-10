@@ -1,16 +1,16 @@
+import {body} from "express-validator";
 import express, {Request, Response} from "express";
 import {
     RequestBodyType,
     RequestParamsBodyType,
     RequestParamsType,
-    TBadRequestError,
     TVideo,
     VideoIdDTO,
     VideoPostDTO, VideoPutDTO
 } from "../types";
 import {HTTP_STATUS} from "../utils";
 import {videosRepository} from "../repositories/videos-repository";
-import {body} from "express-validator";
+
 
 export const videoResolutions = ['P144', 'P240', 'P360', 'P480', 'P720', 'P1080', 'P1440', 'P2160']
 export function checkArrayValues(existArray: string[], receivedArray: string[]): boolean {
