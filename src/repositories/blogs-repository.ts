@@ -3,11 +3,11 @@ import {TBlog} from "../types";
 
 
 export const blogsRepository = {
-    findExistBlogs() {      // get
+    async findExistBlogs(): Promise<TBlog[]> {      // get
         return db.blogs
     },
-    createBlog(name: string, description: string,
-               websiteUrl: string): TBlog {    // post
+    async createBlog(name: string, description: string,
+               websiteUrl: string): Promise<TBlog> {    // post
         const createdBlog: TBlog = {
             id: (+new Date()).toString(),
             name,
@@ -17,19 +17,19 @@ export const blogsRepository = {
         db.blogs.push(createdBlog)
         return createdBlog
     },
-    findBlogById(blogId: string): TBlog | null {    // get, put, delete
+    async findBlogById(blogId: string): Promise<TBlog | null> {    // get, put, delete
         const blog = db.blogs.find(b => b.id === blogId)
         if (blog) return blog
         else return null
     },
-    updateBlog(foundBlog: TBlog, name: string,
-               description: string, websiteUrl: string): TBlog {   // put
+    async updateBlog(foundBlog: TBlog, name: string,
+               description: string, websiteUrl: string): Promise<TBlog> {   // put
         foundBlog.name = name
         foundBlog.description = description
         foundBlog.websiteUrl = websiteUrl
         return foundBlog
     },
-    deleteBlogById(blogId: string) {    // delete
+    async deleteBlogById(blogId: string): Promise<TBlog[]> {    // delete
         return db.blogs = db.blogs.filter(b => b.id !== blogId)
     }
 }

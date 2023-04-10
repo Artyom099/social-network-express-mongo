@@ -3,11 +3,11 @@ import {TVideo} from "../types";
 
 
 export const videosRepository = {
-    findVideos() {
+    async findVideos(): Promise<TVideo[]> {
         return db.videos
     },
-    createVideos(title: string, author: string,
-                 availableResolutions: string[]): TVideo {
+    async createVideos(title: string, author: string,
+                 availableResolutions: string[]): Promise<TVideo> {
         const dateNow = new Date()
         const createdVideo: TVideo = {
             id: (+dateNow).toString(),
@@ -22,16 +22,16 @@ export const videosRepository = {
         db.videos.push(createdVideo)
         return createdVideo
     },
-    findVideoById(videoId: string): TVideo | null{
+    async findVideoById(videoId: string): Promise<TVideo | null> {
         const video = db.videos.find(v => v.id === videoId)
         if (video) return video
         else return null
     },
-    updateVideo(foundVideo: TVideo, title: string,
+    async updateVideo(foundVideo: TVideo, title: string,
                 author: string, availableResolutions: string[],
                 canBeDownloaded: boolean,
                 minAgeRestriction: number | null,
-                publicationDate: string): TVideo {   // put
+                publicationDate: string): Promise<TVideo> {   // put
         foundVideo.title = title
         foundVideo.author = author
         foundVideo.availableResolutions = availableResolutions
@@ -40,7 +40,7 @@ export const videosRepository = {
         foundVideo.publicationDate = publicationDate
         return foundVideo
     },
-    deleteVideoById(videoId: string) {    // delete
+    async deleteVideoById(videoId: string): Promise<TVideo[]> {    // delete
         return db.videos = db.videos.filter(v => v.id !== videoId)
     }
 }
