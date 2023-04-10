@@ -1,7 +1,8 @@
 import {db} from "../db/db";
 
+
 export const testsRepository = {
-    deleteAllData() {
+    async deleteAllData(): Promise<string[]> {
         return db.videos = []
     }
 }
