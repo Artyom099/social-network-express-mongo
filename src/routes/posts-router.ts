@@ -1,7 +1,7 @@
-import express, {Request, Response} from "express";
 import {body} from "express-validator";
+import express, {Request, Response} from "express";
+import {TPost} from "../types";
 import {HTTP_STATUS} from "../utils";
-import {RequestBodyType, TPost} from "../types";
 import {postsRepository} from "../repositories/posts-repository";
 import {blogsRepository} from "../repositories/blogs-repository";
 import {authMiddleware, inputValidationMiddleware} from "../middleware/input-validation-middleware";
@@ -21,10 +21,12 @@ const validationPost = [
 
 export const getPostsRouter = () => {
     const router = express.Router()
+
     router.get('/', async (req: Request, res: Response) => {
         const foundPosts = await postsRepository.findExistPosts()
         res.status(HTTP_STATUS.OK_200).send(foundPosts)
     })
+
     router.post('/', validationPost, authMiddleware, inputValidationMiddleware,
         async (req: Request, res: Response) => {
             const {title, shortDescription, content, blogId} = req.body
@@ -33,20 +35,23 @@ export const getPostsRouter = () => {
             const createPost = await postsRepository.createPost(title, shortDescription, content, blogId, blog)
             res.status(HTTP_STATUS.CREATED_201).json(createPost)
         })
+
     router.get('/:id', async (req: Request, res: Response<TPost>) => {
         const findPost = await postsRepository.findPostById(req.params.id)
         if (!findPost) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)     // если не нашли блог по id, то выдаем ошибку и выходим из эндпоинта
         res.status(HTTP_STATUS.OK_200).json(findPost)
     })
+
     router.put('/:id', validationPost, authMiddleware, inputValidationMiddleware,
         async (req: Request, res: Response) => {
             const foundPost = await postsRepository.findPostById(req.params.id)
             if (!foundPost) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)    // если не нашли блог по id, выдаем ошибку и выходим из эндпоинта
 
             const {title, shortDescription, content} = req.body
-            const updatedPost = await postsRepository.updatePost(foundPost, title, shortDescription, content)
+            const updatedPost = await postsRepository.updatePost(req.params.id, title, shortDescription, content)
             res.status(HTTP_STATUS.NO_CONTENT_204).json(updatedPost)
-        })
+    })
+
     router.delete('/:id', authMiddleware, async (req: Request, res: Response) => {
         const postForDelete = postsRepository.findPostById(req.params.id)
         if (!postForDelete) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
@@ -54,5 +59,6 @@ export const getPostsRouter = () => {
         await postsRepository.deletePostById(req.params.id)
         res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
     })
+
     return router
 }

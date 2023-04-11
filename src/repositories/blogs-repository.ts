@@ -1,10 +1,11 @@
-import {db} from "../db/db";
+import {blogCollection} from "../db/db";
 import {TBlog} from "../types";
+import {Result, ResultCode} from "../utils";
 
 
 export const blogsRepository = {
     async findExistBlogs(): Promise<TBlog[]> {      // get
-        return db.blogs
+        return await blogCollection.find({}).toArray();
     },
     async createBlog(name: string, description: string,
                websiteUrl: string): Promise<TBlog> {    // post
@@ -14,22 +15,33 @@ export const blogsRepository = {
             description,
             websiteUrl
         }
-        db.blogs.push(createdBlog)
+        await blogCollection.insertOne(createdBlog)
         return createdBlog
     },
     async findBlogById(blogId: string): Promise<TBlog | null> {    // get, put, delete
-        const blog = db.blogs.find(b => b.id === blogId)
+        const blog = await blogCollection.findOne({id: blogId})
         if (blog) return blog
         else return null
     },
-    async updateBlog(foundBlog: TBlog, name: string,
-               description: string, websiteUrl: string): Promise<TBlog> {   // put
-        foundBlog.name = name
-        foundBlog.description = description
-        foundBlog.websiteUrl = websiteUrl
-        return foundBlog
+    async updateBlogById(blogId: string, name: string,
+               description: string, websiteUrl: string): Promise<Result<boolean>> {   // put
+        const result =  await blogCollection.updateOne({id: blogId},
+        {$set: {name: name, description: description, websiteUrl: websiteUrl}})
+
+        if(result.matchedCount < 1 ) {
+            return {
+                data: false,
+                code: ResultCode.NotFound
+            }
+        } else {
+            return {
+                data: true,
+                code: ResultCode.Success
+            }
+        }
     },
-    async deleteBlogById(blogId: string): Promise<TBlog[]> {    // delete
-        return db.blogs = db.blogs.filter(b => b.id !== blogId)
+    async deleteBlogById(blogId: string) {    // delete
+        return await blogCollection.deleteOne({id: blogId})
     }
 }
+

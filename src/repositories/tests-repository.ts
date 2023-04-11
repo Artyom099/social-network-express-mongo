@@ -1,8 +1,11 @@
-import {db} from "../db/db";
+import {videoCollection, blogCollection, postCollection} from "../db/db";
 
 
 export const testsRepository = {
-    async deleteAllData(): Promise<string[]> {
-        return db.videos = []
+    async deleteAllData() {
+        await videoCollection.deleteMany()
+        await blogCollection.deleteMany()
+        await postCollection.deleteMany()
+        return
     }
 }

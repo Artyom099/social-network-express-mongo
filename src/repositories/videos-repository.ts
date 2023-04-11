@@ -1,10 +1,10 @@
-import {db} from "../db/db";
+import {videoCollection} from "../db/db";
 import {TVideo} from "../types";
 
 
 export const videosRepository = {
     async findVideos(): Promise<TVideo[]> {
-        return db.videos
+        return await videoCollection.find({}).toArray();
     },
     async createVideos(title: string, author: string,
                  availableResolutions: string[]): Promise<TVideo> {
@@ -19,28 +19,23 @@ export const videosRepository = {
             publicationDate: new Date(dateNow.setDate(dateNow.getDate() + 1)).toISOString(),
             availableResolutions
         }
-        db.videos.push(createdVideo)
+        await videoCollection.insertOne(createdVideo)
         return createdVideo
     },
     async findVideoById(videoId: string): Promise<TVideo | null> {
-        const video = db.videos.find(v => v.id === videoId)
+        const video = await videoCollection.findOne({id: videoId})
         if (video) return video
         else return null
     },
-    async updateVideo(foundVideo: TVideo, title: string,
+    async updateVideo(videoId: string, title: string,
                 author: string, availableResolutions: string[],
-                canBeDownloaded: boolean,
-                minAgeRestriction: number | null,
-                publicationDate: string): Promise<TVideo> {   // put
-        foundVideo.title = title
-        foundVideo.author = author
-        foundVideo.availableResolutions = availableResolutions
-        foundVideo.canBeDownloaded = canBeDownloaded
-        foundVideo.minAgeRestriction = minAgeRestriction
-        foundVideo.publicationDate = publicationDate
-        return foundVideo
+                canBeDownloaded: boolean, minAgeRestriction: number | null,
+                publicationDate: string): Promise<TVideo> | TVideo {   // put
+        return await videoCollection.updateOne({id: videoId},
+            { $set: {title: title, author: author, availableResolutions: availableResolutions,
+                canBeDownloaded: canBeDownloaded, minAgeRestriction: minAgeRestriction, publicationDate: publicationDate}})
     },
-    async deleteVideoById(videoId: string): Promise<TVideo[]> {    // delete
-        return db.videos = db.videos.filter(v => v.id !== videoId)
+    async deleteVideoById(videoId: string) {    // delete
+        return await videoCollection.deleteOne({id: videoId})
     }
 }

@@ -4,5 +4,30 @@ export const HTTP_STATUS = {
     NO_CONTENT_204: 204,
     BAD_REQUEST_400: 400,
     UNAUTHORIZED_401: 401,
-    NOT_FOUND_404: 404
+    NOT_FOUND_404: 404,
+    INTERNAL_SERVER_ERROR: 500
+}
+
+export enum ResultCode {
+    Success = 0,
+    NotFound,
+    BedRequest,
+    Unauthorized
+}
+
+export type Result<T> = {
+    code: ResultCode
+    data: T
+}
+export const convertResultErrorCodeToHttp = (resultCode: ResultCode): number=> {
+    switch (resultCode) {
+        case ResultCode.NotFound:
+            return HTTP_STATUS.NOT_FOUND_404
+        case ResultCode.BedRequest:
+            return HTTP_STATUS.BAD_REQUEST_400
+        case ResultCode.Unauthorized:
+            return HTTP_STATUS.UNAUTHORIZED_401
+        default:
+            return HTTP_STATUS.INTERNAL_SERVER_ERROR
+    }
 }

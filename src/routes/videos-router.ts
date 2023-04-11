@@ -1,16 +1,16 @@
+import {body} from "express-validator";
 import express, {Request, Response} from "express";
 import {
     RequestBodyType,
     RequestParamsBodyType,
     RequestParamsType,
-    TBadRequestError,
     TVideo,
     VideoIdDTO,
     VideoPostDTO, VideoPutDTO
 } from "../types";
 import {HTTP_STATUS} from "../utils";
 import {videosRepository} from "../repositories/videos-repository";
-import {body} from "express-validator";
+
 
 export const videoResolutions = ['P144', 'P240', 'P360', 'P480', 'P720', 'P1080', 'P1440', 'P2160']
 export function checkArrayValues(existArray: string[], receivedArray: string[]): boolean {
@@ -29,10 +29,12 @@ const publicationDateValidation = body('publicationDate').isDate()
 
 export const getVideosRouter = () => {
     const router = express.Router()
+
     router.get('/', async (req: Request, res: Response) => {
         const foundVideos = await videosRepository.findVideos()
         res.status(HTTP_STATUS.OK_200).send(foundVideos)
     })
+
     router.post('/',
         titleValidation,
         authorValidation,
@@ -70,11 +72,13 @@ export const getVideosRouter = () => {
         //     res.status(HTTP_STATUS.CREATED_201).json(createdVideo)
         // }
     })
+
     router.get('/:id', async (req: RequestParamsType<VideoIdDTO>, res: Response<TVideo>) => {
         const foundVideo = await videosRepository.findVideoById(req.params.id)
         if (!foundVideo) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
         res.status(HTTP_STATUS.OK_200).json(foundVideo)
     })
+
     router.put('/:id',
         titleValidation,
         authorValidation,
@@ -87,7 +91,7 @@ export const getVideosRouter = () => {
         if (!foundVideo) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
 
         const {title, author, availableResolutions, canBeDownloaded, minAgeRestriction, publicationDate} = req.body
-        const updatedVideo = await videosRepository.updateVideo(foundVideo, title, author, availableResolutions, canBeDownloaded, minAgeRestriction, publicationDate)
+        const updatedVideo = await videosRepository.updateVideo(req.params.id, title, author, availableResolutions, canBeDownloaded, minAgeRestriction, publicationDate)
         res.status(HTTP_STATUS.NO_CONTENT_204).json(updatedVideo)
 
 
@@ -136,6 +140,7 @@ export const getVideosRouter = () => {
         //     res.status(HTTP_STATUS.NO_CONTENT_204).json(updatedVideo)
         // }
     })
+
     router.delete('/:id', async (req: RequestParamsType<VideoIdDTO>, res: Response) => {
         const videoForDelete = await videosRepository.findVideoById(req.params.id)
         if (!videoForDelete) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
@@ -143,5 +148,6 @@ export const getVideosRouter = () => {
         await videosRepository.deleteVideoById(req.params.id)
         res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
     })
+
     return router
 }
