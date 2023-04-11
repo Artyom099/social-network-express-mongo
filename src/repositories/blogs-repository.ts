@@ -9,11 +9,14 @@ export const blogsRepository = {
     },
     async createBlog(name: string, description: string,
                websiteUrl: string): Promise<TBlog> {    // post
+        const dateNow = new Date()
         const createdBlog: TBlog = {
-            id: (+new Date()).toString(),
+            id: (+dateNow).toString(),
             name,
             description,
-            websiteUrl
+            websiteUrl,
+            createdAt: dateNow.toISOString(),
+            isMembership: false
         }
         await blogCollection.insertOne(createdBlog)
         return createdBlog
