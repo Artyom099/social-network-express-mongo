@@ -25,10 +25,10 @@ export const blogsRepository = {
     },
     async updateBlogById(blogId: string, name: string,
                description: string, websiteUrl: string): Promise<Result<boolean>> {   // put
-        const result =  await blogCollection.updateOne({id: blogId},
+        const updatedResult =  await blogCollection.updateOne({id: blogId},
         {$set: {name: name, description: description, websiteUrl: websiteUrl}})
 
-        if(result.matchedCount < 1 ) {
+        if(updatedResult.matchedCount < 1 ) {
             return {
                 data: false,
                 code: ResultCode.NotFound
