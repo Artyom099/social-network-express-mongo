@@ -1,7 +1,7 @@
 import {body} from "express-validator";
 import express, {Request, Response} from "express";
 import {TBlog} from "../types";
-import {HTTP_STATUS} from "../utils";
+import {convertResultErrorCodeToHttp, HTTP_STATUS} from "../utils";
 import {blogsRepository} from "../repositories/blogs-repository";
 import {authMiddleware, inputValidationMiddleware} from "../middleware/input-validation-middleware";
 
@@ -35,11 +35,17 @@ export const getBlogsRouter = () => {
 
     router.put('/:id', validationBlog, authMiddleware, inputValidationMiddleware,
     async (req: Request, res: Response) => {
-        const foundBlog = await blogsRepository.findBlogById(req.params.id)
-        if (!foundBlog) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)    // если не нашли блог по id, выдаем ошибку и выходим из эндпоинта
+        // const foundBlog = await blogsRepository.findBlogById(req.params.id)
+        // if (!foundBlog) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
 
         const {name, description, websiteUrl} = req.body
-        const updatedBlog = await blogsRepository.updateBlog(foundBlog, name, description, websiteUrl)
+        const result = await blogsRepository.updateBlogById(req.params.id, name, description, websiteUrl)
+
+        if (!result.data) {
+           return  res.sendStatus(convertResultErrorCodeToHttp(result.code))
+        }
+
+        const updatedBlog = await blogsRepository.findBlogById(req.params.id)
         res.status(HTTP_STATUS.NO_CONTENT_204).json(updatedBlog)
     })
 

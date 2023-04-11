@@ -91,7 +91,7 @@ export const getVideosRouter = () => {
         if (!foundVideo) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
 
         const {title, author, availableResolutions, canBeDownloaded, minAgeRestriction, publicationDate} = req.body
-        const updatedVideo = await videosRepository.updateVideo(foundVideo, title, author, availableResolutions, canBeDownloaded, minAgeRestriction, publicationDate)
+        const updatedVideo = await videosRepository.updateVideo(req.params.id, title, author, availableResolutions, canBeDownloaded, minAgeRestriction, publicationDate)
         res.status(HTTP_STATUS.NO_CONTENT_204).json(updatedVideo)
 
 

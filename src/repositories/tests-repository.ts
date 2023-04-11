@@ -1,11 +1,11 @@
-import {db} from "../db/db";
+import {videoCollection, blogCollection, postCollection} from "../db/db";
 
 
 export const testsRepository = {
     async deleteAllData() {
-        db.videos = []
-        db.blogs = []
-        db.posts = []
+        await videoCollection.deleteMany()
+        await blogCollection.deleteMany()
+        await postCollection.deleteMany()
         return
     }
 }

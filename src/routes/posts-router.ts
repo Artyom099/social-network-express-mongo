@@ -48,9 +48,9 @@ export const getPostsRouter = () => {
             if (!foundPost) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)    // если не нашли блог по id, выдаем ошибку и выходим из эндпоинта
 
             const {title, shortDescription, content} = req.body
-            const updatedPost = await postsRepository.updatePost(foundPost, title, shortDescription, content)
+            const updatedPost = await postsRepository.updatePost(req.params.id, title, shortDescription, content)
             res.status(HTTP_STATUS.NO_CONTENT_204).json(updatedPost)
-        })
+    })
 
     router.delete('/:id', authMiddleware, async (req: Request, res: Response) => {
         const postForDelete = postsRepository.findPostById(req.params.id)
