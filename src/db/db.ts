@@ -7,6 +7,7 @@ dotenv.config()
 const mongoUri = process.env.MONGO_URL || 'mongodb://0.0.0.0:27017'
 const client = new MongoClient(mongoUri)
 
+
 const database = client.db('network');
 export const videoCollection = database.collection<TVideo>('videos')
 export const blogCollection = database.collection<TBlog>('blogs')
