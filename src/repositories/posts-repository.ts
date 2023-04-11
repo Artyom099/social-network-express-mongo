@@ -1,5 +1,6 @@
 import {postCollection} from "../db/db";
 import {TBlog, TPost} from "../types";
+import {Result, ResultCode} from "../utils";
 
 
 export const postsRepository = {
@@ -24,11 +25,22 @@ export const postsRepository = {
         if (post) return post
         else return null
     },
-    async updatePost(postId: string, title: string,
-               shortDescription: string,
-               content: string): Promise<TPost> | TPost {      // put
-        return await postCollection.updateOne({id: postId},
+    async updatePost(postId: string, title: string, shortDescription: string,
+               content: string): Promise<Result<boolean>> {      // put
+        const updatedResult = await postCollection.updateOne({id: postId},
         { $set: {title: title, shortDescription: shortDescription, content: content}})
+
+        if(updatedResult.matchedCount < 1 ) {
+            return {
+                data: false,
+                code: ResultCode.NotFound
+            }
+        } else {
+            return {
+                data: true,
+                code: ResultCode.Success
+            }
+        }
     },
     async deletePostById(postId: string) {    // delete
         return await postCollection.deleteOne({id: postId})

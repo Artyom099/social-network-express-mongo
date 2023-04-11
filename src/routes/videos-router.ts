@@ -8,24 +8,36 @@ import {
     VideoIdDTO,
     VideoPostDTO, VideoPutDTO
 } from "../types";
-import {HTTP_STATUS} from "../utils";
+import {convertResultErrorCodeToHttp, HTTP_STATUS} from "../utils";
 import {videosRepository} from "../repositories/videos-repository";
+import {authMiddleware, inputValidationMiddleware} from "../middleware/input-validation-middleware";
 
 
 export const videoResolutions = ['P144', 'P240', 'P360', 'P480', 'P720', 'P1080', 'P1440', 'P2160']
-export function checkArrayValues(existArray: string[], receivedArray: string[]): boolean {
-    for (let i of receivedArray) {
-        if (!existArray.includes(i)) return false
-    }
-    return true
-}
+// export function checkArrayValues(existArray: string[], receivedArray: string[]): boolean {
+//     for (let i of receivedArray) {
+//         if (!existArray.includes(i)) return false
+//     }
+//     return true
+// }
+// const titleValidation = body('title').isString().isLength({min: 3, max: 40}).trim().not().isEmpty()
+// const authorValidation = body('author').isString().isLength({min: 3, max: 20}).trim().not().isEmpty()
+// const availableResolutionsValidation = body('availableResolutions').isIn(videoResolutions)
+// const canBeDownloadedValidation = body('canBeDownloaded').isBoolean()
+// const minAgeRestrictionValidation = body('minAgeRestriction').isNumeric()
+// const publicationDateValidation = body('publicationDate').isDate()
 
-const titleValidation = body('title').isString().isLength({min: 3, max: 40}).trim().not().isEmpty()
-const authorValidation = body('author').isString().isLength({min: 3, max: 20}).trim().not().isEmpty()
-const availableResolutionsValidation = body('availableResolutions').isIn(videoResolutions)
-const canBeDownloadedValidation = body('canBeDownloaded').isBoolean()
-const minAgeRestrictionValidation = body('minAgeRestriction').isNumeric()
-const publicationDateValidation = body('publicationDate').isDate()
+const validationVideoPost = [
+    body('title').isString().isLength({min: 3, max: 40}).trim().not().isEmpty(),
+    body('author').isString().isLength({min: 3, max: 20}).trim().not().isEmpty(),
+    body('availableResolutions').isIn(videoResolutions)
+]
+const validationVideoPut = [
+    ...validationVideoPost,
+    body('canBeDownloaded').isBoolean(),
+    body('minAgeRestriction').isNumeric(),
+    body('publicationDate').isDate()
+]
 
 export const getVideosRouter = () => {
     const router = express.Router()
@@ -35,10 +47,7 @@ export const getVideosRouter = () => {
         res.status(HTTP_STATUS.OK_200).send(foundVideos)
     })
 
-    router.post('/',
-        titleValidation,
-        authorValidation,
-        availableResolutionsValidation,
+    router.post('/', validationVideoPost, authMiddleware, inputValidationMiddleware,
         async (req: RequestBodyType<VideoPostDTO>, res: Response) => {
         const {title, author, availableResolutions} = req.body
         const createdVideo = await videosRepository.createVideos(title, author, availableResolutions)
@@ -79,19 +88,17 @@ export const getVideosRouter = () => {
         res.status(HTTP_STATUS.OK_200).json(foundVideo)
     })
 
-    router.put('/:id',
-        titleValidation,
-        authorValidation,
-        availableResolutionsValidation,
-        canBeDownloadedValidation,
-        minAgeRestrictionValidation,
-        publicationDateValidation,
+    router.put('/:id', validationVideoPut, authMiddleware, inputValidationMiddleware,
         async (req: RequestParamsBodyType<VideoIdDTO, VideoPutDTO>, res: Response) => {
-        const foundVideo = await videosRepository.findVideoById(req.params.id)
-        if (!foundVideo) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
+        // const foundVideo = await videosRepository.findVideoById(req.params.id)
+        // if (!foundVideo) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
 
         const {title, author, availableResolutions, canBeDownloaded, minAgeRestriction, publicationDate} = req.body
-        const updatedVideo = await videosRepository.updateVideo(req.params.id, title, author, availableResolutions, canBeDownloaded, minAgeRestriction, publicationDate)
+        const result = await videosRepository.updateVideo(req.params.id, title, author, availableResolutions, canBeDownloaded, minAgeRestriction, publicationDate)
+
+        if (!result.data) return res.sendStatus(convertResultErrorCodeToHttp(result.code))
+
+        const updatedVideo = await videosRepository.findVideoById(req.params.id)
         res.status(HTTP_STATUS.NO_CONTENT_204).json(updatedVideo)
 
 
