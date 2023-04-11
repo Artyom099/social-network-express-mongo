@@ -10,9 +10,9 @@ export const HTTP_STATUS = {
 
 export enum ResultCode {
     Success = 0,
-    NotFound,
-    BedRequest,
-    Unauthorized
+    NotFound = 1,
+    BedRequest = 2,
+    Unauthorized = 3
 }
 
 export type Result<T> = {

@@ -41,9 +41,7 @@ export const getBlogsRouter = () => {
         const {name, description, websiteUrl} = req.body
         const result = await blogsRepository.updateBlogById(req.params.id, name, description, websiteUrl)
 
-        if (!result.data) {
-           return  res.sendStatus(convertResultErrorCodeToHttp(result.code))
-        }
+        if (!result.data) return res.sendStatus(convertResultErrorCodeToHttp(result.code))
 
         const updatedBlog = await blogsRepository.findBlogById(req.params.id)
         res.status(HTTP_STATUS.NO_CONTENT_204).json(updatedBlog)
