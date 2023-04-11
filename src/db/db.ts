@@ -8,7 +8,7 @@ const mongoUri = process.env.MONGO_URL  // || 'mongodb://0.0.0.0:27017'
 if (!mongoUri) throw new Error('UR doesn\'t found')
 const client = new MongoClient(mongoUri)
 
-const database = client.db('network');
+const database = client.db();
 export const videoCollection = database.collection<TVideo>('videos')
 export const blogCollection = database.collection<TBlog>('blogs')
 export const postCollection = database.collection<TPost>('posts')
