@@ -28,20 +28,20 @@ export const blogsRepository = {
     },
     async updateBlogById(blogId: string, name: string,
                description: string, websiteUrl: string): Promise<Result<boolean>> {   // put
-        const updatedResult =  await blogCollection.updateOne({id: blogId},
+        const updatedResult = await blogCollection.updateOne({id: blogId},
         {$set: {name: name, description: description, websiteUrl: websiteUrl}})
 
-        if(updatedResult.matchedCount < 1 ) {
-            return {
-                data: false,
-                code: ResultCode.NotFound
-            }
-        } else {
-            return {
-                data: true,
-                code: ResultCode.Success
-            }
-        }
+        // if(updatedResult.matchedCount < 1 ) {
+        //     return {
+        //         data: false,
+        //         code: ResultCode.NotFound
+        //     }
+        // } else {
+        //     return {
+        //         data: true,
+        //         code: ResultCode.Success
+        //     }
+        // }
     },
     async deleteBlogById(blogId: string) {    // delete
         return await blogCollection.deleteOne({id: blogId})

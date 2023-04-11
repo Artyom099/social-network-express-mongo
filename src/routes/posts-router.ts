@@ -44,10 +44,13 @@ export const getPostsRouter = () => {
 
     router.put('/:id', validationPost, authMiddleware, inputValidationMiddleware,
         async (req: Request, res: Response) => {
-            const {title, shortDescription, content} = req.body
-            const result = await postsRepository.updatePost(req.params.id, title, shortDescription, content)
+            const foundPost = await blogsRepository.findBlogById(req.params.id)
+            if (!foundPost) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
 
-            if (!result.data) return res.sendStatus(convertResultErrorCodeToHttp(result.code))
+            const {title, shortDescription, content} = req.body
+            await postsRepository.updatePost(req.params.id, title, shortDescription, content)
+
+            // if (!result.data) return res.sendStatus(convertResultErrorCodeToHttp(result.code))
 
             const updatedPost = await postsRepository.findPostById(req.params.id)
             res.status(HTTP_STATUS.NO_CONTENT_204).json(updatedPost)

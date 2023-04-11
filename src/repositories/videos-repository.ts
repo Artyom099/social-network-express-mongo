@@ -36,17 +36,17 @@ export const videosRepository = {
             { $set: {title: title, author: author, availableResolutions: availableResolutions,
                 canBeDownloaded: canBeDownloaded, minAgeRestriction: minAgeRestriction, publicationDate: publicationDate}})
 
-        if(updatedResult.matchedCount < 1 ) {
-            return {
-                data: false,
-                code: ResultCode.NotFound
-            }
-        } else {
-            return {
-                data: true,
-                code: ResultCode.Success
-            }
-        }
+        // if(updatedResult.matchedCount < 1 ) {
+        //     return {
+        //         data: false,
+        //         code: ResultCode.NotFound
+        //     }
+        // } else {
+        //     return {
+        //         data: true,
+        //         code: ResultCode.Success
+        //     }
+        // }
     },
     async deleteVideoById(videoId: string) {    // delete
         return await videoCollection.deleteOne({id: videoId})
