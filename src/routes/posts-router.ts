@@ -13,7 +13,7 @@ const validationPost = [
     body('content').isString().isLength({min: 3, max: 1000}).trim().notEmpty(),
     body('blogId').isString().custom((value) => {
         const blog = blogsRepository.findBlogById(value)
-        if (!blog) {
+        if (blog === null) {
             throw new Error('blog not found')
         }
         return true
