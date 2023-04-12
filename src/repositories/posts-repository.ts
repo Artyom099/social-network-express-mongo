@@ -5,7 +5,7 @@ import {Result, ResultCode} from "../utils";
 
 export const postsRepository = {
     async findExistPosts(): Promise<TPost[]> {      // get
-        return await postCollection.find({}).toArray();
+        return await postCollection.find({}, {projection: {_id: false}}).toArray();
     },
     async createPost(title: string, shortDescription: string, content: string,
                      blogId: string, blog: TBlog | null): Promise<TPost> {    // post
@@ -23,7 +23,7 @@ export const postsRepository = {
         return createdPost
     },
     async findPostById(postId: string): Promise<TPost | null> {   // get, put, delete
-        const post = await postCollection.findOne({id: postId})
+        const post = await postCollection.findOne({id: postId},  {projection: {_id: false}})
         if (post) return post
         else return null
     },
