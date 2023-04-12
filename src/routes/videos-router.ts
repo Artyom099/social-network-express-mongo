@@ -101,7 +101,6 @@ export const getVideosRouter = () => {
         const updatedVideo = await videosRepository.findVideoById(req.params.id)
         res.status(HTTP_STATUS.NO_CONTENT_204).json(updatedVideo)
 
-
         // const errors: TBadRequestError[] = []
         // if (!title || typeof title !== 'string' || !title.trim() || title.length > 40) {
         //     errors.push({

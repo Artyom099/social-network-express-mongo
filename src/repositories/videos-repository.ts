@@ -5,7 +5,7 @@ import {Result, ResultCode} from "../utils";
 
 export const videosRepository = {
     async findVideos(): Promise<TVideo[]> {
-        return await videoCollection.find({}).toArray();
+        return await videoCollection.find({}, {projection: {_id: false}}).toArray();
     },
     async createVideos(title: string, author: string,
                  availableResolutions: string[]): Promise<TVideo> {
@@ -24,7 +24,7 @@ export const videosRepository = {
         return createdVideo
     },
     async findVideoById(videoId: string): Promise<TVideo | null> {
-        const video = await videoCollection.findOne({id: videoId})
+        const video = await videoCollection.findOne({id: videoId}, {projection: {_id: false}})
         if (video) return video
         else return null
     },

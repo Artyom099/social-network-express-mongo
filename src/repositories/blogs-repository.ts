@@ -5,7 +5,7 @@ import {Result, ResultCode} from "../utils";
 
 export const blogsRepository = {
     async findExistBlogs(): Promise<TBlog[]> {      // get
-        return await blogCollection.find({}).toArray();
+        return await blogCollection.find({}, {projection: {_id: false}}).toArray();
     },
     async createBlog(name: string, description: string,
                websiteUrl: string): Promise<TBlog> {    // post
@@ -22,13 +22,13 @@ export const blogsRepository = {
         return createdBlog
     },
     async findBlogById(blogId: string): Promise<TBlog | null> {    // get, put, delete
-        const blog = await blogCollection.findOne({id: blogId})
+        const blog = await blogCollection.findOne({id: blogId}, {projection: {_id: false}})
         if (blog) return blog
         else return null
     },
     async updateBlogById(blogId: string, name: string,
                description: string, websiteUrl: string): Promise<Result<boolean>> {   // put
-        const updatedResult =  await blogCollection.updateOne({id: blogId},
+        const updatedResult = await blogCollection.updateOne({id: blogId},
         {$set: {name: name, description: description, websiteUrl: websiteUrl}})
 
         if(updatedResult.matchedCount < 1 ) {
