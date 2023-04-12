@@ -32,17 +32,17 @@ export const postsRepository = {
         const updatedResult = await postCollection.updateOne({id: postId},
         { $set: {title: title, shortDescription: shortDescription, content: content}})
 
-        // if(updatedResult.matchedCount < 1 ) {
-        //     return {
-        //         data: false,
-        //         code: ResultCode.NotFound
-        //     }
-        // } else {
-        //     return {
-        //         data: true,
-        //         code: ResultCode.Success
-        //     }
-        // }
+        if(updatedResult.matchedCount < 1 ) {
+            return {
+                data: false,
+                code: ResultCode.NotFound
+            }
+        } else {
+            return {
+                data: true,
+                code: ResultCode.Success
+            }
+        }
     },
     async deletePostById(postId: string) {    // delete
         return await postCollection.deleteOne({id: postId})

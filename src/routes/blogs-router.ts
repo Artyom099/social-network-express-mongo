@@ -35,13 +35,13 @@ export const getBlogsRouter = () => {
 
     router.put('/:id', validationBlog, authMiddleware, inputValidationMiddleware,
     async (req: Request, res: Response) => {
-        const foundBlog = await blogsRepository.findBlogById(req.params.id)
-        if (!foundBlog) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
+        // const foundBlog = await blogsRepository.findBlogById(req.params.id)
+        // if (!foundBlog) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
 
         const {name, description, websiteUrl} = req.body
-        await blogsRepository.updateBlogById(req.params.id, name, description, websiteUrl)
+        const result = await blogsRepository.updateBlogById(req.params.id, name, description, websiteUrl)
 
-        // if (!result.data) return res.sendStatus(convertResultErrorCodeToHttp(result.code))
+        if (!result.data) return res.sendStatus(convertResultErrorCodeToHttp(result.code))
 
         const updatedBlog = await blogsRepository.findBlogById(req.params.id)
         res.status(HTTP_STATUS.NO_CONTENT_204).json(updatedBlog)
