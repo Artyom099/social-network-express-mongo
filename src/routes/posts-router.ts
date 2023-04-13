@@ -59,8 +59,8 @@ export const getPostsRouter = () => {
     })
 
     router.delete('/:id', authMiddleware, async (req: Request, res: Response) => {
-        const postForDelete = postsRepository.findPostById(req.params.id)
-        if (!postForDelete || null) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
+        const postForDelete = await postsRepository.findPostById(req.params.id)
+        if (!postForDelete) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
 
         await postsRepository.deletePostById(req.params.id)
         res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
