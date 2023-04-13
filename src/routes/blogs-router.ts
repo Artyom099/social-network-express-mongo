@@ -49,7 +49,7 @@ export const getBlogsRouter = () => {
 
     router.delete('/:id', authMiddleware, async (req: Request, res: Response) => {
         const blogForDelete = blogsRepository.findBlogById(req.params.id)
-        if (!blogForDelete) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)    // если не нашли блог по id, то выдаем ошибку и выходим из эндпоинта
+        if (!blogForDelete || null) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)    // если не нашли блог по id, то выдаем ошибку и выходим из эндпоинта
 
         await blogsRepository.deleteBlogById(req.params.id)                     // эта строка удаляет найденный блог из бд
         res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
