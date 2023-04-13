@@ -31,10 +31,7 @@ export const getPostsRouter = () => {
         async (req: Request, res: Response) => {
             const {title, shortDescription, content, blogId} = req.body
             const blog = await blogsRepository.findBlogById(req.body.blogId)
-
             const createdPost = await postsRepository.createPost(title, shortDescription, content, blogId, blog)
-
-            // await postsRepository.findPostById(req.params.id)
             res.status(HTTP_STATUS.CREATED_201).json(createdPost)
         })
 
