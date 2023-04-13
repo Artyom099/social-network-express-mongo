@@ -19,7 +19,14 @@ export const blogsRepository = {
             isMembership: false
         }
         await blogCollection.insertOne(createdBlog)
-        return createdBlog
+        return  {
+            id: createdBlog.id,
+            name: createdBlog.name,
+            description: createdBlog.description,
+            websiteUrl: createdBlog.websiteUrl,
+            createdAt: createdBlog.createdAt,
+            isMembership: createdBlog.isMembership
+        }
     },
     async findBlogById(blogId: string): Promise<TBlog | null> {    // get, put, delete
         const blog = await blogCollection.findOne({id: blogId}, {projection: {_id: false}})
@@ -30,7 +37,6 @@ export const blogsRepository = {
                description: string, websiteUrl: string): Promise<Result<boolean>> {   // put
         const updatedResult = await blogCollection.updateOne({id: blogId},
         {$set: {name: name, description: description, websiteUrl: websiteUrl}})
-
         if(updatedResult.matchedCount < 1 ) {
             return {
                 data: false,

@@ -21,7 +21,16 @@ export const videosRepository = {
             availableResolutions
         }
         await videoCollection.insertOne(createdVideo)
-        return createdVideo
+        return {
+            id: createdVideo.id,
+            title: createdVideo.title,
+            author: createdVideo.author,
+            canBeDownloaded: createdVideo.canBeDownloaded,
+            minAgeRestriction: createdVideo.minAgeRestriction,
+            createdAt: createdVideo.createdAt,
+            publicationDate: createdVideo.publicationDate,
+            availableResolutions: createdVideo.availableResolutions
+        }
     },
     async findVideoById(videoId: string): Promise<TVideo | null> {
         const video = await videoCollection.findOne({id: videoId}, {projection: {_id: false}})
@@ -35,7 +44,6 @@ export const videosRepository = {
         const updatedResult = await videoCollection.updateOne({id: videoId},
             { $set: {title: title, author: author, availableResolutions: availableResolutions,
                 canBeDownloaded: canBeDownloaded, minAgeRestriction: minAgeRestriction, publicationDate: publicationDate}})
-
         if(updatedResult.matchedCount < 1 ) {
             return {
                 data: false,

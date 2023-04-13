@@ -20,7 +20,15 @@ export const postsRepository = {
             createdAt: dateNow.toISOString()
         }
         await postCollection.insertOne(createdPost)
-        return createdPost
+        return {
+            id: createdPost.id,
+            title: createdPost.title,
+            shortDescription: createdPost.shortDescription,
+            content: createdPost.content,
+            blogId: createdPost.blogId,
+            blogName: createdPost.blogName,
+            createdAt: createdPost.createdAt
+        }
     },
     async findPostById(postId: string): Promise<TPost | null> {   // get, put, delete
         const post = await postCollection.findOne({id: postId},  {projection: {_id: false}})
@@ -31,7 +39,6 @@ export const postsRepository = {
                content: string): Promise<Result<boolean>> {      // put
         const updatedResult = await postCollection.updateOne({id: postId},
         { $set: {title: title, shortDescription: shortDescription, content: content}})
-
         if(updatedResult.matchedCount < 1 ) {
             return {
                 data: false,
