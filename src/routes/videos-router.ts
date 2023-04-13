@@ -46,8 +46,8 @@ export const getVideosRouter = () => {
         const foundVideos = await videosRepository.findVideos()
         res.status(HTTP_STATUS.OK_200).send(foundVideos)
     })
-
-    router.post('/', validationVideoPost, authMiddleware, inputValidationMiddleware,
+    // authMiddleware,
+    router.post('/', validationVideoPost, inputValidationMiddleware,
         async (req: RequestBodyType<VideoPostDTO>, res: Response) => {
         const {title, author, availableResolutions} = req.body
         const createdVideo = await videosRepository.createVideos(title, author, availableResolutions)
@@ -87,8 +87,8 @@ export const getVideosRouter = () => {
         if (!foundVideo) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
         res.status(HTTP_STATUS.OK_200).json(foundVideo)
     })
-
-    router.put('/:id', validationVideoPut, authMiddleware, inputValidationMiddleware,
+    // authMiddleware,
+    router.put('/:id', validationVideoPut, inputValidationMiddleware,
         async (req: RequestParamsBodyType<VideoIdDTO, VideoPutDTO>, res: Response) => {
         // const foundVideo = await videosRepository.findVideoById(req.params.id)
         // if (!foundVideo) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
