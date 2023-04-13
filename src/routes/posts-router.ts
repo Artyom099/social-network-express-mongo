@@ -11,9 +11,9 @@ const validationPost = [
     body('title').isString().isLength({min: 3, max: 30}).trim().not().isEmpty(),
     body('shortDescription').isString().isLength({min: 3, max: 100}).trim().notEmpty(),
     body('content').isString().isLength({min: 3, max: 1000}).trim().notEmpty(),
-    body('blogId').isString().custom((value) => {
-        const blog = blogsRepository.findBlogById(value)
-        if (blog === null) {
+    body('blogId').isString().custom(async (value) => {
+        const blog = await blogsRepository.findBlogById(value)
+        if (!blog) {
             throw new Error('blog not found')
         }
         return true
@@ -32,8 +32,10 @@ export const getPostsRouter = () => {
             const {title, shortDescription, content, blogId} = req.body
             const blog = await blogsRepository.findBlogById(req.body.blogId)
 
-            const createPost = await postsRepository.createPost(title, shortDescription, content, blogId, blog)
-            res.status(HTTP_STATUS.CREATED_201).json(createPost)
+            const createdPost = await postsRepository.createPost(title, shortDescription, content, blogId, blog)
+
+            // await postsRepository.findPostById(req.params.id)
+            res.status(HTTP_STATUS.CREATED_201).json(createdPost)
         })
 
     router.get('/:id', async (req: Request, res: Response<TPost>) => {
