@@ -52,4 +52,3 @@ export const blogsRepository = {
         return await blogCollection.deleteOne({id: blogId})
     }
 }
-
