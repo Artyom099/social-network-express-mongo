@@ -7,19 +7,18 @@ export const blogsRepository = {
     async findExistBlogs(): Promise<TBlog[]> {      // get
         return await blogCollection.find({}, {projection: {_id: false}}).toArray();
     },
-    async createBlog(name: string, description: string,
-               websiteUrl: string): Promise<TBlog> {    // post
-        const dateNow = new Date()
-        const createdBlog: TBlog = {
-            id: (+dateNow).toString(),
-            name,
-            description,
-            websiteUrl,
-            createdAt: dateNow.toISOString(),
-            isMembership: false
-        }
+    async createBlog(createdBlog: TBlog): Promise<TBlog> {    // post
+        // const dateNow = new Date()
+        // const createdBlog: TBlog = {
+        //     id: (+dateNow).toString(),
+        //     name,
+        //     description,
+        //     websiteUrl,
+        //     createdAt: dateNow.toISOString(),
+        //     isMembership: false
+        // }
         await blogCollection.insertOne(createdBlog)
-        return  {
+        return {
             id: createdBlog.id,
             name: createdBlog.name,
             description: createdBlog.description,

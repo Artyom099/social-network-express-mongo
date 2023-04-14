@@ -2,7 +2,7 @@ import {body} from "express-validator";
 import express, {Request, Response} from "express";
 import {TBlog} from "../types";
 import {convertResultErrorCodeToHttp, HTTP_STATUS} from "../utils";
-import {blogsRepository} from "../repositories/blogs-repository";
+import {blogsService} from "../domain/blogs-service";
 import {authMiddleware, inputValidationMiddleware} from "../middleware/input-validation-middleware";
 
 
@@ -16,19 +16,19 @@ export const getBlogsRouter = () => {
     const router = express.Router()
 
     router.get('/', async (req: express.Request, res: express.Response) => {
-        const foundBlogs = await blogsRepository.findExistBlogs()
+        const foundBlogs = await blogsService.findExistBlogs()
         res.status(HTTP_STATUS.OK_200).send(foundBlogs)
     })
 
     router.post('/', validationBlog, authMiddleware, inputValidationMiddleware,
     async (req: express.Request, res: express.Response) => {
         const {name, description, websiteUrl} = req.body
-        const createBlog = await blogsRepository.createBlog(name, description, websiteUrl)
+        const createBlog = await blogsService.createBlog(name, description, websiteUrl)
         res.status(HTTP_STATUS.CREATED_201).json(createBlog)
     })
 
     router.get('/:id', async (req: Request, res: Response<TBlog>) => {
-        const findBlog = await blogsRepository.findBlogById(req.params.id)
+        const findBlog = await blogsService.findBlogById(req.params.id)
         if (!findBlog) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)     // если не нашли блог по id, то выдаем ошибку и выходим из эндпоинта
         res.status(HTTP_STATUS.OK_200).json(findBlog)
     })
@@ -39,19 +39,19 @@ export const getBlogsRouter = () => {
         // if (!foundBlog) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
 
         const {name, description, websiteUrl} = req.body
-        const result = await blogsRepository.updateBlogById(req.params.id, name, description, websiteUrl)
+        const result = await blogsService.updateBlogById(req.params.id, name, description, websiteUrl)
 
         if (!result.data) return res.sendStatus(convertResultErrorCodeToHttp(result.code))
 
-        const updatedBlog = await blogsRepository.findBlogById(req.params.id)
+        const updatedBlog = await blogsService.findBlogById(req.params.id)
         res.status(HTTP_STATUS.NO_CONTENT_204).json(updatedBlog)
     })
 
     router.delete('/:id', authMiddleware, async (req: Request, res: Response) => {
-        const blogForDelete = await blogsRepository.findBlogById(req.params.id)
+        const blogForDelete = await blogsService.findBlogById(req.params.id)
         if (!blogForDelete) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)    // если не нашли блог по id, то выдаем ошибку и выходим из эндпоинта
 
-        await blogsRepository.deleteBlogById(req.params.id)                     // эта строка удаляет найденный блог из бд
+        await blogsService.deleteBlogById(req.params.id)                     // эта строка удаляет найденный блог из бд
         res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
     })
     return router
