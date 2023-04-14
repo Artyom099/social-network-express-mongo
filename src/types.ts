@@ -6,7 +6,7 @@ export type TDataBase = {
     posts: TPost[]
 }
 export type TVideo = {
-    id: string
+    id: number
     title: string
     author: string
     canBeDownloaded: boolean
@@ -52,7 +52,7 @@ export type VideoPutDTO = {
     publicationDate: string
 }
 export type VideoIdDTO = {
-    id: string
+    id: number
 }
 
 export type PostDTO = {

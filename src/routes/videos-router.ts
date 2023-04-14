@@ -96,7 +96,7 @@ export const getVideosRouter = () => {
         if (!result.data) return res.sendStatus(convertResultErrorCodeToHttp(result.code))
 
         const updatedVideo = await videosService.findVideoById(req.params.id)
-        res.status(HTTP_STATUS.NO_CONTENT_204).json(updatedVideo)
+            res.status(HTTP_STATUS.NO_CONTENT_204).json(updatedVideo)
 
         // const errors: TBadRequestError[] = []
         // if (!title || typeof title !== 'string' || !title.trim() || title.length > 40) {

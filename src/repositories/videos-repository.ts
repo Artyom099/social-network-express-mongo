@@ -20,12 +20,12 @@ export const videosRepository = {
             availableResolutions: createdVideo.availableResolutions
         }
     },
-    async findVideoById(videoId: string): Promise<TVideo | null> {
+    async findVideoById(videoId: number): Promise<TVideo | null> {
         const video = await videoCollection.findOne({id: videoId}, {projection: {_id: false}})
         if (video) return video
         else return null
     },
-    async updateVideoById(videoId: string, title: string, author: string, availableResolutions: string[],
+    async updateVideoById(videoId: number, title: string, author: string, availableResolutions: string[],
                 canBeDownloaded: boolean, minAgeRestriction: number | null,
                 publicationDate: string): Promise<Result<boolean>> {   // put
         const updatedResult = await videoCollection.updateOne({id: videoId},
@@ -43,7 +43,7 @@ export const videosRepository = {
             }
         }
     },
-    async deleteVideoById(videoId: string) {    // delete
+    async deleteVideoById(videoId: number) {    // delete
         return await videoCollection.deleteOne({id: videoId})
     }
 }
