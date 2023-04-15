@@ -7,16 +7,8 @@ export const blogsRepository = {
     async findExistBlogs(): Promise<TBlog[]> {      // get
         return await blogCollection.find({}, {projection: {_id: false}}).toArray();
     },
+
     async createBlog(createdBlog: TBlog): Promise<TBlog> {    // post
-        // const dateNow = new Date()
-        // const createdBlog: TBlog = {
-        //     id: (+dateNow).toString(),
-        //     name,
-        //     description,
-        //     websiteUrl,
-        //     createdAt: dateNow.toISOString(),
-        //     isMembership: false
-        // }
         await blogCollection.insertOne(createdBlog)
         return {
             id: createdBlog.id,
@@ -27,11 +19,13 @@ export const blogsRepository = {
             isMembership: createdBlog.isMembership
         }
     },
+
     async findBlogById(blogId: string): Promise<TBlog | null> {    // get, put, delete
         const blog = await blogCollection.findOne({id: blogId}, {projection: {_id: false}})
         if (blog) return blog
         else return null
     },
+
     async updateBlogById(blogId: string, name: string,
                description: string, websiteUrl: string): Promise<Result<boolean>> {   // put
         const updatedResult = await blogCollection.updateOne({id: blogId},
@@ -48,6 +42,7 @@ export const blogsRepository = {
             }
         }
     },
+
     async deleteBlogById(blogId: string) {    // delete
         return await blogCollection.deleteOne({id: blogId})
     }

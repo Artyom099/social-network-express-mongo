@@ -1,10 +1,5 @@
 import {Request} from 'express'
 
-export type TDataBase = {
-    videos: TVideo[]
-    blogs: TBlog[]
-    posts: TPost[]
-}
 export type TVideo = {
     id: number
     title: string
@@ -36,7 +31,6 @@ export type TBadRequestError = {
     message: string
     field: string
 }
-
 
 export type VideoPostDTO = {
     title: string
