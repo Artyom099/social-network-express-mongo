@@ -30,7 +30,7 @@ export const postsRepository = {
     async updatePostById(postId: string, title: string, shortDescription: string,
                content: string): Promise<Result<boolean>> {      // put
         const updatedResult = await postCollection.updateOne({id: postId},
-        { $set: {title: title, shortDescription: shortDescription, content: content}})
+        {$set: {title: title, shortDescription: shortDescription, content: content}})
         if(updatedResult.matchedCount < 1 ) {
             return {
                 data: false,

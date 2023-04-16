@@ -6,26 +6,12 @@ type PostOutputModel = {
     page: number
     pageSize: number
     totalCount: number
-    items: [
-        {
-            id: string
-            title: string
-            shortDescription: string
-            content: string
-            blogId: string
-            blogName: string
-            createdAt: string
-        }
-    ]
-}
-type SortedBy<T> = {
-    fieldName: keyof T
-    direction: 'asc' | 'desc'
+    items: TPost[]
 }
 
-const getSortedItems = <T>(items: T[], sortBy: string, direction: string) => {
+const getSortedItems = (items: TPost[], sortBy: string, direction: string): TPost[] => {
     return [...items].sort((u1, u2) => {
-        if (u1.sortBy < u2[sortBy]) {
+        if (u1[sortBy] < u2[sortBy]) {
             return direction === 'asc' ? -1 : 1
         }
         if (u1[sortBy] > u2[sortBy]) {
@@ -42,19 +28,19 @@ export const queryRepository = {
         else return null
     },
 
-    async findPostsThisBlogById(blogId: string, pageNumber: number, pageSize: number, sortBy: string, sortDirection: string): Promise<PostOutputModel[]> {   // get
+    async findPostsThisBlogById(blogId: string, pageNumber: number, pageSize: number, sortBy: string,
+                                sortDirection: string): Promise<PostOutputModel> {   // get
         const dbPosts: TPost[] = await postCollection.find({blogId: blogId}, {projection: {_id: false}}).toArray()
+        const totalCount: number = await postCollection.countDocuments({blogId: blogId})
 
-        const sortedPosts: TPost[] = getSortedItems(dbPosts, sortBy, sortDirection)
-        // todo здесь сделать сортировку постов по параметру sortBy
+        const sortedPosts: TPost[] = getSortedItems(dbPosts, sortBy, sortDirection)     // todo - сортировка постов по параметру sortBy
 
         return {
-            pagesCount: 1,
-            page: 0,
-            pageSize: pageSize,
-            totalCount: 0,
+            pagesCount: pageNumber,     // общее количество страниц?
+            page: 1,                    // текущая страница?
+            pageSize,                   // количество постов на странице
+            totalCount,                 // общее количество постов?
             items: sortedPosts
         }
-
     }
 }

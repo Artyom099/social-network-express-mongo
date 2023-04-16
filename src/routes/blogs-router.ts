@@ -34,8 +34,8 @@ export const getBlogsRouter = () => {
         const findBlog = await queryRepository.findBlogById(req.params.id)
         if (!findBlog) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
 
-        const {pageNumber, pageSize, sortBy, sortDirection} = req.params
-        const postsThisBlog = await queryRepository.findPostsThisBlogById(findBlog.id, pageNumber, pageSize, sortBy, sortDirection)
+        const {id, pageNumber, pageSize, sortBy, sortDirection} = req.params
+        const postsThisBlog = await queryRepository.findPostsThisBlogById(id, Number(pageNumber), Number(pageSize), sortBy, sortDirection)
         res.status(HTTP_STATUS.OK_200).json(postsThisBlog)
     })
 
@@ -45,7 +45,7 @@ export const getBlogsRouter = () => {
         if (!findBlog) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
 
         const {title, shortDescription, content} = req.body
-        const createdPostThisBlog = await postsService.createPost(title, shortDescription, content, req.params.id, findBlog)
+        const createdPostThisBlog = await postsService.createPost(title, shortDescription, content, findBlog.id, findBlog)
         res.status(HTTP_STATUS.CREATED_201).json(createdPostThisBlog)
     })
 
