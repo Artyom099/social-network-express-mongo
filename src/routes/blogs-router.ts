@@ -5,6 +5,7 @@ import {convertResultErrorCodeToHttp, HTTP_STATUS} from "../utils";
 import {blogsService} from "../domain/blogs-service";
 import {postsService} from "../domain/posts-service";
 import {authMiddleware, inputValidationMiddleware} from "../middleware/input-validation-middleware";
+import {queryRepository} from "../repositories/query-repository";
 
 
 const validationBlog = [
@@ -24,22 +25,28 @@ export const getBlogsRouter = () => {
     router.post('/', validationBlog, authMiddleware, inputValidationMiddleware,
     async (req: Request, res: Response) => {
         const {name, description, websiteUrl} = req.body
-        const createBlog = await blogsService.createBlog(name, description, websiteUrl)
-        res.status(HTTP_STATUS.CREATED_201).json(createBlog)
+        const createdBlog = await blogsService.createBlog(name, description, websiteUrl)
+        res.status(HTTP_STATUS.CREATED_201).json(createdBlog)
     })
 
 
     router.get('/:id/posts', async (req: Request, res: Response) => {
-        const findBlog = await blogsService.findBlogById(req.params.id)
+        const findBlog = await queryRepository.findBlogById(req.params.id)
         if (!findBlog) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
 
-        const postsThisBlog = await postsService.findPostsThisBlogById(findBlog.id)
+        const {pageNumber, pageSize, sortBy, sortDirection} = req.params
+        const postsThisBlog = await queryRepository.findPostsThisBlogById(findBlog.id, pageNumber, pageSize, sortBy, sortDirection)
         res.status(HTTP_STATUS.OK_200).json(postsThisBlog)
     })
 
     router.post('/:id/posts', authMiddleware, inputValidationMiddleware,
     async (req: Request, res: Response) => {
+        const findBlog = await blogsService.findBlogById(req.params.id)
+        if (!findBlog) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
 
+        const {title, shortDescription, content} = req.body
+        const createdPostThisBlog = await postsService.createPost(title, shortDescription, content, req.params.id, findBlog)
+        res.status(HTTP_STATUS.CREATED_201).json(createdPostThisBlog)
     })
 
 
