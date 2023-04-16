@@ -1,7 +1,7 @@
 import {Request} from 'express'
 
 export type TVideo = {
-    id: number
+    id: string
     title: string
     author: string
     canBeDownloaded: boolean
@@ -46,7 +46,7 @@ export type VideoPutDTO = {
     publicationDate: string
 }
 export type VideoIdDTO = {
-    id: number
+    id: string
 }
 
 export type PostDTO = {
