@@ -5,7 +5,7 @@ import {Result, ResultCode} from "../utils";
 
 export const blogsRepository = {
     async findExistBlogs(): Promise<TBlog[]> {      // get
-        return await blogCollection.find({}, {projection: {_id: false}}).toArray();
+        return await blogCollection.find({}, {projection: {_id: false}}).toArray()
     },
 
     async createBlog(createdBlog: TBlog): Promise<TBlog> {    // post

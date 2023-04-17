@@ -18,8 +18,9 @@ export const getBlogsRouter = () => {
     const router = express.Router()
 
     router.get('/', async (req: Request, res: Response) => {
-        const foundBlogs = await blogsService.findExistBlogs()
-        res.status(HTTP_STATUS.OK_200).send(foundBlogs)
+        const {searchNameTerm, pageNumber, pageSize, sortBy, sortDirection} = req.params
+        const foundSortedBlogs = await queryRepository.findBlogAndSort(searchNameTerm, Number(pageNumber), Number(pageSize), sortBy, sortDirection)
+        res.status(HTTP_STATUS.OK_200).send(foundSortedBlogs)
     })
 
     router.post('/', validationBlog, authMiddleware, inputValidationMiddleware,
