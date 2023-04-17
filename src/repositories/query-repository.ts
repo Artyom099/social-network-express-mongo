@@ -6,34 +6,22 @@ type PostOutputModel = {
     page: number
     pageSize: number
     totalCount: number
-    items: [
-        {
-            id: string
-            title: string
-            shortDescription: string
-            content: string
-            blogId: string
-            blogName: string
-            createdAt: string
-        }
-    ]
-}
-type SortedBy<T> = {
-    fieldName: keyof T
-    direction: 'asc' | 'desc'
+    items: TPost[]
 }
 
-const getSortedItems = <T>(items: T[], sortBy: string, direction: string) => {
-    return [...items].sort((u1, u2) => {
-        if (u1.sortBy < u2[sortBy]) {
-            return direction === 'asc' ? -1 : 1
-        }
-        if (u1[sortBy] > u2[sortBy]) {
-            return direction === 'desc' ? 1 : -1
-        }
-        return 0
-    })
-}
+// const getSortedItems = (items: TPost[], sortBy: string, direction: string): TPost[] => {
+//     return [...items].sort((u1, u2) => {
+//         if (u1[sortBy] < u2[sortBy]) {
+//             return direction === 'asc' ? -1 : 1
+//         }
+//         if (u1[sortBy] > u2[sortBy]) {
+//             return direction === 'desc' ? 1 : -1
+//         }
+//         return 0
+//     })
+// }
+// const obj = {[sortBy]: ''}
+// obj[sortBy] = 6
 
 export const queryRepository = {
     async findBlogById(blogId: string): Promise<TBlog | null> {    // get, put, delete
@@ -42,19 +30,44 @@ export const queryRepository = {
         else return null
     },
 
-    async findPostsThisBlogById(blogId: string, pageNumber: number, pageSize: number, sortBy: string, sortDirection: string): Promise<PostOutputModel[]> {   // get
-        const dbPosts: TPost[] = await postCollection.find({blogId: blogId}, {projection: {_id: false}}).toArray()
+    async findBlogAndSort(searchNameTerm: string, pageNumber: number, pageSize: number, sortBy: string,
+                          sortDirection: string) {
+        const filter: {blogId: string, searchNameTerm?: string} = {blogId: blogId}
 
-        const sortedPosts: TPost[] = getSortedItems(dbPosts, sortBy, sortDirection)
-        // todo здесь сделать сортировку постов по параметру sortBy
+        // if(searchNameTerm) {
+        //     filter.searchNameTerm = {}
+        // }
+
+        const totalCount: number = await blogCollection.countDocuments({searchNameTerm})
+        const sortedBlogs: TBlog[] = await blogCollection.find({}, {projection: {_id: false}}).toArray()
+        return {
+            pagesCount: Math.ceil(totalCount / pageSize),    // общее количество страниц
+            page: pageNumber,                                   // текущая страница
+            pageSize,                                           // количество блогов на странице
+            totalCount,                                         // общее количество блогов
+            items: sortedBlogs
+        }
+    },
+
+    async findPostsThisBlogById(blogId: string, pageNumber: number, pageSize: number, sortBy: string,
+                                sortDirection: string): Promise<PostOutputModel> {   // get
+
+        const filter: {blogId: string, searchNameTerm?: string} = {blogId: blogId}
+
+        let sortDir
+        if (sortDirection === 'asc') sortDir = '1'
+        if (sortDirection === 'desc') sortDir = '-1'
+
+        const totalCount: number = await postCollection.countDocuments(filter)
+        const sortedPosts: TPost[] = await postCollection.find(filter, {projection: {_id: false}})
+            .sort({sortBy: sortDir}).toArray()
 
         return {
-            pagesCount: 1,
-            page: 0,
-            pageSize: pageSize,
-            totalCount: 0,
+            pagesCount: Math.ceil(totalCount / pageSize),    // общее количество страниц
+            page: pageNumber,                                   // текущая страница
+            pageSize,                                           // количество постов на странице
+            totalCount,                                         // общее количество постов
             items: sortedPosts
         }
-
     }
 }
