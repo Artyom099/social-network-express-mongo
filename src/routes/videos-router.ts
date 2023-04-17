@@ -1,13 +1,6 @@
 import {body} from "express-validator";
 import express, {Request, Response} from "express";
-import {
-    RequestBodyType,
-    RequestParamsBodyType,
-    RequestParamsType,
-    TVideo,
-    VideoIdDTO,
-    VideoPostDTO, VideoPutDTO
-} from "../types";
+import { ReqBodyType, ReqParamsBodyType, ReqParamsType, TVideo, IdDTO, VideoPostDTO, VideoPutDTO} from "../types";
 import {convertResultErrorCodeToHttp, HTTP_STATUS} from "../utils";
 import {videosService} from "../domain/videos-service";
 import {authMiddleware, inputValidationMiddleware} from "../middleware/input-validation-middleware";
@@ -48,7 +41,7 @@ export const getVideosRouter = () => {
     })
     // authMiddleware,
     router.post('/', validationVideoPost, inputValidationMiddleware,
-        async (req: RequestBodyType<VideoPostDTO>, res: Response) => {
+        async (req: ReqBodyType<VideoPostDTO>, res: Response) => {
         const {title, author, availableResolutions} = req.body
         const createdVideo = await videosService.createVideo(title, author, availableResolutions)
         res.status(HTTP_STATUS.CREATED_201).json(createdVideo)
@@ -82,21 +75,21 @@ export const getVideosRouter = () => {
         // }
     })
 
-    router.get('/:id', async (req: RequestParamsType<VideoIdDTO>, res: Response<TVideo>) => {
+    router.get('/:id', async (req: ReqParamsType<IdDTO>, res: Response<TVideo>) => {
         const foundVideo = await videosService.findVideoById(req.params.id)
         if (!foundVideo) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
         res.status(HTTP_STATUS.OK_200).json(foundVideo)
     })
     // authMiddleware,
     router.put('/:id', validationVideoPut, inputValidationMiddleware,
-        async (req: RequestParamsBodyType<VideoIdDTO, VideoPutDTO>, res: Response) => {
+        async (req: ReqParamsBodyType<IdDTO, VideoPutDTO>, res: Response) => {
         const {title, author, availableResolutions, canBeDownloaded, minAgeRestriction, publicationDate} = req.body
         const result = await videosService.updateVideo(req.params.id, title, author, availableResolutions, canBeDownloaded, minAgeRestriction, publicationDate)
 
         if (!result.data) return res.sendStatus(convertResultErrorCodeToHttp(result.code))
 
         const updatedVideo = await videosService.findVideoById(req.params.id)
-            res.status(HTTP_STATUS.NO_CONTENT_204).json(updatedVideo)
+        res.status(HTTP_STATUS.NO_CONTENT_204).json(updatedVideo)
 
         // const errors: TBadRequestError[] = []
         // if (!title || typeof title !== 'string' || !title.trim() || title.length > 40) {
@@ -144,7 +137,7 @@ export const getVideosRouter = () => {
         // }
     })
 
-    router.delete('/:id', async (req: RequestParamsType<VideoIdDTO>, res: Response) => {
+    router.delete('/:id', async (req: ReqParamsType<IdDTO>, res: Response) => {
         const videoForDelete = await videosService.findVideoById(req.params.id)
         if (!videoForDelete) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
 

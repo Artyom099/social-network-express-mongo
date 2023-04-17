@@ -31,7 +31,7 @@ export const getPostsRouter = () => {
         async (req: Request, res: Response) => {
             const {title, shortDescription, content, blogId} = req.body
             const blog = await blogsService.findBlogById(blogId)
-            const createdPost = await postsService.createPost(title, shortDescription, content, blogId, blog)
+            const createdPost = await postsService.createPost(title, shortDescription, content, blog)
             res.status(HTTP_STATUS.CREATED_201).json(createdPost)
     })
 

@@ -4,7 +4,7 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 
-const mongoUri = process.env.MONGO_URL  // || 'mongodb://0.0.0.0:27017'
+const mongoUri = process.env.MONGO_URL || 'mongodb://0.0.0.0:27017'
 if (!mongoUri) throw new Error('UR doesn\'t found')
 const client = new MongoClient(mongoUri)
 

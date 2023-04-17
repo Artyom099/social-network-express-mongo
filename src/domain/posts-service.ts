@@ -8,14 +8,14 @@ export const postsService = {
         return await postsRepository.findExistPosts()
     },
 
-    async createPost(title: string, shortDescription: string, content: string, blogId: string, blog: TBlog | null): Promise<TPost> {    // post
+    async createPost(title: string, shortDescription: string, content: string, blog: TBlog | null): Promise<TPost> {    // post
         const dateNow = new Date()
         const createdPost: TPost = {
             id: (+dateNow).toString(),
             title,
             shortDescription,
             content,
-            blogId,
+            blogId: blog!.id,
             blogName: blog!.name,
             createdAt: dateNow.toISOString()
         }
