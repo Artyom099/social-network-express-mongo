@@ -1,10 +1,11 @@
 import {body} from "express-validator";
 import express, {Request, Response} from "express";
-import {TPost} from "../types";
+import {BlogGetWithSearchDTO, BlogPostsGetDTO, ReqQueryType, TPost} from "../types";
 import {convertResultErrorCodeToHttp, HTTP_STATUS} from "../utils";
 import {postsService} from "../domain/posts-service";
 import {blogsService} from "../domain/blogs-service";
 import {authMiddleware, inputValidationMiddleware} from "../middleware/input-validation-middleware";
+import {queryRepository} from "../repositories/query-repository";
 
 
 const validationPost = [
@@ -22,9 +23,14 @@ const validationPost = [
 export const getPostsRouter = () => {
     const router = express.Router()
 
-    router.get('/', async (req: Request, res: Response) => {
-        const foundPosts = await postsService.findExistPosts()
-        res.status(HTTP_STATUS.OK_200).send(foundPosts)
+    router.get('/', async (req: ReqQueryType<BlogPostsGetDTO>, res: Response) => {
+        const pageNumber = req.query.pageNumber ?? 1
+        const pageSize = req.query.pageSize ?? 10
+        const sortBy = req.query.sortBy ?? 'createdAt'
+        const sortDirection = req.query.sortDirection ?? 'desc'
+
+        const foundSortedPosts = await queryRepository.findPostsAndSort(Number(pageNumber), Number(pageSize), sortBy, sortDirection)
+        res.status(HTTP_STATUS.OK_200).json(foundSortedPosts)
     })
 
     router.post('/', validationPost, authMiddleware, inputValidationMiddleware,
