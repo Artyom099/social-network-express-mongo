@@ -58,7 +58,7 @@ export const getBlogsRouter = () => {
         const sortBy = req.query.sortBy ?? 'createdAt'
         const sortDirection = req.query.sortDirection ?? 'desc'
         const postsThisBlog = await queryRepository.findPostsThisBlogById(findBlog.id, Number(pageNumber), Number(pageSize), sortBy, sortDirection)
-        res.status(HTTP_STATUS.OK_200).json(postsThisBlog)
+        res.status(HTTP_STATUS.OK_200).send(postsThisBlog)
     })
 
     router.post('/:id/posts', validationPost, authMiddleware, inputValidationMiddleware,
