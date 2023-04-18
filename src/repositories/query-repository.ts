@@ -65,14 +65,14 @@ export const queryRepository = {
         }
     },
 
-    async findPostsAndSort( pageNumber: number, pageSize: number, sortBy: string,
+    async findPostsAndSort(pageNumber: number, pageSize: number, sortBy: string,
                            sortDirection: string): Promise<OutputModel<TPost[]>> {
         let sortNum: Sort = -1
         if (sortDirection === 'asc') sortNum = 1
         if (sortDirection === 'desc') sortNum = -1
 
         const totalCount: number = await postCollection.countDocuments()
-        const sortedPosts: TPost[] = await postCollection.find( {projection: {_id: false}})
+        const sortedPosts: TPost[] = await postCollection.find({},{projection: {_id: false}})
             .sort({[sortBy]: sortNum}).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
         return {
             pagesCount: Math.ceil(totalCount / pageSize),    // общее количество страниц
