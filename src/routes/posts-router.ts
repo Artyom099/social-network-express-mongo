@@ -7,7 +7,7 @@ import {blogsService} from "../domain/blogs-service";
 import {authMiddleware, inputValidationMiddleware} from "../middleware/input-validation-middleware";
 
 
-export const validationPost = [
+const validationPost = [
     body('title').isString().isLength({min: 3, max: 30}).trim().not().isEmpty(),
     body('shortDescription').isString().isLength({min: 3, max: 100}).trim().notEmpty(),
     body('content').isString().isLength({min: 3, max: 1000}).trim().notEmpty(),

@@ -14,13 +14,17 @@ import {blogsService} from "../domain/blogs-service";
 import {postsService} from "../domain/posts-service";
 import {authMiddleware, inputValidationMiddleware} from "../middleware/input-validation-middleware";
 import {queryRepository} from "../repositories/query-repository";
-import {validationPost} from "./posts-router";
 
 
 const validationBlog = [
     body('name').isString().isLength({min: 3, max: 15}).trim().not().isEmpty(),
     body('description').isString().isLength({min: 3, max: 500}).trim().notEmpty(),
     body('websiteUrl').isURL().isLength({min: 4, max: 100})
+]
+const validationPost = [
+    body('title').isString().isLength({min: 3, max: 30}).trim().not().isEmpty(),
+    body('shortDescription').isString().isLength({min: 3, max: 100}).trim().notEmpty(),
+    body('content').isString().isLength({min: 3, max: 1000}).trim().notEmpty()
 ]
 
 export const getBlogsRouter = () => {
