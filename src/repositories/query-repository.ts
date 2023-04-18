@@ -10,10 +10,9 @@ type OutputModel<T> = {
     items: T
 }
 
-
 // @ts-ignore
-const directionToNum = (sortDirection: string): Sort => {
-    if (!sortDirection || sortDirection === 'desc') return -1
+const directionToNum = (sortDirection: string = -1): Sort => {
+    if (sortDirection === 'desc') return -1
     if (sortDirection === 'asc') return 1
 }
 
@@ -29,7 +28,7 @@ export const queryRepository = {
         let sortNum: Sort = -1
         if (sortDirection === 'asc') sortNum = 1
         if (sortDirection === 'desc') sortNum = -1
-        // const sortNum: Sort = directionToNum(sortDirection) ?? -1
+        // const sortNum: Sort = directionToNum(sortDirection)
 
         const totalCount: number = await blogCollection.countDocuments({name: { $regex: searchNameTerm}})
         const sortedBlogs: TBlog[] = await blogCollection.find({name: { $regex: searchNameTerm}},
@@ -47,7 +46,7 @@ export const queryRepository = {
                                 sortDirection: string): Promise<OutputModel<TPost[]>> {   // get
         const filter: {blogId: string} = {blogId: blogId}
         let sortNum: Sort = -1
-        if (!sortDirection || sortDirection === 'desc') sortNum = -1
+        if (sortDirection === 'desc') sortNum = -1
         if (sortDirection === 'asc') sortNum = 1
 
         const totalCount: number = await postCollection.countDocuments(filter)
