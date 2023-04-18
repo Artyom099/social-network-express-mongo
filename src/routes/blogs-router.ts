@@ -14,6 +14,7 @@ import {blogsService} from "../domain/blogs-service";
 import {postsService} from "../domain/posts-service";
 import {authMiddleware, inputValidationMiddleware} from "../middleware/input-validation-middleware";
 import {queryRepository} from "../repositories/query-repository";
+import {validationPost} from "./posts-router";
 
 
 const validationBlog = [
@@ -56,7 +57,7 @@ export const getBlogsRouter = () => {
         res.status(HTTP_STATUS.OK_200).json(postsThisBlog)
     })
 
-    router.post('/:id/posts', authMiddleware, inputValidationMiddleware,
+    router.post('/:id/posts', validationPost, authMiddleware, inputValidationMiddleware,
     async (req: ReqParamsBodyType<IdDTO, BlogPostDTO>, res: Response) => {
         const findBlog = await blogsService.findBlogById(req.params.id)
         if (!findBlog) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
