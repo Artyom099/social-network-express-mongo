@@ -31,14 +31,14 @@ export const getBlogsRouter = () => {
     const router = express.Router()
 
     router.get('/', async (req: ReqQueryType<BlogGetWithSearchDTO>, res: Response) => {
-        // const {searchNameTerm, pageNumber, pageSize, sortBy, sortDirection} = req.query
         const searchNameTerm = req.query.searchNameTerm ?? null
         const pageNumber = req.query.pageNumber ?? 1
         const pageSize = req.query.pageSize ?? 10
         const sortBy = req.query.sortBy ?? 'createdAt'
         const sortDirection = req.query.sortDirection ?? 'desc'
+
         const foundSortedBlogs = await queryRepository.findBlogsAndSort(searchNameTerm, Number(pageNumber), Number(pageSize), sortBy, sortDirection)
-        res.status(HTTP_STATUS.OK_200).send(foundSortedBlogs)
+        res.status(HTTP_STATUS.OK_200).json(foundSortedBlogs)
     })
 
     router.post('/', validationBlog, authMiddleware, inputValidationMiddleware,
@@ -52,13 +52,13 @@ export const getBlogsRouter = () => {
         const findBlog = await queryRepository.findBlogById(req.params.id)
         if (!findBlog) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
 
-        // const {pageNumber, pageSize, sortBy, sortDirection} = req.query
         const pageNumber = req.query.pageNumber ?? 1
         const pageSize = req.query.pageSize ?? 10
         const sortBy = req.query.sortBy ?? 'createdAt'
         const sortDirection = req.query.sortDirection ?? 'desc'
+
         const postsThisBlog = await queryRepository.findPostsThisBlogById(findBlog.id, Number(pageNumber), Number(pageSize), sortBy, sortDirection)
-        res.status(HTTP_STATUS.OK_200).send(postsThisBlog)
+        res.status(HTTP_STATUS.OK_200).json(postsThisBlog)
     })
 
     router.post('/:id/posts', validationPost, authMiddleware, inputValidationMiddleware,
