@@ -32,7 +32,7 @@ export const getBlogsRouter = () => {
 
     router.get('/', async (req: ReqQueryType<BlogGetWithSearchDTO>, res: Response) => {
         // const {searchNameTerm, pageNumber, pageSize, sortBy, sortDirection} = req.query
-        const searchNameTerm = req.query.searchNameTerm ?? ''
+        const searchNameTerm = req.query.searchNameTerm ?? null
         const pageNumber = req.query.pageNumber ?? 1
         const pageSize = req.query.pageSize ?? 10
         const sortBy = req.query.sortBy ?? 'createdAt'
