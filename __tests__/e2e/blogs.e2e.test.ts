@@ -11,4 +11,10 @@ describe('/blogs', () => {
             .get('/blogs')
             .expect(200, [])
     })
+
+    it('should return 404 for not existing blog', async () => {
+        await request(app)
+            .get('/blogs/1')
+            .expect(404)
+    })
 })

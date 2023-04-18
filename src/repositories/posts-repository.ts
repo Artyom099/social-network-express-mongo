@@ -31,7 +31,7 @@ export const postsRepository = {
                content: string): Promise<Result<boolean>> {      // put
         const updatedResult = await postCollection.updateOne({id: postId},
         {$set: {title: title, shortDescription: shortDescription, content: content}})
-        if(updatedResult.matchedCount < 1 ) {
+        if(updatedResult.matchedCount < 1) {
             return {
                 data: false,
                 code: ResultCode.NotFound

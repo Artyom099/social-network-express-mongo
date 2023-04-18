@@ -1,27 +1,20 @@
 import {TBlog, TPost} from "../types";
 import {blogCollection, postCollection} from "../db/db";
+import {Sort} from "mongodb";
 
-type PostOutputModel = {
+type OutputModel<T> = {
     pagesCount: number
     page: number
     pageSize: number
     totalCount: number
-    items: TPost[]
+    items: T
 }
 
-// const getSortedItems = (items: TPost[], sortBy: string, direction: string): TPost[] => {
-//     return [...items].sort((u1, u2) => {
-//         if (u1[sortBy] < u2[sortBy]) {
-//             return direction === 'asc' ? -1 : 1
-//         }
-//         if (u1[sortBy] > u2[sortBy]) {
-//             return direction === 'desc' ? 1 : -1
-//         }
-//         return 0
-//     })
-// }
-// const obj = {[sortBy]: ''}
-// obj[sortBy] = 6
+// @ts-ignore
+const directionToNum = (sortDirection: string = -1): Sort => {
+    if (sortDirection === 'desc') return -1
+    if (sortDirection === 'asc') return 1
+}
 
 export const queryRepository = {
     async findBlogById(blogId: string): Promise<TBlog | null> {    // get, put, delete
@@ -30,16 +23,16 @@ export const queryRepository = {
         else return null
     },
 
-    async findBlogAndSort(searchNameTerm: string, pageNumber: number, pageSize: number, sortBy: string,
-                          sortDirection: string) {
-        const filter: {blogId: string, searchNameTerm?: string} = {blogId: blogId}
+    async findBlogsAndSort(searchNameTerm: string, pageNumber: number, pageSize: number, sortBy: string,
+                          sortDirection: string): Promise<OutputModel<TBlog[]>> {
+        let sortNum: Sort = -1
+        if (sortDirection === 'asc') sortNum = 1
+        if (sortDirection === 'desc') sortNum = -1
+        // const sortNum: Sort = directionToNum(sortDirection)
 
-        // if(searchNameTerm) {
-        //     filter.searchNameTerm = {}
-        // }
-
-        const totalCount: number = await blogCollection.countDocuments({searchNameTerm})
-        const sortedBlogs: TBlog[] = await blogCollection.find({}, {projection: {_id: false}}).toArray()
+        const totalCount: number = await blogCollection.countDocuments({name: { $regex: searchNameTerm}})
+        const sortedBlogs: TBlog[] = await blogCollection.find({name: { $regex: searchNameTerm}},
+            {projection: {_id: false}}).sort({sortBy: sortNum}).toArray()
         return {
             pagesCount: Math.ceil(totalCount / pageSize),    // общее количество страниц
             page: pageNumber,                                   // текущая страница
@@ -50,18 +43,15 @@ export const queryRepository = {
     },
 
     async findPostsThisBlogById(blogId: string, pageNumber: number, pageSize: number, sortBy: string,
-                                sortDirection: string): Promise<PostOutputModel> {   // get
-
-        const filter: {blogId: string, searchNameTerm?: string} = {blogId: blogId}
-
-        let sortDir
-        if (sortDirection === 'asc') sortDir = '1'
-        if (sortDirection === 'desc') sortDir = '-1'
+                                sortDirection: string): Promise<OutputModel<TPost[]>> {   // get
+        const filter: {blogId: string} = {blogId: blogId}
+        let sortNum: Sort = -1
+        if (sortDirection === 'desc') sortNum = -1
+        if (sortDirection === 'asc') sortNum = 1
 
         const totalCount: number = await postCollection.countDocuments(filter)
         const sortedPosts: TPost[] = await postCollection.find(filter, {projection: {_id: false}})
-            .sort({sortBy: sortDir}).toArray()
-
+            .sort({sortBy: sortNum}).toArray()
         return {
             pagesCount: Math.ceil(totalCount / pageSize),    // общее количество страниц
             page: pageNumber,                                   // текущая страница

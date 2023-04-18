@@ -1,5 +1,9 @@
 import {Request} from 'express'
 
+export type IdDTO = {
+    id: string
+}
+
 export type TVideo = {
     id: string
     title: string
@@ -27,10 +31,6 @@ export type TPost = {
     blogName: string
     createdAt: string
 }
-export type TBadRequestError = {
-    message: string
-    field: string
-}
 
 export type VideoPostDTO = {
     title: string
@@ -45,8 +45,30 @@ export type VideoPutDTO = {
     minAgeRestriction: number | null
     publicationDate: string
 }
-export type VideoIdDTO = {
-    id: string
+
+export type BlogPostsGetDTO = {
+    pageNumber: number
+    pageSize: number
+    sortBy: string
+    sortDirection: string
+}
+
+export type BlogGetWithSearchDTO = {
+    searchNameTerm: string
+    pageNumber: number
+    pageSize: number
+    sortBy: string
+    sortDirection: string
+}
+export type BlogPostDTO = {
+    title: string
+    shortDescription: string
+    content: string
+}
+export type BlogPutDTO = {
+    name: string
+    description: string
+    websiteUrl: string
 }
 
 export type PostDTO = {
@@ -56,7 +78,11 @@ export type PostDTO = {
     blogId: string
 }
 
-export type RequestParamsType<T> = Request<T>
-export type RequestBodyType<T> = Request<{},{},T>  //или так - Request<{},{},{},T> ? TODO проверить
-export type RequestParamsBodyType<T, Y> = Request<T,{},Y>
+// e.Request<P,ResBody,ReqBody,ReqQuery,Locals>
+//     <Params, ??????,   Body,   Query, ?????>
 
+export type ReqParamsType<T> = Request<T>
+export type ReqBodyType<T>   = Request<{},{},T>
+export type ReqQueryType<T>  = Request<{},{},{},T>
+export type ReqParamsBodyType<T, Y> = Request<T,{},Y>
+export type ReqParamsQueryType<T, Y> = Request<T,{},{},Y>
