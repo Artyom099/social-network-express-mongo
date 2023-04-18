@@ -1,6 +1,6 @@
 import {TBlog, TPost} from "../types";
 import {blogCollection, postCollection} from "../db/db";
-import {Sort} from "mongodb";
+import {Filter, Sort} from "mongodb";
 
 type OutputModel<T> = {
     pagesCount: number
@@ -23,18 +23,18 @@ export const queryRepository = {
         else return null
     },
 
-    async findBlogsAndSort(searchNameTerm: string, pageNumber: number, pageSize: number, sortBy: string,
+    async findBlogsAndSort(searchNameTerm: string | null, pageNumber: number, pageSize: number, sortBy: string,
                           sortDirection: string): Promise<OutputModel<TBlog[]>> {
         let sortNum: Sort = -1
         if (sortDirection === 'asc') sortNum = 1
         if (sortDirection === 'desc') sortNum = -1
+        const filter: Filter<TBlog> = {}
+        if (searchNameTerm) {
+            filter.name = {$regex: searchNameTerm}
+        }
 
-        // if (!searchNameTerm) {
-        //     return searchNameTerm = ''
-        // }
-
-        const totalCount: number = await blogCollection.countDocuments({name: {$regex: searchNameTerm}})
-        const sortedBlogs: TBlog[] = await blogCollection.find({name: {$regex: searchNameTerm}},{projection: {_id: false}})
+        const totalCount: number = await blogCollection.countDocuments(filter)
+        const sortedBlogs: TBlog[] = await blogCollection.find(filter,{projection: {_id: false}})
             .sort({sortBy: sortNum}).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
         return {
             pagesCount: Math.ceil(totalCount / pageSize),    // общее количество страниц
