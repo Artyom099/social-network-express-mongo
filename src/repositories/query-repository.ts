@@ -25,9 +25,10 @@ export const queryRepository = {
 
     async findBlogsAndSort(searchNameTerm: string | null, pageNumber: number, pageSize: number, sortBy: string,
                           sortDirection: string): Promise<OutputModel<TBlog[]>> {
-        let sortNum: Sort = -1
-        if (sortDirection === 'asc') sortNum = 1
-        if (sortDirection === 'desc') sortNum = -1
+        let sortNum: Sort = 1
+        if (sortDirection === 'asc') sortNum = -1
+        if (sortDirection === 'desc') sortNum = 1
+
         const filter: Filter<TBlog> = {}
         if (searchNameTerm) {
             filter.name = {$regex: searchNameTerm}
@@ -48,9 +49,9 @@ export const queryRepository = {
     async findPostsThisBlogById(blogId: string, pageNumber: number, pageSize: number, sortBy: string,
                                 sortDirection: string): Promise<OutputModel<TPost[]>> {   // get
         const filter: {blogId: string} = {blogId: blogId}
-        let sortNum: Sort = -1
-        if (sortDirection === 'asc') sortNum = 1
-        if (sortDirection === 'desc') sortNum = -1
+        let sortNum: Sort = 1
+        if (sortDirection === 'asc') sortNum = -1
+        if (sortDirection === 'desc') sortNum = 1
 
         const totalCount: number = await postCollection.countDocuments(filter)
         const sortedPosts: TPost[] = await postCollection.find(filter, {projection: {_id: false}})
