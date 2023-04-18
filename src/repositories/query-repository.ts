@@ -36,7 +36,7 @@ export const queryRepository = {
 
         const totalCount: number = await blogCollection.countDocuments(filter)
         const sortedBlogs: TBlog[] = await blogCollection.find(filter,{projection: {_id: false}})
-            .sort({sortBy: sortNum}).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
+            .sort({[sortBy]: sortNum}).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
         return {
             pagesCount: Math.ceil(totalCount / pageSize),    // общее количество страниц
             page: pageNumber,                                   // текущая страница
@@ -55,7 +55,7 @@ export const queryRepository = {
 
         const totalCount: number = await postCollection.countDocuments(filter)
         const sortedPosts: TPost[] = await postCollection.find(filter, {projection: {_id: false}})
-            .sort({sortBy: sortNum}).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
+            .sort({[sortBy]: sortNum}).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
         return {
             pagesCount: Math.ceil(totalCount / pageSize),    // общее количество страниц
             page: pageNumber,                                   // текущая страница
