@@ -80,7 +80,7 @@ export type PostDTO = {
 
 // e.Request<P,ResBody,ReqBody,ReqQuery,Locals>
 //     <Params, ??????,   Body,   Query, ?????>
-
+7
 export type ReqParamsType<T> = Request<T>
 export type ReqBodyType<T>   = Request<{},{},T>
 export type ReqQueryType<T>  = Request<{},{},{},T>
