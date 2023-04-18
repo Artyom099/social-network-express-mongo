@@ -31,7 +31,7 @@ export const queryRepository = {
 
         const filter: Filter<TBlog> = {}
         if (searchNameTerm) {
-            filter.name = {$regex: searchNameTerm}
+            filter.name = {$regex: searchNameTerm, $options: "i"}
         }
 
         const totalCount: number = await blogCollection.countDocuments(filter)
