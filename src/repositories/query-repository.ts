@@ -25,14 +25,14 @@ export const queryRepository = {
 
     async findBlogsAndSort(searchNameTerm: string, pageNumber: number, pageSize: number, sortBy: string,
                           sortDirection: string): Promise<OutputModel<TBlog[]>> {
-        let sortNum: Sort = 1
-        if (sortDirection === 'asc') sortNum = -1
-        if (sortDirection === 'desc') sortNum = 1
+        let sortNum: Sort = -1
+        if (sortDirection === 'asc') sortNum = 1
+        if (sortDirection === 'desc') sortNum = -1
         // const sortNum: Sort = directionToNum(sortDirection)
 
         const totalCount: number = await blogCollection.countDocuments({name: { $regex: searchNameTerm}})
-        const sortedBlogs: TBlog[] = await blogCollection.find({name: { $regex: searchNameTerm}},
-            {projection: {_id: false}}).sort({sortBy: sortNum}).toArray()
+        const sortedBlogs: TBlog[] = await blogCollection.find({name: { $regex: searchNameTerm}},{projection: {_id: false}})
+            .sort({sortBy: sortNum}).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
         return {
             pagesCount: Math.ceil(totalCount / pageSize),    // общее количество страниц
             page: pageNumber,                                   // текущая страница
@@ -45,19 +45,19 @@ export const queryRepository = {
     async findPostsThisBlogById(blogId: string, pageNumber: number, pageSize: number, sortBy: string,
                                 sortDirection: string): Promise<OutputModel<TPost[]>> {   // get
         const filter: {blogId: string} = {blogId: blogId}
-        let sortNum: Sort = 1
-        if (sortDirection === 'asc') sortNum = -1
-        if (sortDirection === 'desc') sortNum = 1
+        let sortNum: Sort = -1
+        if (sortDirection === 'asc') sortNum = 1
+        if (sortDirection === 'desc') sortNum = -1
 
         const totalCount: number = await postCollection.countDocuments(filter)
         const sortedPosts: TPost[] = await postCollection.find(filter, {projection: {_id: false}})
-            .sort({sortBy: sortNum}).toArray()
+            .sort({sortBy: sortNum}).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
         return {
             pagesCount: Math.ceil(totalCount / pageSize),    // общее количество страниц
             page: pageNumber,                                   // текущая страница
             pageSize,                                           // количество постов на странице
             totalCount,                                         // общее количество постов
-            items: sortedPosts
+            items: sortedPosts          // выводить pageSize постов на pageNumber странице
         }
     }
 }
