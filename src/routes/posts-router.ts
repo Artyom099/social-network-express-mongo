@@ -1,6 +1,6 @@
 import {body} from "express-validator";
 import express, {Request, Response} from "express";
-import {BlogGetWithSearchDTO, BlogPostsGetDTO, ReqQueryType, TPost} from "../types";
+import {BlogPostsGetDTO, ReqQueryType, TPost} from "../types";
 import {convertResultErrorCodeToHttp, HTTP_STATUS} from "../utils";
 import {postsService} from "../domain/posts-service";
 import {blogsService} from "../domain/blogs-service";
