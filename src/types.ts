@@ -1,4 +1,5 @@
 import {Request} from 'express'
+import {ObjectId} from "mongodb";
 
 export type IdDTO = {
     id: string
@@ -29,6 +30,12 @@ export type TPost = {
     content: string
     blogId: string
     blogName: string
+    createdAt: string
+}
+export type TUser = {
+    id: string
+    login: string
+    email: string
     createdAt: string
 }
 
@@ -71,6 +78,28 @@ export type BlogPutDTO = {
     websiteUrl: string
 }
 
+export type UserGetDTO = {
+    searchEmailTerm: string
+    searchLoginTerm: string
+    pageNumber: number
+    pageSize: number
+    sortBy: string
+    sortDirection: string
+}
+export type UserDBType = {
+    id: object
+    userName: string
+    email: string
+    passwordHash: string
+    passwordSalt: string
+    createdAt: string
+}
+
+export type AuthType = {
+    loginOrEmail: string
+    password: string
+}
+
 export type PostDTO = {
     title: string
     shortDescription: string
@@ -86,3 +115,11 @@ export type ReqBodyType<T>   = Request<{},{},T>
 export type ReqQueryType<T>  = Request<{},{},{},T>
 export type ReqParamsBodyType<T, Y> = Request<T,{},Y>
 export type ReqParamsQueryType<T, Y> = Request<T,{},{},Y>
+
+export type OutputModel<T> = {
+    pagesCount: number
+    page: number
+    pageSize: number
+    totalCount: number
+    items: T
+}

@@ -1,14 +1,6 @@
-import {TBlog, TPost} from "../types";
+import {OutputModel, TBlog, TPost} from "../types";
 import {blogCollection, postCollection} from "../db/db";
 import {Filter, Sort} from "mongodb";
-
-type OutputModel<T> = {
-    pagesCount: number
-    page: number
-    pageSize: number
-    totalCount: number
-    items: T
-}
 
 // @ts-ignore
 const directionToNum = (sortDirection: string = -1): Sort => {
