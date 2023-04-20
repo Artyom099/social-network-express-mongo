@@ -4,6 +4,7 @@ import {HTTP_STATUS} from "../utils";
 import {usersService} from "../domain/users-service";
 import {body} from "express-validator";
 import {ReqQueryType, UserGetDTO} from "../types";
+import {queryRepository} from "../repositories/query-repository";
 
 const validationUser = [
     body('login').isString().isLength({min: 3, max: 10}).trim().notEmpty().matches('^[a-zA-Z0-9_-]*$'),
@@ -22,7 +23,7 @@ export const getUsersRouter = () => {
         const sortBy = req.query.sortBy ?? 'createdAt'
         const sortDirection = req.query.sortDirection ?? 'desc'
 
-        const foundSortedUsers = await usersService.findUsersAndSort(searchEmailTerm, searchLoginTerm, Number(pageNumber), Number(pageSize), sortBy, sortDirection)
+        const foundSortedUsers = await queryRepository.findUsersAndSort(searchEmailTerm, searchLoginTerm, Number(pageNumber), Number(pageSize), sortBy, sortDirection)
         res.status(HTTP_STATUS.OK_200).json(foundSortedUsers)
     })
 

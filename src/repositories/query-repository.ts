@@ -1,5 +1,5 @@
-import {OutputModel, TBlog, TPost} from "../types";
-import {blogCollection, postCollection} from "../db/db";
+import {OutputModel, TBlog, TPost, TUser} from "../types";
+import {blogCollection, postCollection, userCollection} from "../db/db";
 import {Filter, Sort} from "mongodb";
 
 // @ts-ignore TODO заменить этой функцией sortNum
@@ -72,6 +72,32 @@ export const queryRepository = {
             pageSize,                                           // количество постов на странице
             totalCount,                                         // общее количество постов
             items: sortedPosts          // выводить pageSize постов на pageNumber странице
+        }
+    },
+
+    async findUsersAndSort(searchEmailTerm: string, searchLoginTerm: string, pageNumber: number, pageSize: number, sortBy: string,
+                         sortDirection: string): Promise<OutputModel<TUser[]>> {
+        let sortNum: Sort = -1
+        if (sortDirection === 'asc') sortNum = 1     // 1 - возрстание
+        if (sortDirection === 'desc') sortNum = -1   // -1 - убывание
+
+        const filter: Filter<TUser> = {}
+        if (searchEmailTerm) {
+            filter.email = {$regex: searchEmailTerm, $options: "i"}
+        }
+        if (searchLoginTerm) {
+            filter.login = {$regex: searchLoginTerm, $options: "i"}
+        }
+
+        const totalCount: number = await userCollection.countDocuments(filter)
+        const sortedUsers: TUser[] = await userCollection.find(filter,{projection: {_id: false, passwordHash: false, passwordSalt: false}})
+            .sort({[sortBy]: sortNum}).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
+        return {
+            pagesCount: Math.ceil(totalCount / pageSize),    // общее количество страниц
+            page: pageNumber,                                   // текущая страница
+            pageSize,                                           // количество пользователей на странице
+            totalCount,                                         // общее количество пользователей
+            items: sortedUsers
         }
     }
 }
