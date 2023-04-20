@@ -40,7 +40,7 @@ export const queryRepository = {
 
     async findPostsThisBlogById(blogId: string, pageNumber: number, pageSize: number, sortBy: string,
                                 sortDirection: string): Promise<OutputModel<TPost[]>> {   // get
-        const filter: { blogId: string } = {blogId: blogId}
+        const filter: {blogId: string} = {blogId: blogId}
         let sortNum: Sort = -1
         if (sortDirection === 'asc') sortNum = 1
         if (sortDirection === 'desc') sortNum = -1
@@ -83,10 +83,10 @@ export const queryRepository = {
 
         const filter: Filter<TUser> = {}
         if (searchEmailTerm) {
-            filter.email = {$regex: searchEmailTerm, $options: "i"}
+            filter.email = {regex: searchEmailTerm, $options: "i"}
         }
         if (searchLoginTerm) {
-            filter.login = {$regex: searchLoginTerm, $options: "i"}
+            filter.login = {regex: searchLoginTerm, $options: "i"}
         }
 
         const totalCount: number = await userCollection.countDocuments(filter)
