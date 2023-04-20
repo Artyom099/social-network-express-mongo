@@ -15,7 +15,7 @@ export const authRouter = () => {
     router.post('/login', validationAuth, inputValidationMiddleware, async (req: ReqBodyType<AuthType>, res: Response) => {
         const checkResult = await usersService.checkCredentials(req.body.loginOrEmail, req.body.password)
         if (checkResult) {
-            res.sendStatus(HTTP_STATUS.CREATED_201)     //.send(checkResult.data)
+            res.sendStatus(HTTP_STATUS.NO_CONTENT_204)     //.send(checkResult.data)
         } else {
             res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
         }
