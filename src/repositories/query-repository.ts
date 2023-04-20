@@ -2,7 +2,7 @@ import {OutputModel, TBlog, TPost} from "../types";
 import {blogCollection, postCollection} from "../db/db";
 import {Filter, Sort} from "mongodb";
 
-// @ts-ignore
+// @ts-ignore TODO заменить этой функцией sortNum
 const directionToNum = (sortDirection: string = -1): Sort => {
     if (sortDirection === 'desc') return -1
     if (sortDirection === 'asc') return 1

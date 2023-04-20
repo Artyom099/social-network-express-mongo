@@ -1,5 +1,4 @@
 import {Request} from 'express'
-import {ObjectId} from "mongodb";
 
 export type IdDTO = {
     id: string
@@ -87,8 +86,8 @@ export type UserGetDTO = {
     sortDirection: string
 }
 export type UserDBType = {
-    id: object
-    userName: string
+    id: string
+    login: string
     email: string
     passwordHash: string
     passwordSalt: string
