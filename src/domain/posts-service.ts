@@ -4,10 +4,6 @@ import {postsRepository} from "../repositories/posts-repository";
 
 
 export const postsService = {
-    async findExistPosts(): Promise<TPost[]> {      // get
-        return await postsRepository.findExistPosts()
-    },
-
     async createPost(title: string, shortDescription: string, content: string, blog: TBlog | null): Promise<TPost> {    // post
         const dateNow = new Date()
         const createdPost: TPost = {

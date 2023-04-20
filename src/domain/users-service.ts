@@ -1,13 +1,9 @@
 import bcrypt from 'bcrypt'
-import {usersRepository} from "../repositories/users-repository";
 import {TUser, UserDBType} from "../types";
+import {usersRepository} from "../repositories/users-repository";
+
 
 export const usersService = {
-    async findUsersAndSort(searchEmailTerm: string, searchLoginTerm: string, pageNumber: number, pageSize: number, sortBy: string,
-                  sortDirection: string) {
-        return await usersRepository.findExistUsers(pageNumber, pageSize, sortBy, sortDirection)
-    },
-
     async createUser(login: string, password: string, email: string) {
         const passwordSalt = await bcrypt.genSalt(10)
         const passwordHash = await this._generateHash(password, passwordSalt)
