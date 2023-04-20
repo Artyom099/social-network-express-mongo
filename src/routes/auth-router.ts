@@ -14,7 +14,7 @@ export const authRouter = () => {
     const router = express.Router()
     router.post('/login', validationAuth, inputValidationMiddleware, async (req: ReqBodyType<AuthType>, res: Response) => {
         const checkResult = await usersService.checkCredentials(req.body.loginOrEmail, req.body.password)
-        if (!checkResult) {
+        if (checkResult) {
             res.sendStatus(HTTP_STATUS.CREATED_201)     //.send(checkResult.data)
         } else {
             res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
