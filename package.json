@@ -9,6 +9,7 @@
     "test": "jest -i --detectOpenHandles --no-cache"
   },
   "dependencies": {
+    "@types/bcrypt": "^5.0.0",
     "@types/jest": "^29.5.0",
     "@types/supertest": "^2.0.12",
     "bcrypt": "^5.1.0",

@@ -1,4 +1,4 @@
-import {TBlog, TPost, TVideo} from "../types"
+import {TBlog, TPost, TVideo, UserDBType} from "../types"
 import {MongoClient} from 'mongodb'
 import dotenv from 'dotenv'
 dotenv.config()
@@ -12,6 +12,7 @@ const database = client.db();
 export const videoCollection = database.collection<TVideo>('videos')
 export const blogCollection = database.collection<TBlog>('blogs')
 export const postCollection = database.collection<TPost>('posts')
+export const userCollection = database.collection<UserDBType>('users')
 
 export async function runDb() {
     try {
