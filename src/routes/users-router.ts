@@ -7,7 +7,7 @@ import {ReqQueryType, UserGetDTO} from "../types";
 
 const validationUser = [
     body('login').isString().isLength({min: 3, max: 10}).trim().notEmpty().matches('^[a-zA-Z0-9_-]*$'),
-    body('password').isString().isLength({min: 3, max: 20}).trim().notEmpty(),
+    body('password').isString().isLength({min: 6, max: 20}).trim().notEmpty(),
     body('email').isString().isEmail().trim().notEmpty(),
 ]
 

@@ -11,7 +11,7 @@ export const usersRepository = {
         if (sortDirection === 'desc') sortNum = -1   // -1 - убывание
 
         const totalCount: number = await userCollection.countDocuments()
-        const sortedUsers: TUser[] = await userCollection.find({},{projection: [{_id: false}, {passwordHash: false}, {passwordSalt: false}]})
+        const sortedUsers: TUser[] = await userCollection.find({},{projection: {_id: false, passwordHash: false, passwordSalt: false}})
             .sort({[sortBy]: sortNum}).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
         return {
             pagesCount: Math.ceil(totalCount / pageSize),    // общее количество страниц
