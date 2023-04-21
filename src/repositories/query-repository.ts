@@ -3,7 +3,7 @@ import {blogCollection, postCollection, userCollection} from "../db/db";
 import {Filter, Sort} from "mongodb";
 
 // @ts-ignore TODO заменить этой функцией sortNum
-const directionToNum = (sortDirection: string = -1): Sort => {
+const sortDirToNum = (sortDirection: string = -1): Sort => {
     if (sortDirection === 'desc') return -1
     if (sortDirection === 'asc') return 1
 }
@@ -22,9 +22,7 @@ export const queryRepository = {
         if (sortDirection === 'desc') sortNum = -1   // -1 - убывание
 
         const filter: Filter<TBlog> = {}
-        if (searchNameTerm) {
-            filter.name = {$regex: searchNameTerm, $options: "i"}
-        }
+        if (searchNameTerm) filter.name = {$regex: searchNameTerm, $options: "i"}
 
         const totalCount: number = await blogCollection.countDocuments(filter)
         const sortedBlogs: TBlog[] = await blogCollection.find(filter, {projection: {_id: false}})
@@ -40,7 +38,7 @@ export const queryRepository = {
 
     async findPostsThisBlogById(blogId: string, pageNumber: number, pageSize: number, sortBy: string,
                                 sortDirection: string): Promise<OutputModel<TPost[]>> {   // get
-        const filter: {blogId: string} = {blogId: blogId}
+        const filter: { blogId: string } = {blogId: blogId}
         let sortNum: Sort = -1
         if (sortDirection === 'asc') sortNum = 1
         if (sortDirection === 'desc') sortNum = -1
@@ -64,7 +62,7 @@ export const queryRepository = {
         if (sortDirection === 'desc') sortNum = -1
 
         const totalCount: number = await postCollection.countDocuments()
-        const sortedPosts: TPost[] = await postCollection.find({},{projection: {_id: false}})
+        const sortedPosts: TPost[] = await postCollection.find({}, {projection: {_id: false}})
             .sort({[sortBy]: sortNum}).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
         return {
             pagesCount: Math.ceil(totalCount / pageSize),    // общее количество страниц
@@ -76,21 +74,21 @@ export const queryRepository = {
     },
 
     async findUsersAndSort(searchEmailTerm: string, searchLoginTerm: string, pageNumber: number, pageSize: number, sortBy: string,
-                         sortDirection: string): Promise<OutputModel<TUser[]>> {
+                           sortDirection: string): Promise<OutputModel<TUser[]>> {
         let sortNum: Sort = -1
         if (sortDirection === 'asc') sortNum = 1     // 1 - возрстание
         if (sortDirection === 'desc') sortNum = -1   // -1 - убывание
 
-        const filter: Filter<TUser> = {}
-        if (searchEmailTerm) {
-            filter.email = {$regex: searchEmailTerm, $options: "i"}
-        }
-        if (searchLoginTerm) {
-            filter.login = {$regex: searchLoginTerm, $options: "i"}
-        }
+        // let filter: Filter<TUser> = {}
+        // if (searchEmailTerm) filter.email = {$regex: searchEmailTerm, $options: "i"}
+        // if (searchLoginTerm) filter.login = {$regex: searchLoginTerm, $options: "i"}
 
+        const filter: Filter<TUser> = {
+            $or: [{login: {$regex: searchLoginTerm ?? '', $options: "i"}},
+                {email: {$regex: searchEmailTerm ?? '', $options: "i"}}]
+        }
         const totalCount: number = await userCollection.countDocuments(filter)
-        const sortedUsers: TUser[] = await userCollection.find(filter,{projection: {_id: false, passwordHash: false, passwordSalt: false}})
+        const sortedUsers: TUser[] = await userCollection.find(filter, {projection: {_id: false, passwordHash: false, passwordSalt: false}})
             .sort({[sortBy]: sortNum}).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
         return {
             pagesCount: Math.ceil(totalCount / pageSize),    // общее количество страниц
