@@ -79,10 +79,6 @@ export const queryRepository = {
         if (sortDirection === 'asc') sortNum = 1     // 1 - возрстание
         if (sortDirection === 'desc') sortNum = -1   // -1 - убывание
 
-        // let filter: Filter<TUser> = {}
-        // if (searchEmailTerm) filter.email = {$regex: searchEmailTerm, $options: "i"}
-        // if (searchLoginTerm) filter.login = {$regex: searchLoginTerm, $options: "i"}
-
         const filter: Filter<TUser> = {
             $or: [{login: {$regex: searchLoginTerm ?? '', $options: "i"}},
                 {email: {$regex: searchEmailTerm ?? '', $options: "i"}}]
