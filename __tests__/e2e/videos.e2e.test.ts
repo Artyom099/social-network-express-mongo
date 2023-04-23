@@ -61,6 +61,7 @@ describe('/videos', () => {
             .get('/videos')
             .expect(200, [createdVideo1])
     })
+
     let createdVideo2: any = null
     it('create one more video with correct input data', async () => {
         const createResponse = await request(app)
