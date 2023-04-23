@@ -93,7 +93,7 @@ describe('/videos', () => {
     // TODO - не работет, починить
     // it('shouldn\'t update video with incorrect input data', async () => {
     //     await request(app)
-    //         .put('/videos/' + createdVideo.id)
+    //         .put('/videos/' + createdVideo1.id)
     //         .send({
     //             title: "valid title",
     //             author: "invalid author len=21",
@@ -104,13 +104,13 @@ describe('/videos', () => {
     //         })
     //         .expect(400)
     //
-    //     expect(createdVideo).toEqual({
+    //     expect(createdVideo1).toEqual({
     //         message: expect.any(String),
     //         field: 'author'
     //     })
     //
     //     await request(app)
-    //         .get('/videos/' + createdVideo.id)
+    //         .get('/videos/' + createdVideo1.id)
     //         .expect(200, [createdVideo])
     // })
 
@@ -131,7 +131,7 @@ describe('/videos', () => {
     // TODO - не работет, починить
     // it('should update video with correct input data', async () => {
     //         await request(app)
-    //             .put('/videos/' + createdVideo.id)
+    //             .put('/videos/' + createdVideo1.id)
     //             .send({
     //                 title: 'UPDATED valid title',
     //                 author: "valid author",
@@ -143,7 +143,7 @@ describe('/videos', () => {
     //             .expect(204)
     //
     //         await request(app)
-    //             .get('/videos/' + createdVideo.id)
+    //             .get('/videos/' + createdVideo1.id)
     //             .expect(200, {
     //                 ...createdVideo,
     //                 title: 'UPDATED valid title',
