@@ -71,7 +71,6 @@ export const getBlogsRouter = () => {
         res.status(HTTP_STATUS.CREATED_201).json(createdPostThisBlog)
     })
 
-
     router.get('/:id', async (req: Request, res: Response<TBlog>) => {
         const findBlog = await blogsService.findBlogById(req.params.id)
         if (!findBlog) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)     // если не нашли блог по id, то выдаем ошибку и выходим из эндпоинта
