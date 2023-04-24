@@ -1,4 +1,10 @@
-import {videoCollection, blogCollection, postCollection, userCollection} from "../db/db";
+import {
+    videoCollection,
+    blogCollection,
+    postCollection,
+    userCollection,
+    commentCollection,
+} from "../db/db";
 
 
 export const testsRepository = {
@@ -7,6 +13,7 @@ export const testsRepository = {
         await blogCollection.deleteMany()
         await postCollection.deleteMany()
         await userCollection.deleteMany()
+        await commentCollection.deleteMany()
         return
     }
 }

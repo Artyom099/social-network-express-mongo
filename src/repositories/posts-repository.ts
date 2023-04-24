@@ -4,10 +4,6 @@ import {Result, ResultCode} from "../utils";
 
 
 export const postsRepository = {
-    async findExistPosts(): Promise<TPost[]> {      // get
-        return await postCollection.find({}, {projection: {_id: false}}).toArray()
-    },
-
     async createPost(createdPost: TPost): Promise<TPost> {    // post
         await postCollection.insertOne(createdPost)
         return {

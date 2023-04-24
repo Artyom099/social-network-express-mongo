@@ -18,7 +18,7 @@ export const inputValidationMiddleware = (req: Request, res: Response, next: Nex
     }
 }
 
-export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
+export const authMiddlewareBasic = (req: Request, res: Response, next: NextFunction) => {
     const auth = req.headers.authorization
     if (!auth) return res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
     const [authType, authValue] = auth.split(' ')

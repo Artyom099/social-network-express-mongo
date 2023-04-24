@@ -1,12 +1,13 @@
-import {OutputModel, TBlog, TPost, TUser} from "../types";
-import {blogCollection, postCollection, userCollection} from "../db/db";
-import {Filter, Sort} from "mongodb";
+import {OutputModel, TBlog, TComment, TPost, TUser} from "../types"
+import {blogCollection, commentCollection, postCollection, userCollection} from "../db/db";
+import {Filter, Sort} from "mongodb"
 
 // @ts-ignore TODO заменить этой функцией sortNum
 const sortDirToNum = (sortDirection: string = -1): Sort => {
     if (sortDirection === 'desc') return -1
     if (sortDirection === 'asc') return 1
 }
+
 
 export const queryRepository = {
     async findBlogById(blogId: string): Promise<TBlog | null> {    // get, put, delete
@@ -92,6 +93,24 @@ export const queryRepository = {
             pageSize,                                           // количество пользователей на странице
             totalCount,                                         // общее количество пользователей
             items: sortedUsers
+        }
+    },
+
+    async findCommentsAndSort(postId: string, pageNumber: number, pageSize: number, sortBy: string,
+                              sortDirection: string): Promise<OutputModel<TComment[]>> {
+        let sortNum: Sort = -1
+        if (sortDirection === 'asc') sortNum = 1     // 1 - возрстание
+        if (sortDirection === 'desc') sortNum = -1   // -1 - убывание
+
+        const totalCount: number = await commentCollection.countDocuments()
+        const sortedComments: TComment[] = await commentCollection.find({}, {projection: {_id: false}})
+            .sort({[sortBy]: sortNum}).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
+        return {
+            pagesCount: Math.ceil(totalCount / pageSize),    // общее количество страниц
+            page: pageNumber,                                   // текущая страница
+            pageSize,                                           // количество пользователей на странице
+            totalCount,                                         // общее количество пользователей
+            items: sortedComments
         }
     }
 }
