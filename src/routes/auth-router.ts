@@ -5,7 +5,7 @@ import {AuthType, ReqBodyType} from "../types";
 import {body} from "express-validator";
 import {inputValidationMiddleware} from "../middleware/input-validation-middleware";
 import {jwtService} from "../application/jwt-service";
-import {authMiddleware} from "../middleware/auth-middleware";
+import {authMiddlewareBearer} from "../middleware/auth-middleware";
 
 const validationAuth = [
     body('loginOrEmail').isString().trim().notEmpty(),
@@ -24,7 +24,7 @@ export const authRouter = () => {
         }
     })
 
-    router.get('/me', authMiddleware, async (req: Request, res: Response) => {
+    router.get('/me', authMiddlewareBearer, async (req: Request, res: Response) => {
         const foundUser = await usersService.findUserById(req.body.userId)
         res.status(HTTP_STATUS.OK_200).json(foundUser)
     })

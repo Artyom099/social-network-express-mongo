@@ -1,13 +1,13 @@
 import express, {Request, Response} from "express"
 import {convertResultErrorCodeToHttp, HTTP_STATUS} from "../utils"
 import {feedbackService} from "../domain/feedbacks-service"
-import {authMiddleware} from "../middleware/auth-middleware";
+import {authMiddlewareBearer} from "../middleware/auth-middleware";
 
 
 export const feedbackRouter = () => {
     const router = express.Router()
 
-    router.put('/:commentId', authMiddleware, async (req: Request, res: Response) => {
+    router.put('/:commentId', authMiddlewareBearer, async (req: Request, res: Response) => {
         const result = await feedbackService.updateCommentById(req.params.id, req.body.content)
 
         if (!result.data) return res.sendStatus(convertResultErrorCodeToHttp(result.code))
@@ -16,7 +16,7 @@ export const feedbackRouter = () => {
         res.status(HTTP_STATUS.NO_CONTENT_204).json(updatedComment)
     })
 
-    router.delete('/:commentId', authMiddleware, async (req: Request, res: Response) => {
+    router.delete('/:commentId', authMiddlewareBearer, async (req: Request, res: Response) => {
         const foundComment = await feedbackService.findCommentById(req.params.id)
         if (!foundComment) res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
 

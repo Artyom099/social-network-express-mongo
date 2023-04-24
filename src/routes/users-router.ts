@@ -1,10 +1,11 @@
 import express, {Request, Response} from "express"
-import {authMiddlewareBasic, inputValidationMiddleware} from "../middleware/input-validation-middleware"
+import {inputValidationMiddleware} from "../middleware/input-validation-middleware"
 import {HTTP_STATUS} from "../utils"
 import {usersService} from "../domain/users-service"
 import {body} from "express-validator"
 import {ReqQueryType, UserGetDTO} from "../types"
 import {queryRepository} from "../repositories/query-repository"
+import {authMiddlewareBasic} from "../middleware/auth-middleware";
 
 const validationUser = [
     body('login').isString().isLength({min: 3, max: 10}).trim().notEmpty().matches('^[a-zA-Z0-9_-]*$'),
