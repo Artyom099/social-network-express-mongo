@@ -3,22 +3,11 @@ import express, {Request, Response} from "express";
 import { ReqBodyType, ReqParamsBodyType, ReqParamsType, TVideo, IdDTO, VideoPostDTO, VideoPutDTO} from "../types";
 import {convertResultErrorCodeToHttp, HTTP_STATUS} from "../utils";
 import {videosService} from "../domain/videos-service";
-import {authMiddleware, inputValidationMiddleware} from "../middleware/input-validation-middleware";
+import {authMiddleware} from "../middleware/auth-middleware"
+import {inputValidationMiddleware} from "../middleware/input-validation-middleware";
 
 
 export const videoResolutions = ['P144', 'P240', 'P360', 'P480', 'P720', 'P1080', 'P1440', 'P2160']
-// export function checkArrayValues(existArray: string[], receivedArray: string[]): boolean {
-//     for (let i of receivedArray) {
-//         if (!existArray.includes(i)) return false
-//     }
-//     return true
-// }
-// const titleValidation = body('title').isString().isLength({min: 3, max: 40}).trim().not().isEmpty()
-// const authorValidation = body('author').isString().isLength({min: 3, max: 20}).trim().not().isEmpty()
-// const availableResolutionsValidation = body('availableResolutions').isIn(videoResolutions)
-// const canBeDownloadedValidation = body('canBeDownloaded').isBoolean()
-// const minAgeRestrictionValidation = body('minAgeRestriction').isNumeric()
-// const publicationDateValidation = body('publicationDate').isDate()
 
 const validationVideoPost = [
     body('title').isString().isLength({min: 3, max: 40}).trim().not().isEmpty(),

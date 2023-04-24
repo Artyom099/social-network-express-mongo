@@ -13,7 +13,7 @@ import {blogsService} from "../domain/blogs-service";
 import {postsService} from "../domain/posts-service";
 import {inputValidationMiddleware} from "../middleware/input-validation-middleware";
 import {queryRepository} from "../repositories/query-repository";
-import {authMiddleware} from "../middleware/auth-middleware";
+import {authMiddleware} from "../middleware/auth-middleware"
 
 
 const validationBlog = [
