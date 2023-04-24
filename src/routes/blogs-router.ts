@@ -13,7 +13,7 @@ import {blogsService} from "../domain/blogs-service";
 import {postsService} from "../domain/posts-service";
 import {inputValidationMiddleware} from "../middleware/input-validation-middleware";
 import {queryRepository} from "../repositories/query-repository";
-import {authMiddleware} from "../middleware/auth-middleware"
+import {authMiddlewareBasic} from "../middleware/auth-middleware"
 
 
 const validationBlog = [
@@ -41,7 +41,7 @@ export const getBlogsRouter = () => {
         res.status(HTTP_STATUS.OK_200).json(foundSortedBlogs)
     })
 
-    router.post('/', validationBlog, authMiddleware, inputValidationMiddleware,
+    router.post('/', validationBlog, authMiddlewareBasic, inputValidationMiddleware,
     async (req: Request, res: Response) => {
         const {name, description, websiteUrl} = req.body
         const createdBlog = await blogsService.createBlog(name, description, websiteUrl)
@@ -61,7 +61,7 @@ export const getBlogsRouter = () => {
         res.status(HTTP_STATUS.OK_200).json(postsThisBlog)
     })
 
-    router.post('/:id/posts', validationPost, authMiddleware, inputValidationMiddleware,
+    router.post('/:id/posts', validationPost, authMiddlewareBasic, inputValidationMiddleware,
     async (req: ReqParamsBodyType<IdDTO, BlogPostDTO>, res: Response) => {
         const findBlog = await blogsService.findBlogById(req.params.id)
         if (!findBlog) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
@@ -77,7 +77,7 @@ export const getBlogsRouter = () => {
         res.status(HTTP_STATUS.OK_200).json(findBlog)
     })
 
-    router.put('/:id', validationBlog, authMiddleware, inputValidationMiddleware,
+    router.put('/:id', validationBlog, authMiddlewareBasic, inputValidationMiddleware,
     async (req: ReqParamsBodyType<IdDTO, BlogPutDTO>, res: Response) => {
         const {name, description, websiteUrl} = req.body
         const result = await blogsService.updateBlogById(req.params.id, name, description, websiteUrl)
@@ -88,7 +88,7 @@ export const getBlogsRouter = () => {
         res.status(HTTP_STATUS.NO_CONTENT_204).json(updatedBlog)
     })
 
-    router.delete('/:id', authMiddleware, async (req: Request, res: Response) => {
+    router.delete('/:id', authMiddlewareBasic, async (req: Request, res: Response) => {
         const blogForDelete = await blogsService.findBlogById(req.params.id)
         if (!blogForDelete) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)    // если не нашли блог по id, то выдаем ошибку и выходим из эндпоинта
 

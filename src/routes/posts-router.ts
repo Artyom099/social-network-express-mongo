@@ -7,7 +7,7 @@ import {blogsService} from "../domain/blogs-service";
 import {inputValidationMiddleware} from "../middleware/input-validation-middleware";
 import {queryRepository} from "../repositories/query-repository";
 import {feedbackService} from "../domain/feedbacks-service";
-import {authMiddleware} from "../middleware/auth-middleware";
+import {authMiddlewareBasic, authMiddlewareBearer} from "../middleware/auth-middleware";
 
 
 const validationPost = [
@@ -41,7 +41,7 @@ export const getPostsRouter = () => {
         res.status(HTTP_STATUS.OK_200).json(foundSortedComments)
     })
 
-    router.post('/:postId/comments', validationComment, authMiddleware, inputValidationMiddleware,
+    router.post('/:postId/comments', validationComment, authMiddlewareBearer, inputValidationMiddleware,
         async (req: Request, res: Response) => {
         const currentPost = await postsService.findPostById(req.params.postId)
         if (!currentPost) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
@@ -61,7 +61,7 @@ export const getPostsRouter = () => {
         res.status(HTTP_STATUS.OK_200).json(foundSortedPosts)
     })
 
-    router.post('/', validationPost, authMiddleware, inputValidationMiddleware,
+    router.post('/', validationPost, authMiddlewareBasic, inputValidationMiddleware,
         async (req: ReqBodyType<PostDTO>, res: Response) => {
             const {title, shortDescription, content, blogId} = req.body
             const blog = await blogsService.findBlogById(blogId)
@@ -75,7 +75,7 @@ export const getPostsRouter = () => {
         res.status(HTTP_STATUS.OK_200).json(foundPost)
     })
 
-    router.put('/:id', validationPost, authMiddleware, inputValidationMiddleware,
+    router.put('/:id', validationPost, authMiddlewareBasic, inputValidationMiddleware,
         async (req: Request, res: Response) => {
             const {title, shortDescription, content} = req.body
             const result = await postsService.updatePostById(req.params.id, title, shortDescription, content)
@@ -86,7 +86,7 @@ export const getPostsRouter = () => {
             res.status(HTTP_STATUS.NO_CONTENT_204).json(updatedPost)
     })
 
-    router.delete('/:id', authMiddleware, async (req: Request, res: Response) => {
+    router.delete('/:id', authMiddlewareBasic, async (req: Request, res: Response) => {
         const postForDelete = await postsService.findPostById(req.params.id)
         if (!postForDelete) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
 

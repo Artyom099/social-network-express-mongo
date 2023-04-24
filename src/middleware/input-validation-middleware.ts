@@ -17,14 +17,3 @@ export const inputValidationMiddleware = (req: Request, res: Response, next: Nex
         next()
     }
 }
-
-export const authMiddlewareBasic = (req: Request, res: Response, next: NextFunction) => {
-    const auth = req.headers.authorization
-    if (!auth) return res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
-    const [authType, authValue] = auth.split(' ')
-    if (authType !== 'Basic' || authValue !== 'YWRtaW46cXdlcnR5') {
-        return res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
-    } else {
-        return next()
-    }
-}
