@@ -1,4 +1,4 @@
-import {OutputModel, TBlog, TPost, TUser} from "../types";
+import {OutputModel, TBlog, TComment, TPost, TUser} from "../types";
 import {blogCollection, postCollection, userCollection} from "../db/db";
 import {Filter, Sort} from "mongodb";
 
@@ -92,6 +92,20 @@ export const queryRepository = {
             pageSize,                                           // количество пользователей на странице
             totalCount,                                         // общее количество пользователей
             items: sortedUsers
+        }
+    },
+
+    async findCommentsAndSort(postId: string, pageNumber: number, pageSize: number, sortBy: string,
+                              sortDirection: string): Promise<OutputModel<TComment[]>> {
+
+        const totalCount =
+        const sortedComments =
+        return {
+            pagesCount: Math.ceil(totalCount / pageSize),    // общее количество страниц
+            page: pageNumber,                                   // текущая страница
+            pageSize,                                           // количество пользователей на странице
+            totalCount,                                         // общее количество пользователей
+            items: sortedComments
         }
     }
 }

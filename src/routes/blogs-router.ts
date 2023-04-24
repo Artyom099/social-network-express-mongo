@@ -12,8 +12,9 @@ import {
 import {convertResultErrorCodeToHttp, HTTP_STATUS} from "../utils";
 import {blogsService} from "../domain/blogs-service";
 import {postsService} from "../domain/posts-service";
-import {authMiddleware, inputValidationMiddleware} from "../middleware/input-validation-middleware";
+import {inputValidationMiddleware} from "../middleware/input-validation-middleware";
 import {queryRepository} from "../repositories/query-repository";
+import {authMiddleware} from "../middleware/auth-middleware";
 
 
 const validationBlog = [

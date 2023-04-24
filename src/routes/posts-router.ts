@@ -23,6 +23,24 @@ const validationPost = [
 export const getPostsRouter = () => {
     const router = express.Router()
 
+    router.get('/:postId/comments', async (req: Request, res: Response) => {
+        const postId = req.query.postId
+        if (!postId) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
+
+        const pageNumber = req.query.pageNumber ?? 1
+        const pageSize = req.query.pageSize ?? 10
+        const sortBy = req.query.sortBy ?? 'createdAt'
+        const sortDirection = req.query.sortDirection ?? 'desc'
+
+        const foundSortedComments = await queryRepository.findCommentsAndSort(postId, pageNumber, pageSize, sortBy, sortDirection)
+        res.status(HTTP_STATUS.OK_200).json(foundSortedComments)
+    })
+
+    router.post('/:postId/comments', authMiddleware, async (req: Request, res: Response) => {
+
+    })
+
+
     router.get('/', async (req: ReqQueryType<BlogPostsGetDTO>, res: Response) => {
         const pageNumber = req.query.pageNumber ?? 1
         const pageSize = req.query.pageSize ?? 10

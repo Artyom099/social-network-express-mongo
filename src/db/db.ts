@@ -13,6 +13,7 @@ export const videoCollection = database.collection<TVideo>('videos')
 export const blogCollection = database.collection<TBlog>('blogs')
 export const postCollection = database.collection<TPost>('posts')
 export const userCollection = database.collection<UserDBType>('users')
+export const commentCollecton = database.collection('comments')
 
 export async function runDb() {
     try {

@@ -37,6 +37,15 @@ export type TUser = {
     email: string
     createdAt: string
 }
+export type TComment = {
+    id: string
+    content: string
+    commentatorInfo: {
+        userId: string
+        userLogin: string
+    }
+    createdAt: string
+}
 
 export type VideoPostDTO = {
     title: string
