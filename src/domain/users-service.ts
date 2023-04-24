@@ -20,10 +20,10 @@ export const usersService = {
     },
 
     async checkCredentials(loginOrEmail: string, password: string) {
-        const user = await usersRepository.findByLoginOrEmail(loginOrEmail)
+        const user = await usersRepository.findUserByLoginOrEmail(loginOrEmail)
         if (!user) return false
         const passwordHash = await this._generateHash(password, user.passwordSalt)
-        return user.passwordHash === passwordHash
+        if (user.passwordSalt === passwordHash) return passwordHash
     },
 
     async _generateHash(password: string, salt: string) {

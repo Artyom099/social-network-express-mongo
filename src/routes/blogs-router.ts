@@ -1,9 +1,8 @@
 import {body} from "express-validator";
 import express, {Request, Response} from "express";
 import {
-    BlogGetWithSearchDTO,
-    BlogPostDTO, BlogPostsGetDTO, BlogPutDTO,
-    IdDTO,
+    BlogPostDTO, BlogPutDTO,
+    IdDTO, PagingDTO, PagingWithSearchDTO,
     ReqParamsBodyType,
     ReqParamsQueryType,
     ReqQueryType,
@@ -31,7 +30,7 @@ const validationPost = [
 export const getBlogsRouter = () => {
     const router = express.Router()
 
-    router.get('/', async (req: ReqQueryType<BlogGetWithSearchDTO>, res: Response) => {
+    router.get('/', async (req: ReqQueryType<PagingWithSearchDTO>, res: Response) => {
         const searchNameTerm = req.query.searchNameTerm ?? null
         const pageNumber = req.query.pageNumber ?? 1
         const pageSize = req.query.pageSize ?? 10
@@ -49,7 +48,7 @@ export const getBlogsRouter = () => {
         res.status(HTTP_STATUS.CREATED_201).json(createdBlog)
     })
 
-    router.get('/:id/posts', async (req: ReqParamsQueryType<IdDTO, BlogPostsGetDTO>, res: Response) => {
+    router.get('/:id/posts', async (req: ReqParamsQueryType<IdDTO, PagingDTO>, res: Response) => {
         const findBlog = await queryRepository.findBlogById(req.params.id)
         if (!findBlog) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
 

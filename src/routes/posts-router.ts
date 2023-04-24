@@ -1,6 +1,6 @@
 import {body} from "express-validator";
 import express, {Request, Response} from "express";
-import {BlogPostsGetDTO, ReqQueryType, TPost} from "../types";
+import {ReqParamsQueryType, IdDTO, PagingDTO, ReqQueryType, TPost, PostDTO, ReqBodyType} from "../types";
 import {convertResultErrorCodeToHttp, HTTP_STATUS} from "../utils";
 import {postsService} from "../domain/posts-service";
 import {blogsService} from "../domain/blogs-service";
@@ -28,8 +28,8 @@ const validationComment = [
 export const getPostsRouter = () => {
     const router = express.Router()
 
-    router.get('/:postId/comments', async (req: Request, res: Response) => {
-        const postId = req.params.postId
+    router.get('/:postId/comments', async (req: ReqParamsQueryType<IdDTO, PagingDTO>, res: Response) => {
+        const postId = req.params.id
         if (!postId) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
 
         const pageNumber = req.query.pageNumber ?? 1
@@ -43,15 +43,15 @@ export const getPostsRouter = () => {
 
     router.post('/:postId/comments', validationComment, authMiddleware, inputValidationMiddleware,
         async (req: Request, res: Response) => {
-        const currentPost = await postsService.findPostById(req.params.id)
+        const currentPost = await postsService.findPostById(req.params.postId)
         if (!currentPost) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
 
-        const createdComment = await feedbackService.createComment(req.body.content, req.params.id)
+        const createdComment = await feedbackService.createComment(req.body.content, req.params.postId)
         res.status(HTTP_STATUS.CREATED_201).json(createdComment)
     })
 
 
-    router.get('/', async (req: ReqQueryType<BlogPostsGetDTO>, res: Response) => {
+    router.get('/', async (req: ReqQueryType<PagingDTO>, res: Response) => {
         const pageNumber = req.query.pageNumber ?? 1
         const pageSize = req.query.pageSize ?? 10
         const sortBy = req.query.sortBy ?? 'createdAt'
@@ -62,7 +62,7 @@ export const getPostsRouter = () => {
     })
 
     router.post('/', validationPost, authMiddleware, inputValidationMiddleware,
-        async (req: Request, res: Response) => {
+        async (req: ReqBodyType<PostDTO>, res: Response) => {
             const {title, shortDescription, content, blogId} = req.body
             const blog = await blogsService.findBlogById(blogId)
             const createdPost = await postsService.createPost(title, shortDescription, content, blog)

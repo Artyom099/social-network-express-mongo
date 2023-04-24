@@ -1,9 +1,5 @@
 import {Request} from 'express'
 
-export type IdDTO = {
-    id: string
-}
-
 export type TVideo = {
     id: string
     title: string
@@ -47,6 +43,23 @@ export type TComment = {
     createdAt: string
 }
 
+export type IdDTO = {
+    id: string
+}
+export type PagingDTO = {
+    pageNumber: number
+    pageSize: number
+    sortBy: string
+    sortDirection: string
+}
+export type PagingWithSearchDTO = {
+    searchNameTerm: string
+    pageNumber: number
+    pageSize: number
+    sortBy: string
+    sortDirection: string
+}
+
 export type VideoPostDTO = {
     title: string
     author: string
@@ -61,19 +74,6 @@ export type VideoPutDTO = {
     publicationDate: string
 }
 
-export type BlogPostsGetDTO = {
-    pageNumber: number
-    pageSize: number
-    sortBy: string
-    sortDirection: string
-}
-export type BlogGetWithSearchDTO = {
-    searchNameTerm: string
-    pageNumber: number
-    pageSize: number
-    sortBy: string
-    sortDirection: string
-}
 export type BlogPostDTO = {
     title: string
     shortDescription: string

@@ -31,4 +31,3 @@ export const authRouter = () => {
 
     return router
 }
-

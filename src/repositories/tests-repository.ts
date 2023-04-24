@@ -4,7 +4,6 @@ import {
     postCollection,
     userCollection,
     commentCollection,
-    commentCollection
 } from "../db/db";
 
 
