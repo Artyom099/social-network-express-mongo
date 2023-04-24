@@ -23,7 +23,7 @@ export const usersService = {
         const user = await usersRepository.findUserByLoginOrEmail(loginOrEmail)
         if (!user) return false
         const passwordHash = await this._generateHash(password, user.passwordSalt)
-        if (user.passwordSalt === passwordHash) return passwordHash
+        if (user.passwordSalt === passwordHash) return user
     },
 
     async _generateHash(password: string, salt: string) {
