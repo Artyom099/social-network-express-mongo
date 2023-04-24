@@ -74,7 +74,7 @@ export const queryRepository = {
         }
     },
 
-    async findUsersAndSort(searchEmailTerm: string, searchLoginTerm: string, pageNumber: number, pageSize: number, sortBy: string,
+    async findUsersAndSort(searchEmailTerm: string | null, searchLoginTerm: string | null, pageNumber: number, pageSize: number, sortBy: string,
                            sortDirection: string): Promise<OutputModel<TUser[]>> {
         let sortNum: Sort = -1
         if (sortDirection === 'asc') sortNum = 1     // 1 - возрстание
