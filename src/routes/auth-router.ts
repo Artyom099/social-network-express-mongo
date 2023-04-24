@@ -25,8 +25,7 @@ export const authRouter = () => {
     })
 
     router.get('/me', authMiddleware, async (req: Request, res: Response) => {
-        const userId = await jwtService.getUserIdByToken(token)
-        const foundUser = await jwtService.(userId)
+        const foundUser = await usersService.findUserById(req.body.userId)
         res.status(HTTP_STATUS.OK_200).json(foundUser)
     })
 
