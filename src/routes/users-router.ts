@@ -17,6 +17,7 @@ export const getUsersRouter = () => {
     const router = express.Router()
 
     router.get('/', authMiddlewareBasic, async (req: ReqQueryType<UserGetDTO>, res: Response) => {
+        //TODO попробовать реализовать как ф-ю
         const searchEmailTerm = req.query.searchEmailTerm ?? null
         const searchLoginTerm = req.query.searchLoginTerm ?? null
         const pageNumber = req.query.pageNumber ?? 1
