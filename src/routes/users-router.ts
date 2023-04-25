@@ -24,7 +24,8 @@ export const getUsersRouter = () => {
         const sortBy = req.query.sortBy ?? 'createdAt'
         const sortDirection = req.query.sortDirection ?? 'desc'
 
-        const foundSortedUsers = await queryRepository.findUsersAndSort(searchEmailTerm, searchLoginTerm, Number(pageNumber), Number(pageSize), sortBy, sortDirection)
+        const foundSortedUsers = await queryRepository.findUsersAndSort(searchEmailTerm, searchLoginTerm,
+            Number(pageNumber), Number(pageSize), sortBy, sortDirection)
         res.status(HTTP_STATUS.OK_200).json(foundSortedUsers)
     })
 
