@@ -88,8 +88,8 @@ export type BlogPutDTO = {
 export type UserGetDTO = {
     searchEmailTerm: string
     searchLoginTerm: string
-    pageNumber: number
-    pageSize: number
+    pageNumber: string
+    pageSize: string
     sortBy: string
     sortDirection: string
 }
