@@ -23,7 +23,7 @@ export const feedbackService = {
             content,
             commentatorInfo: {
                 userId,
-                userLogin: '??'
+                userLogin: '??'     //TODO добавить логин
             },
             createdAt: dateNow.toISOString()
         }
