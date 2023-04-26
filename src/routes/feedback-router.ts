@@ -8,16 +8,16 @@ export const feedbackRouter = () => {
     const router = express.Router()
 
     router.put('/:commentId', authMiddlewareBearer, async (req: Request, res: Response) => {
-        const result = await feedbackService.updateCommentById(req.params.id, req.body.content)
+        const result = await feedbackService.updateCommentById(req.params.commentId, req.body.content)
 
         if (!result.data) return res.sendStatus(convertResultErrorCodeToHttp(result.code))
 
-        const updatedComment = await feedbackService.findCommentById(req.params.id)
+        const updatedComment = await feedbackService.findCommentById(req.params.commentId)
         res.status(HTTP_STATUS.NO_CONTENT_204).json(updatedComment)
     })
 
     router.delete('/:commentId', authMiddlewareBearer, async (req: Request, res: Response) => {
-        const foundComment = await feedbackService.findCommentById(req.params.id)
+        const foundComment = await feedbackService.findCommentById(req.params.commentId)
         if (!foundComment) res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
 
         await feedbackService.deleteCommentById(req.params.id)
