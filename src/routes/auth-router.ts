@@ -18,15 +18,16 @@ export const authRouter = () => {
         const user = await usersService.checkCredentials(req.body.loginOrEmail, req.body.password)
         if (user) {
             const token = await jwtService.createJWT(user)
-            res.sendStatus(HTTP_STATUS.OK_200).send(token)
+            res.status(HTTP_STATUS.OK_200).setHeader('accessToken', token).send()
         } else {
             res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
         }
     })
 
     router.get('/me', authMiddlewareBearer, async (req: Request, res: Response) => {
-        const foundUser = await usersService.findUserById(req.body.userId)
-        res.status(HTTP_STATUS.OK_200).json(foundUser)
+        // const foundUserId = await jwtService.getUserIdByToken(String(req.query.token))
+        // const foundUser = await usersService.findUserById(String(foundUserId))
+        res.status(HTTP_STATUS.OK_200).json(req.body.user)
     })
 
     return router

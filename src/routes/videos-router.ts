@@ -3,7 +3,6 @@ import express, {Request, Response} from "express";
 import { ReqBodyType, ReqParamsBodyType, ReqParamsType, TVideo, IdDTO, VideoPostDTO, VideoPutDTO} from "../types";
 import {convertResultErrorCodeToHttp, HTTP_STATUS} from "../utils";
 import {videosService} from "../domain/videos-service";
-import {authMiddleware} from "../middleware/auth-middleware"
 import {inputValidationMiddleware} from "../middleware/input-validation-middleware";
 
 
