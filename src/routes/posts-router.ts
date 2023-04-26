@@ -21,7 +21,7 @@ const validationPost = [
         }
         return true
     })]
-const validationComment = [
+export const validationComment = [
     body('content').isString().isLength({min: 20, max: 300}).trim().not().isEmpty()
 ]
 
