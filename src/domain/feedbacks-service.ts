@@ -16,14 +16,14 @@ export const feedbackService = {
         await feedbackRepository.deleteCommentById(commentId)
     },
 
-    async createComment(content: string, userId: string) {
+    async createComment(content: string, userId: string, userLogin: string) {
         const dateNow = new Date()
         const createdComment: TComment = {
             id: (+dateNow).toString(),
             content,
             commentatorInfo: {
                 userId,
-                userLogin: '??'     //TODO добавить логин
+                userLogin
             },
             createdAt: dateNow.toISOString()
         }
