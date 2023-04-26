@@ -52,11 +52,11 @@ describe('/users', () => {
             .expect(HTTP_STATUS.OK_200)
 
         //чтобы .split не ругался на возможный undefined
-        if (!createResponse.header.authorization) return new Error()
-        token = createResponse.header.authorization.split(' ')[1]
+        if (!createResponse.headers.authorization) return new Error()
+        token = createResponse.headers.authorization.split(' ')[1]
         await request(app)
             .get('/auth/me')
-            .auth('token', {type: "bearer"})
+            .auth('token', {type: 'bearer'})
             .expect(HTTP_STATUS.OK_200, {
                 email: 'valid-email@mail.ru',
                 login: 'lg-647449',

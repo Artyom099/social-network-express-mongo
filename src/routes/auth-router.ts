@@ -18,7 +18,8 @@ export const authRouter = () => {
         const user = await usersService.checkCredentials(req.body.loginOrEmail, req.body.password)
         if (user) {
             const token = await jwtService.createJWT(user)
-            res.status(HTTP_STATUS.OK_200).setHeader('accessToken', token).send()
+
+            res.status(HTTP_STATUS.OK_200).json({'accessToken': token})
         } else {
             res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
         }
