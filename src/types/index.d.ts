@@ -1,7 +1,10 @@
+import {TUser} from "../types";
+
 declare global {
-    namespace Express {
+    declare namespace Express {
         export interface Request {
             userId: string | null
+            user: TUser | null
         }
     }
 }
