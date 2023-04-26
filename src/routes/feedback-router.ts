@@ -13,9 +13,8 @@ export const feedbackRouter = () => {
         const result = await feedbackService.updateCommentById(req.params.commentId, req.body.content)
         if (!result.data) return res.sendStatus(convertResultErrorCodeToHttp(result.code))
 
-
-
         const updatedComment = await feedbackService.findCommentById(req.params.commentId)
+        if (req.user!.id !== updatedComment!.commentatorInfo.userId) return res.sendStatus(HTTP_STATUS.FORBIDDEN_403)
         res.status(HTTP_STATUS.NO_CONTENT_204).json(updatedComment)
     })
 
