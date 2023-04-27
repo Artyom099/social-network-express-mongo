@@ -4,6 +4,12 @@ import {TComment} from "../types";
 
 
 export const feedbackRepository = {
+    async findCommentByID(commentId: string) {
+        const comment = await commentCollection.findOne({id: commentId}, {projection: {_id: false}})
+        if (comment) return comment
+        else return null
+    },
+
     async createComment(createdComment: TComment): Promise<TComment> {
         await commentCollection.insertOne(createdComment)
         return  {
