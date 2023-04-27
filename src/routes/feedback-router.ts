@@ -21,7 +21,9 @@ export const feedbackRouter = () => {
 
     router.delete('/:commentId', authMiddlewareBearer, async (req: Request, res: Response) => {
         const foundComment = await feedbackService.findCommentById(req.params.commentId)
-        if (!foundComment) res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
+        if (!foundComment) {
+            return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
+        }
         if (req.user!.id !== foundComment!.commentatorInfo.userId) return res.sendStatus(HTTP_STATUS.FORBIDDEN_403)
 
         await feedbackService.deleteCommentById(req.params.commentId)
