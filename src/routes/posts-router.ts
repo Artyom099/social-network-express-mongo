@@ -46,7 +46,7 @@ export const getPostsRouter = () => {
         const currentPost = await postsService.findPostById(req.params.postId)
         if (!currentPost) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
 
-        const createdComment = await feedbackService.createComment(req.body.content, req.params.postId, req.user!.login)
+        const createdComment = await feedbackService.createComment(req.body.content, req.user!.id, req.user!.login)
         res.status(HTTP_STATUS.CREATED_201).json(createdComment)
     })
 

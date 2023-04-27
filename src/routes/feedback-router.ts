@@ -10,11 +10,12 @@ export const feedbackRouter = () => {
     const router = express.Router()
 
     router.put('/:commentId', validationComment, authMiddlewareBearer, inputValidationMiddleware, async (req: Request, res: Response) => {
-        const result = await feedbackService.updateCommentById(req.params.commentId, req.body.content)
-        if (!result.data) return res.sendStatus(convertResultErrorCodeToHttp(result.code))
+        const foundComment = await feedbackService.findCommentById(req.params.commentId)
+        if (req.user!.id !== foundComment!.commentatorInfo.userId) return res.sendStatus(HTTP_STATUS.FORBIDDEN_403)
 
-        const updatedComment = await feedbackService.findCommentById(req.params.commentId)
-        if (req.user!.id !== updatedComment!.commentatorInfo.userId) return res.sendStatus(HTTP_STATUS.FORBIDDEN_403)
+        const updatedComment = await feedbackService.updateCommentById(req.params.commentId, req.body.content)
+        if (!updatedComment.data) return res.sendStatus(convertResultErrorCodeToHttp(updatedComment.code))
+
         res.status(HTTP_STATUS.NO_CONTENT_204).json(updatedComment)
     })
 
@@ -22,7 +23,7 @@ export const feedbackRouter = () => {
         const foundComment = await feedbackService.findCommentById(req.params.commentId)
         if (!foundComment) res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
 
-        await feedbackService.deleteCommentById(req.params.id)
+        await feedbackService.deleteCommentById(req.params.commentId)
         res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
     })
 
