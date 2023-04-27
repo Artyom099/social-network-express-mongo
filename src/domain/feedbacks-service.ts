@@ -1,4 +1,4 @@
-import {TComment} from "../types";
+import {CommentBDType, TComment} from "../types";
 import {feedbackRepository} from "../repositories/feedback-repository";
 
 
@@ -15,10 +15,11 @@ export const feedbackService = {
         await feedbackRepository.deleteCommentById(commentId)
     },
 
-    async createComment(content: string, userId: string, userLogin: string) {
+    async createComment(postId: string, content: string, userId: string, userLogin: string) {
         const dateNow = new Date()
-        const createdComment: TComment = {
+        const createdComment: CommentBDType = {
             id: (+dateNow).toString(),
+            postId,
             content,
             commentatorInfo: {
                 userId,

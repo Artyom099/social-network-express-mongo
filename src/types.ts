@@ -114,6 +114,17 @@ export type PostDTO = {
     blogId: string
 }
 
+export type CommentBDType = {
+    id: string
+    postId: string
+    content: string
+    commentatorInfo: {
+        userId: string
+        userLogin: string
+    }
+    createdAt: string
+}
+
 // e.Request<P,ResBody,ReqBody,ReqQuery,Locals>
 //     <Params, ??????,   Body,   Query, ?????>
 

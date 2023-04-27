@@ -37,7 +37,7 @@ export const getPostsRouter = () => {
         const sortBy = req.query.sortBy ?? 'createdAt'
         const sortDirection = req.query.sortDirection ?? 'desc'
 
-        const foundSortedComments = await queryRepository.findCommentsAndSort(foundPost.id, Number(pageNumber), Number(pageSize), sortBy, sortDirection)
+        const foundSortedComments = await queryRepository.findCommentsThisPostAndSort(foundPost.id, Number(pageNumber), Number(pageSize), sortBy, sortDirection)
         res.status(HTTP_STATUS.OK_200).json(foundSortedComments)
     })
 
@@ -46,7 +46,7 @@ export const getPostsRouter = () => {
         const currentPost = await postsService.findPostById(req.params.postId)
         if (!currentPost) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
 
-        const createdComment = await feedbackService.createComment(req.body.content, req.user!.id, req.user!.login)
+        const createdComment = await feedbackService.createComment(req.params.postId, req.body.content, req.user!.id, req.user!.login)
         res.status(HTTP_STATUS.CREATED_201).json(createdComment)
     })
 
