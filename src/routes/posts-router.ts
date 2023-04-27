@@ -31,8 +31,6 @@ export const getPostsRouter = () => {
     router.get('/:id/comments', async (req: ReqParamsQueryType<IdDTO, PagingDTO>, res: Response) => {
         const foundPost = await postsService.findPostById(req.params.id)
         if (!foundPost) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
-        // const postId = req.params.id
-        // if (!postId) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
 
         const pageNumber = req.query.pageNumber ?? 1
         const pageSize = req.query.pageSize ?? 10
