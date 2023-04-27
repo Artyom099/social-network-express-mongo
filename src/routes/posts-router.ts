@@ -29,15 +29,17 @@ export const getPostsRouter = () => {
     const router = express.Router()
 
     router.get('/:id/comments', async (req: ReqParamsQueryType<IdDTO, PagingDTO>, res: Response) => {
-        const postId = req.params.id
-        if (!postId) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
+        const foundPost = await postsService.findPostById(req.params.id)
+        if (!foundPost) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
+        // const postId = req.params.id
+        // if (!postId) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
 
         const pageNumber = req.query.pageNumber ?? 1
         const pageSize = req.query.pageSize ?? 10
         const sortBy = req.query.sortBy ?? 'createdAt'
         const sortDirection = req.query.sortDirection ?? 'desc'
 
-        const foundSortedComments = await queryRepository.findCommentsAndSort(postId, Number(pageNumber), Number(pageSize), sortBy, sortDirection)
+        const foundSortedComments = await queryRepository.findCommentsAndSort(foundPost.id, Number(pageNumber), Number(pageSize), sortBy, sortDirection)
         res.status(HTTP_STATUS.OK_200).json(foundSortedComments)
     })
 
@@ -71,7 +73,7 @@ export const getPostsRouter = () => {
 
     router.get('/:id', async (req: Request, res: Response<TPost>) => {
         const foundPost = await postsService.findPostById(req.params.id)
-        if (!foundPost) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)     // если не нашли блог по id, то выдаем ошибку и выходим из эндпоинта
+        if (!foundPost) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)     // если не нашли пост по id, то выдаем ошибку и выходим из эндпоинта
         res.status(HTTP_STATUS.OK_200).json(foundPost)
     })
 
