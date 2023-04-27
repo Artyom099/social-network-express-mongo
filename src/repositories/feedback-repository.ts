@@ -1,6 +1,6 @@
 import {commentCollection} from "../db/db";
 import {ResultCode} from "../utils";
-import {TComment} from "../types";
+import {CommentBDType, TComment} from "../types";
 
 
 export const feedbackRepository = {
@@ -10,7 +10,7 @@ export const feedbackRepository = {
         return null
     },
 
-    async createComment(createdComment: TComment): Promise<TComment> {
+    async createComment(createdComment: CommentBDType): Promise<TComment> {
         await commentCollection.insertOne(createdComment)
         return  {
             id: createdComment.id,

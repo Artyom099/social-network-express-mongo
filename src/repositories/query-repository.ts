@@ -39,7 +39,7 @@ export const queryRepository = {
 
     async findPostsThisBlogById(blogId: string, pageNumber: number, pageSize: number, sortBy: string,
                                 sortDirection: string): Promise<OutputModel<TPost[]>> {   // get
-        const filter: { blogId: string } = {blogId: blogId}
+        const filter: {blogId: string} = {blogId: blogId}
         let sortNum: Sort = -1
         if (sortDirection === 'asc') sortNum = 1
         if (sortDirection === 'desc') sortNum = -1
@@ -96,15 +96,15 @@ export const queryRepository = {
         }
     },
 
-    async findCommentsAndSort(postId: string, pageNumber: number, pageSize: number, sortBy: string,
+    async findCommentsThisPostAndSort(postId: string, pageNumber: number, pageSize: number, sortBy: string,
                               sortDirection: string): Promise<OutputModel<TComment[]>> {
-        const filter: { postId: string } = {postId: postId}
+        const filter: {postId: string} = {postId: postId}
         let sortNum: Sort = -1
         if (sortDirection === 'asc') sortNum = 1     // 1 - возрстание
         if (sortDirection === 'desc') sortNum = -1   // -1 - убывание
 
         const totalCount: number = await commentCollection.countDocuments(filter)
-        const sortedComments: TComment[] = await commentCollection.find(filter, {projection: {_id: false}})
+        const sortedComments: TComment[] = await commentCollection.find(filter, {projection: {_id: false, postId: false}})
             .sort({[sortBy]: sortNum}).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
         return {
             pagesCount: Math.ceil(totalCount / pageSize),    // общее количество страниц
