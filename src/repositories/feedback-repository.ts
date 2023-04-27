@@ -5,7 +5,7 @@ import {CommentBDType, TComment} from "../types";
 
 export const feedbackRepository = {
     async findCommentByID(commentId: string) {
-        const comment = await commentCollection.findOne({id: commentId}, {projection: {_id: false}})
+        const comment = await commentCollection.findOne({id: commentId}, {projection: {_id: false, postId: false}})
         if (comment) return comment
         return null
     },
