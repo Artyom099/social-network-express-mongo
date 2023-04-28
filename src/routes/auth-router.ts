@@ -9,7 +9,12 @@ import {authMiddlewareBearer} from "../middleware/auth-middleware";
 
 const validationAuth = [
     body('loginOrEmail').isString().trim().notEmpty(),
-    body('password').isString().trim().notEmpty(),
+    body('password').isString().trim().notEmpty()
+]
+const validationReg = [
+    body('login').isString().trim().notEmpty().isLength({min: 3, max: 10}).matches('^[a-zA-Z0-9_-]*$'),
+    body('password').isString().trim().notEmpty().isLength({min: 6, max: 20}),
+    body('email').isString().trim().notEmpty().isEmail
 ]
 
 export const authRouter = () => {
@@ -23,6 +28,19 @@ export const authRouter = () => {
         } else {
             res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
         }
+    })
+
+    router.post('/registration-confirmation', async (req: Request, res: Response) => {
+    // нам приходит код, мы проверяем, верный он или нет
+    })
+
+    router.post('/registration', validationReg, inputValidationMiddleware, async (req: Request, res: Response) => {
+        await usersService.createUser(req.body.login, req.body.password, req.body.email)
+        res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
+    })
+
+    router.post('/registration-email-resending', async (req: Request, res: Response) => {
+
     })
 
     router.get('/me', authMiddlewareBearer, async (req: Request, res: Response) => {
