@@ -6,6 +6,8 @@ import {body} from "express-validator";
 import {inputValidationMiddleware} from "../middleware/input-validation-middleware";
 import {jwtService} from "../application/jwt-service";
 import {authMiddlewareBearer} from "../middleware/auth-middleware";
+import {authService} from "../domain/auth-service";
+import {emailManager} from "../managers/email-manager";
 
 const validationAuth = [
     body('loginOrEmail').isString().trim().notEmpty(),
@@ -31,11 +33,18 @@ export const authRouter = () => {
     })
 
     router.post('/registration-confirmation', async (req: Request, res: Response) => {
-    // нам приходит код, мы проверяем, верный он или нет
+    // нам приходит код, если он верный, то 204, иначе 400 и текст ошибки
+        const verifyEmail = await authService.checkConfirmationCode(req.body.code)
+        if (!verifyEmail) {
+            throw new Error()
+            return res.sendStatus(HTTP_STATUS.BAD_REQUEST_400)
+        }
+        res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
     })
 
     router.post('/registration', validationReg, inputValidationMiddleware, async (req: Request, res: Response) => {
-        await usersService.createUser(req.body.login, req.body.password, req.body.email)
+        await emailManager.sendEmailConfirmationMessage(req.body.email)
+        await authService.createUser(req.body.login, req.body.password, req.body.email)
         res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
     })
 
