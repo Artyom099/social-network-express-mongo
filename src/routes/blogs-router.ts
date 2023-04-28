@@ -14,6 +14,7 @@ import {postsService} from "../domain/posts-service";
 import {inputValidationMiddleware} from "../middleware/input-validation-middleware";
 import {queryRepository} from "../repositories/query-repository";
 import {authMiddlewareBasic} from "../middleware/auth-middleware"
+import {DEFAULT_SORT_BY, DEFAULT_SORT_DIRECTION} from "../types/constants";
 
 
 const validationBlog = [
@@ -34,8 +35,9 @@ export const getBlogsRouter = () => {
         const searchNameTerm = req.query.searchNameTerm ?? null
         const pageNumber = req.query.pageNumber ?? 1
         const pageSize = req.query.pageSize ?? 10
-        const sortBy = req.query.sortBy ?? 'createdAt'
-        const sortDirection = req.query.sortDirection ?? 'desc'
+        const sortBy = req.query.sortBy ?? DEFAULT_SORT_BY
+        const sortDirection = req.query.sortDirection ?? DEFAULT_SORT_DIRECTION// === DEFAULT_SORT_DIRECTION ? 1 : -1
+
 
         const foundSortedBlogs = await queryRepository.findBlogsAndSort(searchNameTerm, Number(pageNumber), Number(pageSize), sortBy, sortDirection)
         res.status(HTTP_STATUS.OK_200).json(foundSortedBlogs)
@@ -54,8 +56,8 @@ export const getBlogsRouter = () => {
 
         const pageNumber = req.query.pageNumber ?? 1
         const pageSize = req.query.pageSize ?? 10
-        const sortBy = req.query.sortBy ?? 'createdAt'
-        const sortDirection = req.query.sortDirection ?? 'desc'
+        const sortBy = req.query.sortBy ?? DEFAULT_SORT_BY
+        const sortDirection = req.query.sortDirection ?? DEFAULT_SORT_DIRECTION
 
         const postsThisBlog = await queryRepository.findPostsThisBlogById(findBlog.id, Number(pageNumber), Number(pageSize), sortBy, sortDirection)
         res.status(HTTP_STATUS.OK_200).json(postsThisBlog)

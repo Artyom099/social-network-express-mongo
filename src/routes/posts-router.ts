@@ -8,6 +8,7 @@ import {inputValidationMiddleware} from "../middleware/input-validation-middlewa
 import {queryRepository} from "../repositories/query-repository";
 import {feedbackService} from "../domain/feedbacks-service";
 import {authMiddlewareBasic, authMiddlewareBearer} from "../middleware/auth-middleware";
+import {DEFAULT_SORT_BY, DEFAULT_SORT_DIRECTION} from "../types/constants";
 
 
 const validationPost = [
@@ -34,8 +35,8 @@ export const getPostsRouter = () => {
 
         const pageNumber = req.query.pageNumber ?? 1
         const pageSize = req.query.pageSize ?? 10
-        const sortBy = req.query.sortBy ?? 'createdAt'
-        const sortDirection = req.query.sortDirection ?? 'desc'
+        const sortBy = req.query.sortBy ?? DEFAULT_SORT_BY
+        const sortDirection = req.query.sortDirection ?? DEFAULT_SORT_DIRECTION
 
         const foundSortedComments = await queryRepository.findCommentsThisPostAndSort(foundPost.id, Number(pageNumber), Number(pageSize), sortBy, sortDirection)
         res.status(HTTP_STATUS.OK_200).json(foundSortedComments)
@@ -54,8 +55,8 @@ export const getPostsRouter = () => {
     router.get('/', async (req: ReqQueryType<PagingDTO>, res: Response) => {
         const pageNumber = req.query.pageNumber ?? 1
         const pageSize = req.query.pageSize ?? 10
-        const sortBy = req.query.sortBy ?? 'createdAt'
-        const sortDirection = req.query.sortDirection ?? 'desc'
+        const sortBy = req.query.sortBy ?? DEFAULT_SORT_BY
+        const sortDirection = req.query.sortDirection ?? DEFAULT_SORT_DIRECTION
 
         const foundSortedPosts = await queryRepository.findPostsAndSort(Number(pageNumber), Number(pageSize), sortBy, sortDirection)
         res.status(HTTP_STATUS.OK_200).json(foundSortedPosts)
