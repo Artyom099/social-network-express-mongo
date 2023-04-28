@@ -1,7 +1,7 @@
 import express, {Request, Response} from "express";
 import {usersService} from "../domain/users-service";
 import {HTTP_STATUS} from "../utils";
-import {AuthType, ReqBodyType} from "../types";
+import {AuthDTO, ReqBodyType} from "../types";
 import {body} from "express-validator";
 import {inputValidationMiddleware} from "../middleware/input-validation-middleware";
 import {jwtService} from "../application/jwt-service";
@@ -14,11 +14,11 @@ const validationAuth = [
 
 export const authRouter = () => {
     const router = express.Router()
-    router.post('/login', validationAuth, inputValidationMiddleware, async (req: ReqBodyType<AuthType>, res: Response) => {
+
+    router.post('/login', validationAuth, inputValidationMiddleware, async (req: ReqBodyType<AuthDTO>, res: Response) => {
         const user = await usersService.checkCredentials(req.body.loginOrEmail, req.body.password)
         if (user) {
             const token = await jwtService.createJWT(user)
-
             res.status(HTTP_STATUS.OK_200).json({'accessToken': token})
         } else {
             res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)

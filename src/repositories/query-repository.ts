@@ -2,12 +2,6 @@ import {OutputModel, TBlog, TComment, TPost, TUser} from "../types"
 import {blogCollection, commentCollection, postCollection, userCollection} from "../db/db";
 import {Filter, Sort} from "mongodb"
 
-// @ts-ignore TODO заменить этой функцией sortNum
-const sortDirToNum = (sortDirection: string = -1): Sort => {
-    if (sortDirection === 'desc') return -1
-    if (sortDirection === 'asc') return 1
-}
-
 
 export const queryRepository = {
     async findBlogById(blogId: string): Promise<TBlog | null> {    // get, put, delete
@@ -16,7 +10,7 @@ export const queryRepository = {
         else return null
     },
 
-    async findBlogsAndSort(searchNameTerm: string | null, pageNumber: number, pageSize: number, sortBy: string,
+    async findBlogsAndSort(searchNameTerm: string | null = null, pageNumber: number, pageSize: number, sortBy: string,
                            sortDirection: string): Promise<OutputModel<TBlog[]>> {
         let sortNum: Sort = -1
         if (sortDirection === 'asc') sortNum = 1     // 1 - возрстание

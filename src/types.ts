@@ -1,5 +1,6 @@
 import {Request} from 'express'
 
+// models
 export type TVideo = {
     id: string
     title: string
@@ -43,6 +44,25 @@ export type TComment = {
     createdAt: string
 }
 
+export type UserDBType = {
+    id: string
+    login: string
+    email: string
+    passwordHash: string
+    passwordSalt: string
+    createdAt: string
+}
+export type CommentBDType = {
+    id: string
+    postId: string
+    content: string
+    commentatorInfo: {
+        userId: string
+        userLogin: string
+    }
+    createdAt: string
+}
+
 export type IdDTO = {
     id: string
 }
@@ -73,7 +93,6 @@ export type VideoPutDTO = {
     minAgeRestriction: number | null
     publicationDate: string
 }
-
 export type BlogPostDTO = {
     title: string
     shortDescription: string
@@ -84,7 +103,12 @@ export type BlogPutDTO = {
     description: string
     websiteUrl: string
 }
-
+export type PostDTO = {
+    title: string
+    shortDescription: string
+    content: string
+    blogId: string
+}
 export type UserGetDTO = {
     searchEmailTerm: string
     searchLoginTerm: string
@@ -93,45 +117,19 @@ export type UserGetDTO = {
     sortBy: string
     sortDirection: string
 }
-export type UserDBType = {
-    id: string
-    login: string
-    email: string
-    passwordHash: string
-    passwordSalt: string
-    createdAt: string
-}
-
-export type AuthType = {
+export type AuthDTO = {
     loginOrEmail: string
     password: string
 }
 
-export type PostDTO = {
-    title: string
-    shortDescription: string
-    content: string
-    blogId: string
-}
-
-export type CommentBDType = {
-    id: string
-    postId: string
-    content: string
-    commentatorInfo: {
-        userId: string
-        userLogin: string
-    }
-    createdAt: string
-}
 
 // e.Request<P,ResBody,ReqBody,ReqQuery,Locals>
 //     <Params, ??????,   Body,   Query, ?????>
 
-export type ReqParamsType<T> = Request<T>
-export type ReqBodyType<T>   = Request<{},{},T>
-export type ReqQueryType<T>  = Request<{},{},{},T>
-export type ReqParamsBodyType<T, Y> = Request<T,{},Y>
+export type ReqParamsType<T>         = Request<T>
+export type ReqBodyType<T>           = Request<{},{},T>
+export type ReqQueryType<T>          = Request<{},{},{},T>
+export type ReqParamsBodyType<T, Y>  = Request<T,{},Y>
 export type ReqParamsQueryType<T, Y> = Request<T,{},{},Y>
 
 export type OutputModel<T> = {

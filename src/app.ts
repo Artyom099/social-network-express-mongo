@@ -6,6 +6,7 @@ import {getPostsRouter} from "./routes/posts-router";
 import {getUsersRouter} from "./routes/users-router";
 import {authRouter} from "./routes/auth-router";
 import {feedbackRouter} from "./routes/feedback-router";
+import {emailRouter} from "./routes/email-router";
 
 export const app = express()
 export const jsonBodyMiddleware = express.json()
@@ -19,3 +20,4 @@ app.use('/posts', getPostsRouter())
 app.use('/users', getUsersRouter())
 app.use('/auth', authRouter())
 app.use('/comments', feedbackRouter())
+app.use('/', emailRouter())

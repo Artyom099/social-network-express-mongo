@@ -6,6 +6,7 @@ import {body} from "express-validator"
 import {ReqQueryType, UserGetDTO} from "../types"
 import {queryRepository} from "../repositories/query-repository"
 import {authMiddlewareBasic} from "../middleware/auth-middleware";
+import {DEFAULT_SORT_BY, DEFAULT_SORT_DIRECTION} from "../types/constants";
 
 const validationUser = [
     body('login').isString().isLength({min: 3, max: 10}).trim().notEmpty().matches('^[a-zA-Z0-9_-]*$'),
@@ -22,8 +23,8 @@ export const getUsersRouter = () => {
         const searchLoginTerm = req.query.searchLoginTerm ?? null
         const pageNumber = req.query.pageNumber ?? 1
         const pageSize = req.query.pageSize ?? 10
-        const sortBy = req.query.sortBy ?? 'createdAt'
-        const sortDirection = req.query.sortDirection ?? 'desc'
+        const sortBy = req.query.sortBy ?? DEFAULT_SORT_BY
+        const sortDirection = req.query.sortDirection ?? DEFAULT_SORT_DIRECTION
 
         const foundSortedUsers = await queryRepository.findUsersAndSort(searchEmailTerm, searchLoginTerm,
             Number(pageNumber), Number(pageSize), sortBy, sortDirection)
