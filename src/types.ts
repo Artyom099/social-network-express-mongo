@@ -1,6 +1,6 @@
 import {Request} from 'express'
 
-// models
+// ViewModels
 export type TVideo = {
     id: string
     title: string

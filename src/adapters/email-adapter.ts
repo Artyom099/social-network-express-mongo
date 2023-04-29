@@ -3,7 +3,7 @@ import nodemailer from "nodemailer"
 export const emailAdapter = {
     async sendEmail(email: string, subject: string, message: string) {
         const testAccount = {
-            user: 'artgolubev@bk.ru',
+            user: 'test-api@gmail.ru',
             pass: 'qwerty1'
         }
         let transporter  = await nodemailer.createTransport({
@@ -14,11 +14,10 @@ export const emailAdapter = {
             }
         })
         return await transporter.sendMail({
-            from: '"Fred Foo 👻" <testAccount.user>', // sender address
-            to: email,                     // list of receivers
-            subject: subject,              // Subject line
-            html: message,                 // html body
+            from: '"Fred Foo 👻" <testAccount.user>',    // sender address
+            to: email,                                  // list of receivers
+            subject: subject,                           // Subject line
+            html: message,                              // html body
         })
     }
-
 }
