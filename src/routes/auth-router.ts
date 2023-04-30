@@ -49,7 +49,8 @@ export const authRouter = () => {
     })
 
     router.post('/registration-email-resending', async (req: Request, res: Response) => {
-
+        await emailManager.sendEmailConfirmationMessage(req.body.email)
+        res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
     })
 
     router.get('/me', authMiddlewareBearer, async (req: Request, res: Response) => {
