@@ -12,7 +12,7 @@ export const emailManager = {
         await emailAdapter.sendEmail(email, subject, message)
     },
 
-    async sendPasswordRecoveryMessage(user) {
+    async sendPasswordRecoveryMessage() {
         const subject = 'password recovery'
         const message = '<div>Click here</div>'
         // save to repo
