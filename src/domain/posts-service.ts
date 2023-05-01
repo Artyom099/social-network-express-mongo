@@ -1,4 +1,4 @@
-import {TBlog, TPost} from "../types";
+import {TBlog, TPost} from "../types/types";
 import {Result} from "../utils";
 import {postsRepository} from "../repositories/posts-repository";
 

@@ -1,6 +1,6 @@
 import {commentCollection} from "../db/db";
 import {ResultCode} from "../utils";
-import {CommentBDType, TComment} from "../types";
+import {CommentBDType, TComment} from "../types/types";
 
 
 export const feedbackRepository = {

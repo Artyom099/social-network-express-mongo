@@ -7,7 +7,7 @@ import {
     ReqParamsQueryType,
     ReqQueryType,
     TBlog
-} from "../types";
+} from "../types/types";
 import {convertResultErrorCodeToHttp, HTTP_STATUS} from "../utils";
 import {blogsService} from "../domain/blogs-service";
 import {postsService} from "../domain/posts-service";

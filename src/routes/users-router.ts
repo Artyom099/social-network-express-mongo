@@ -3,7 +3,7 @@ import {inputValidationMiddleware} from "../middleware/input-validation-middlewa
 import {HTTP_STATUS} from "../utils"
 import {usersService} from "../domain/users-service"
 import {body} from "express-validator"
-import {ReqQueryType, UserGetDTO} from "../types"
+import {ReqQueryType, UserGetDTO} from "../types/types"
 import {queryRepository} from "../repositories/query-repository"
 import {authMiddlewareBasic} from "../middleware/auth-middleware";
 import {DEFAULT_SORT_BY, DEFAULT_SORT_DIRECTION} from "../types/constants";

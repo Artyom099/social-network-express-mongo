@@ -6,7 +6,7 @@ export const emailRouter = () => {
     const router = express.Router()
 
     router.post('/send', async (req: Request, res: Response) => {
-        await emailManager.sendPasswordRecoveryMessage(req.body.user)
+        // await emailManager.sendPasswordRecoveryMessage(req.body.user)
     })
 
     return router

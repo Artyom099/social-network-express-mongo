@@ -1,5 +1,5 @@
 import {blogCollection} from "../db/db";
-import {TBlog} from "../types";
+import {TBlog} from "../types/types";
 import {Result, ResultCode} from "../utils";
 
 

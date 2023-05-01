@@ -1,4 +1,4 @@
-import {CommentBDType, TBlog, TPost, TVideo, UserDBType} from "../types"
+import {CommentBDType, TBlog, TPost, TVideo, UserDBType} from "../types/types"
 import {MongoClient} from 'mongodb'
 import dotenv from 'dotenv'
 dotenv.config()

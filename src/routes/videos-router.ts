@@ -1,6 +1,6 @@
 import {body} from "express-validator";
 import express, {Request, Response} from "express";
-import { ReqBodyType, ReqParamsBodyType, ReqParamsType, TVideo, IdDTO, VideoPostDTO, VideoPutDTO} from "../types";
+import { ReqBodyType, ReqParamsBodyType, ReqParamsType, TVideo, IdDTO, VideoPostDTO, VideoPutDTO} from "../types/types";
 import {convertResultErrorCodeToHttp, HTTP_STATUS} from "../utils";
 import {videosService} from "../domain/videos-service";
 import {inputValidationMiddleware} from "../middleware/input-validation-middleware";
