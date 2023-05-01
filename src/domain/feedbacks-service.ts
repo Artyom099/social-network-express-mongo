@@ -1,4 +1,4 @@
-import {CommentBDType, TComment} from "../types";
+import {CommentBDType, TComment} from "../types/types";
 import {feedbackRepository} from "../repositories/feedback-repository";
 
 

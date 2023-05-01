@@ -1,5 +1,5 @@
 import {videoCollection} from "../db/db";
-import {TVideo} from "../types";
+import {TVideo} from "../types/types";
 import {Result, ResultCode} from "../utils";
 
 

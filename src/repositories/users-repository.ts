@@ -1,4 +1,4 @@
-import {TUser, UserDBType} from "../types";
+import {TUser, UserDBType} from "../types/types";
 import {userCollection} from "../db/db";
 
 

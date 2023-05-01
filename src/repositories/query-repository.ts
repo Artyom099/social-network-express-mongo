@@ -1,4 +1,4 @@
-import {OutputModel, TBlog, TComment, TPost, TUser} from "../types"
+import {OutputModel, TBlog, TComment, TPost, TUser} from "../types/types"
 import {blogCollection, commentCollection, postCollection, userCollection} from "../db/db";
 import {Filter, Sort} from "mongodb"
 

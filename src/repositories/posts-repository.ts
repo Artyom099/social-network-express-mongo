@@ -1,5 +1,5 @@
 import {postCollection} from "../db/db";
-import {TPost} from "../types";
+import {TPost} from "../types/types";
 import {Result, ResultCode} from "../utils";
 
 

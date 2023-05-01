@@ -1,4 +1,4 @@
-import {TUser} from "../types";
+import {TUser} from "./types";
 
 declare global {
     declare namespace Express {

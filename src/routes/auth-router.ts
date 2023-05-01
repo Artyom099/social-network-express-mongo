@@ -1,7 +1,7 @@
 import express, {Request, Response} from "express";
 import {usersService} from "../domain/users-service";
 import {HTTP_STATUS} from "../utils";
-import {AuthDTO, ReqBodyType} from "../types";
+import {AuthDTO, ReqBodyType} from "../types/types";
 import {body} from "express-validator";
 import {inputValidationMiddleware} from "../middleware/input-validation-middleware";
 import {jwtService} from "../application/jwt-service";
@@ -13,11 +13,15 @@ const validationAuth = [
     body('loginOrEmail').isString().trim().notEmpty(),
     body('password').isString().trim().notEmpty()
 ]
-const validationReg = [
-    body('login').isString().trim().notEmpty().isLength({min: 3, max: 10}).matches('^[a-zA-Z0-9_-]*$'),
-    body('password').isString().trim().notEmpty().isLength({min: 6, max: 20}),
+const validationEmail = [
     body('email').isString().trim().notEmpty().isEmail
 ]
+const validationReg = [
+    ...validationEmail,
+    body('login').isString().trim().notEmpty().isLength({min: 3, max: 10}).matches('^[a-zA-Z0-9_-]*$'),
+    body('password').isString().trim().notEmpty().isLength({min: 6, max: 20}),
+]
+
 
 export const authRouter = () => {
     const router = express.Router()
@@ -37,9 +41,10 @@ export const authRouter = () => {
         const verifyEmail = await authService.checkConfirmationCode(req.body.code)
         if (!verifyEmail) {
             throw new Error()
-            return res.sendStatus(HTTP_STATUS.BAD_REQUEST_400)
+            res.sendStatus(HTTP_STATUS.BAD_REQUEST_400)
+        } else {
+            res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
         }
-        res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
     })
 
     router.post('/registration', validationReg, inputValidationMiddleware, async (req: Request, res: Response) => {
@@ -48,7 +53,7 @@ export const authRouter = () => {
         res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
     })
 
-    router.post('/registration-email-resending', async (req: Request, res: Response) => {
+    router.post('/registration-email-resending', validationEmail, inputValidationMiddleware, async (req: Request, res: Response) => {
         await emailManager.sendEmailConfirmationMessage(req.body.email)
         res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
     })

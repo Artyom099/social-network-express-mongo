@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt'
-import {TUser, UserDBType} from "../types";
+import {TUser, UserDBType} from "../types/types";
 import {usersRepository} from "../repositories/users-repository";
 
 

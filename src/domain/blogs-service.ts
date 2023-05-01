@@ -1,5 +1,5 @@
 import {blogsRepository} from "../repositories/blogs-repository";
-import {TBlog} from "../types";
+import {TBlog} from "../types/types";
 import {Result} from "../utils";
 
 
