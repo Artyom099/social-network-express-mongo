@@ -1,15 +1,15 @@
-import {TUser, UserDBType} from "../types/types";
+import {TUser, UserAccountDBType, UserDBType} from "../types/types";
 import {userCollection} from "../db/db";
 
 
 export const usersRepository = {
-    async createUser(newUser: UserDBType): Promise<TUser> {
+    async createUser(newUser: UserAccountDBType): Promise<TUser> {
         await userCollection.insertOne(newUser)
         return {
             id: newUser.id,
-            login: newUser.login,
-            email: newUser.email,
-            createdAt: newUser.createdAt
+            login: newUser.accountData.login,
+            email: newUser.accountData.email,
+            createdAt: newUser.accountData.createdAt
         }
     },
 
