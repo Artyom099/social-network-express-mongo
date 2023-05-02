@@ -52,6 +52,19 @@ export type UserDBType = {
     passwordSalt: string
     createdAt: string
 }
+export type UserAccountDBType = {
+    id: string
+    accountData: {
+        login: string
+        email: string
+        passwordHash: string
+        passwordSalt: string
+        createdAt: string
+    },
+    emailConfirmation: {
+
+    }
+}
 export type CommentBDType = {
     id: string
     postId: string
@@ -122,7 +135,8 @@ export type AuthDTO = {
     password: string
 }
 
-
+// ResBody - типизация ответа
+// Locals - переменные окружения
 // e.Request<P,ResBody,ReqBody,ReqQuery,Locals>
 //     <Params, ??????,   Body,   Query, ?????>
 
