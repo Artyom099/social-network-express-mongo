@@ -41,9 +41,12 @@ export const authRouter = () => {
         const verifyEmail = await authService.checkConfirmationCode(req.body.code)
         if (!verifyEmail) {
             res.status(HTTP_STATUS.BAD_REQUEST_400).json({
-                errorsMessages: {
-                    // todo
-                }
+                errorsMessages: [
+                    {
+                        message: 'code is incorrect, expired or already been applied',
+                        field: 'code'
+                    }
+                ]
             })
         } else {
             res.sendStatus(HTTP_STATUS.NO_CONTENT_204)

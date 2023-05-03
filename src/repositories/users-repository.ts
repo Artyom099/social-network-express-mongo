@@ -19,9 +19,14 @@ export const usersRepository = {
         else return null
     },
 
-    async findUserById(userId: string) {
+    async findUserById(userId: string): Promise<TUser | null> {
         const user = await userCollection.findOne({id: userId}, {projection: {_id: false}})
-        if (user) return user
+        if (user) return {
+            id: user.id,
+            login: user.accountData.login,
+            email: user.accountData.email,
+            createdAt: user.accountData.createdAt
+        }
         else return null
     },
 
