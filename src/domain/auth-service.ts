@@ -3,6 +3,8 @@ import {UserAccountDBType, UserDBType} from "../types/types";
 import {usersRepository} from "../repositories/users-repository";
 import {usersService} from "./users-service";
 import {emailManager} from "../managers/email-manager";
+import {v4 as uuidv4} from 'uuid'
+import add from 'date-fns/add'
 
 
 export const authService = {
@@ -20,7 +22,10 @@ export const authService = {
                 createdAt: dateNow.toISOString()
             },
             emailConfirmation: {
-
+                // todo начать с заполнения этого объекта по видео
+                confirmationCode: uuidv4(),
+                expirationDate: add(new Date, {minutes: 10}),
+                isConfirmed: false
             }
         }
         const createResult = await usersRepository.createUser(newUser)

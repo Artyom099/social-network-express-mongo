@@ -136,7 +136,7 @@ export type AuthDTO = {
 }
 
 // ResBody - типизация ответа
-// Locals - переменные окружения
+// Locals - возможно переменные окружения
 // e.Request<P,ResBody,ReqBody,ReqQuery,Locals>
 //     <Params, ??????,   Body,   Query, ?????>
 
