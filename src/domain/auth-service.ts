@@ -36,12 +36,13 @@ export const authService = {
         return createResult
     },
 
-    async checkConfirmationCode(code: string, email: string): Promise<boolean> {
+    async checkConfirmationCode(code: string): Promise<boolean> {
         // проверка кода на правильность, срок жизни и повторное использование
-        const user = await usersRepository.findUserByLoginOrEmail(email)
-        if (user && user.emailConfirmation.confirmationCode === code && !user.emailConfirmation.isConfirmed &&
+        const user = await usersRepository.findUserByConfirmationCode(code)
+        if (user && !user.emailConfirmation.isConfirmed &&
+            user.emailConfirmation.confirmationCode === code &&
             user.emailConfirmation.expirationDate > new Date()) {
-            await usersRepository.updateConfirmation(user.id)
+            await usersRepository.updateEmailConfirmation(user.id)
             return true
         } else {
             return false

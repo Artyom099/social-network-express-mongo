@@ -1,4 +1,4 @@
-import {OutputModel, TBlog, TComment, TPost, TUser} from "../types/types"
+import {OutputModel, TBlog, TComment, TPost, UserAccountDBType} from "../types/types"
 import {blogCollection, commentCollection, postCollection, userCollection} from "../db/db";
 import {Filter, Sort} from "mongodb"
 
@@ -69,25 +69,26 @@ export const queryRepository = {
     },
 
     async findUsersAndSort(searchEmailTerm: string | null, searchLoginTerm: string | null, pageNumber: number, pageSize: number, sortBy: string,
-                           sortDirection: string): Promise<OutputModel<TUser[]>> {
+                           sortDirection: string): Promise<OutputModel<UserAccountDBType[]>> {
         let sortNum: Sort = -1
         if (sortDirection === 'asc') sortNum = 1     // 1 - возрстание
         if (sortDirection === 'desc') sortNum = -1   // -1 - убывание
 
-        const filter: Filter<TUser> = {
+        const filter: Filter<UserAccountDBType> = {
             $or: [{'accountData.login': {$regex: searchLoginTerm ?? '', $options: "i"}},
                 {'accountData.email': {$regex: searchEmailTerm ?? '', $options: "i"}}]
         }
         const totalCount: number = await userCollection.countDocuments(filter)
-        const sortedUsers: TUser[] = await userCollection
-            .find(filter, {projection: {_id: false, 'accountData.passwordHash': false, 'accountData.passwordSalt': false, emailConfirmation: false}})
+        const sortedUsers: UserAccountDBType[] = await userCollection
+            .find(filter, {projection: {_id: 0, id: 1, login: '$accountData.login',
+                email: '$accountData.email', createdAt: '$accountData.createdAt'}})
             .sort({[sortBy]: sortNum}).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
         return {
             pagesCount: Math.ceil(totalCount / pageSize),    // общее количество страниц
             page: pageNumber,                                   // текущая страница
             pageSize,                                           // количество пользователей на странице
             totalCount,                                         // общее количество пользователей
-            items: sortedUsers
+            items: sortedUsers  //todo здесь тип TUser!
         }
     },
 
