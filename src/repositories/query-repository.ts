@@ -1,4 +1,4 @@
-import {OutputModel, TBlog, TComment, TPost, TUser} from "../types/types"
+import {OutputModel, TBlog, TComment, TPost, TUser, UserAccountDBType} from "../types/types"
 import {blogCollection, commentCollection, postCollection, userCollection} from "../db/db";
 import {Filter, Sort} from "mongodb"
 
@@ -74,12 +74,12 @@ export const queryRepository = {
         if (sortDirection === 'asc') sortNum = 1     // 1 - возрстание
         if (sortDirection === 'desc') sortNum = -1   // -1 - убывание
 
-        const filter: Filter<TUser> = {
+        const filter: Filter<UserAccountDBType> = {
             $or: [{'accountData.login': {$regex: searchLoginTerm ?? '', $options: "i"}},
                 {'accountData.email': {$regex: searchEmailTerm ?? '', $options: "i"}}]
         }
         const totalCount: number = await userCollection.countDocuments(filter)
-        const sortedUsers: TUser[] = await userCollection
+        const sortedUsers: UserAccountDBType[] = await userCollection
             .find(filter, {projection: {_id: false, 'accountData.passwordHash': false, 'accountData.passwordSalt': false, emailConfirmation: false}})
             .sort({[sortBy]: sortNum}).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
         return {

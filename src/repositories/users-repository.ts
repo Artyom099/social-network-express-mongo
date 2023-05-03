@@ -40,7 +40,7 @@ export const usersRepository = {
         else return null
     },
 
-    async updateConfirmation(userId: string) {
+    async updateEmailConfirmation(userId: string) {
         await userCollection.updateOne({id: userId}, {$set: {'emailConfirmation.isConfirmed': true}})
     }
 }

@@ -43,9 +43,8 @@ export const usersService = {
         return await usersRepository.findUserById(userId)
     },
 
-    async findUserByEmail(userEmail: string) {
-        const user = await usersRepository.findUserByLoginOrEmail(userEmail)
-        if (!user) return false
+    async findUserByEmail(userEmail: string): Promise<UserAccountDBType | null> {
+        return await usersRepository.findUserByLoginOrEmail(userEmail)
     },
 
     async deleteUser(userId: string) {
