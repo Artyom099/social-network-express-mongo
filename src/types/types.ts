@@ -62,7 +62,9 @@ export type UserAccountDBType = {
         createdAt: string
     },
     emailConfirmation: {
-
+        confirmationCode: string
+        expirationDate: Date
+        isConfirmed: boolean
     }
 }
 export type CommentBDType = {

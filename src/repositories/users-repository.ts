@@ -1,4 +1,4 @@
-import {TUser, UserAccountDBType, UserDBType} from "../types/types";
+import {TUser, UserAccountDBType} from "../types/types";
 import {userCollection} from "../db/db";
 
 
@@ -13,8 +13,8 @@ export const usersRepository = {
         }
     },
 
-    async findUserByLoginOrEmail(loginOrEmail: string) {
-        const user = await userCollection.findOne({ $or: [ {email: loginOrEmail}, {login: loginOrEmail} ]})
+    async findUserByLoginOrEmail(loginOrEmail: string): Promise<UserAccountDBType | null> {
+        const user = await userCollection.findOne({ $or: [ {'accountData.email': loginOrEmail}, {'accountData.login': loginOrEmail} ]})
         if (user) return user
         else return null
     },
@@ -32,5 +32,9 @@ export const usersRepository = {
 
     async deleteUser(userId: string) {
         return await userCollection.deleteOne({id: userId})
+    },
+
+    async updateConfirmation(userId: string) {
+        await userCollection.updateOne({id: userId}, {$set: {'emailConfirmation.isConfirmed': true}})
     }
 }

@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import {TUser, UserAccountDBType, UserDBType} from "../types/types";
+import {TUser, UserAccountDBType} from "../types/types";
 import {usersRepository} from "../repositories/users-repository";
 import {usersService} from "./users-service";
 import {emailManager} from "../managers/email-manager";
@@ -36,8 +36,15 @@ export const authService = {
         return createResult
     },
 
-    async checkConfirmationCode(code: string): Promise<boolean> {
-        //todo вернуть объект с ошибкой
-        return code === code;
+    async checkConfirmationCode(code: string, email: string): Promise<boolean> {
+        // проверка кода на правильность, срок жизни и повторное использование
+        const user = await usersRepository.findUserByLoginOrEmail(email)
+        if (user && user.emailConfirmation.confirmationCode === code && !user.emailConfirmation.isConfirmed &&
+            user.emailConfirmation.expirationDate > new Date()) {
+            await usersRepository.updateConfirmation(user.id)
+            return true
+        } else {
+            return false
+        }
     }
 }

@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt'
-import {TUser, UserAccountDBType, UserDBType} from "../types/types";
+import {TUser, UserAccountDBType} from "../types/types";
 import {usersRepository} from "../repositories/users-repository";
 import {v4 as uuidv4} from "uuid";
 import add from "date-fns/add";
@@ -32,7 +32,7 @@ export const usersService = {
         if (!user) return false
         const passwordHash = await this._generateHash(password, user.accountData.passwordSalt)
         if (user.accountData.passwordHash === passwordHash) return user
-        // else return
+        else return false
     },
 
     async _generateHash(password: string, salt: string) {
@@ -41,6 +41,11 @@ export const usersService = {
 
     async findUserById(userId: string): Promise<TUser | null> {    // get, put, delete
         return await usersRepository.findUserById(userId)
+    },
+
+    async findUserByEmail(userEmail: string) {
+        const user = await usersRepository.findUserByLoginOrEmail(userEmail)
+        if (!user) return false
     },
 
     async deleteUser(userId: string) {
