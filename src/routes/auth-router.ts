@@ -38,7 +38,7 @@ export const authRouter = () => {
 
     router.post('/registration-confirmation', async (req: Request, res: Response) => {
         // нам приходит код на почту, если он верный, то 204, иначе 400 и текст ошибки
-        const verifyEmail = await authService.checkConfirmationCode(req.body.code, req.body.email)
+        const verifyEmail = await authService.checkConfirmationCode(req.body.code)
         if (!verifyEmail) {
             res.status(HTTP_STATUS.BAD_REQUEST_400).json({
                 errorsMessages: [
