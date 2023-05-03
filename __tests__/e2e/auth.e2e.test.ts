@@ -33,4 +33,17 @@ describe('/auth', () => {
             })
             .expect(HTTP_STATUS.UNAUTHORIZED_401)
     })
+
+    it('should return 204 and create user', async () => {
+        const createResponse = await request(app)
+            .post('/auth/registration')
+            .send({
+                login: 'valid-super-login',
+                password: 'qwerty1',
+                email: 'valid-super@mail.ru'
+            })
+            .expect(HTTP_STATUS.NO_CONTENT_204)
+
+        //todo залезать в бд и оттуда брать код, либо как-то с помщью nodemailer
+    })
 })
