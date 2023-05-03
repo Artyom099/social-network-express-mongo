@@ -1,20 +1,28 @@
 import bcrypt from 'bcrypt'
-import {TUser, UserDBType} from "../types/types";
+import {TUser, UserAccountDBType} from "../types/types";
 import {usersRepository} from "../repositories/users-repository";
+import {v4 as uuidv4} from "uuid";
+import add from "date-fns/add";
 
 
 export const usersService = {
     async createUser(login: string, password: string, email: string) {
         const passwordSalt = await bcrypt.genSalt(10)
         const passwordHash = await this._generateHash(password, passwordSalt)
-        const dateNow = new Date()
-        const newUser: UserDBType = {
-            id: (+dateNow).toString(),
-            login: login,
-            email,
-            passwordHash,
-            passwordSalt,
-            createdAt: dateNow.toISOString()
+        const newUser: UserAccountDBType = {
+            id: uuidv4().toString(),
+            accountData: {
+                login,
+                email,
+                passwordHash,
+                passwordSalt,
+                createdAt: new Date().toISOString()
+            },
+            emailConfirmation: {
+                confirmationCode: uuidv4(),
+                expirationDate: add(new Date, {minutes: 10}),
+                isConfirmed: false
+            }
         }
         return await usersRepository.createUser(newUser)
     },
@@ -22,9 +30,9 @@ export const usersService = {
     async checkCredentials(loginOrEmail: string, password: string) {
         const user = await usersRepository.findUserByLoginOrEmail(loginOrEmail)
         if (!user) return false
-        const passwordHash = await this._generateHash(password, user.passwordSalt)
-        if (user.passwordHash === passwordHash) return user
-        // else return
+        const passwordHash = await this._generateHash(password, user.accountData.passwordSalt)
+        if (user.accountData.passwordHash === passwordHash) return user
+        else return false
     },
 
     async _generateHash(password: string, salt: string) {
@@ -33,6 +41,11 @@ export const usersService = {
 
     async findUserById(userId: string): Promise<TUser | null> {    // get, put, delete
         return await usersRepository.findUserById(userId)
+    },
+
+    async findUserByEmail(userEmail: string) {
+        const user = await usersRepository.findUserByLoginOrEmail(userEmail)
+        if (!user) return false
     },
 
     async deleteUser(userId: string) {

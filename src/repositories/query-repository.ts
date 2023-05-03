@@ -75,11 +75,12 @@ export const queryRepository = {
         if (sortDirection === 'desc') sortNum = -1   // -1 - убывание
 
         const filter: Filter<TUser> = {
-            $or: [{login: {$regex: searchLoginTerm ?? '', $options: "i"}},
-                {email: {$regex: searchEmailTerm ?? '', $options: "i"}}]
+            $or: [{'accountData.login': {$regex: searchLoginTerm ?? '', $options: "i"}},
+                {'accountData.email': {$regex: searchEmailTerm ?? '', $options: "i"}}]
         }
         const totalCount: number = await userCollection.countDocuments(filter)
-        const sortedUsers: TUser[] = await userCollection.find(filter, {projection: {_id: false, passwordHash: false, passwordSalt: false}})
+        const sortedUsers: TUser[] = await userCollection
+            .find(filter, {projection: {_id: false, 'accountData.passwordHash': false, 'accountData.passwordSalt': false, emailConfirmation: false}})
             .sort({[sortBy]: sortNum}).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
         return {
             pagesCount: Math.ceil(totalCount / pageSize),    // общее количество страниц

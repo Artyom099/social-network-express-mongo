@@ -62,7 +62,9 @@ export type UserAccountDBType = {
         createdAt: string
     },
     emailConfirmation: {
-
+        confirmationCode: string
+        expirationDate: Date
+        isConfirmed: boolean
     }
 }
 export type CommentBDType = {
@@ -136,7 +138,7 @@ export type AuthDTO = {
 }
 
 // ResBody - типизация ответа
-// Locals - переменные окружения
+// Locals - возможно переменные окружения
 // e.Request<P,ResBody,ReqBody,ReqQuery,Locals>
 //     <Params, ??????,   Body,   Query, ?????>
 

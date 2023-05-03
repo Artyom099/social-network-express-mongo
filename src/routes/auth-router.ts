@@ -38,12 +38,15 @@ export const authRouter = () => {
 
     router.post('/registration-confirmation', async (req: Request, res: Response) => {
         // нам приходит код на почту, если он верный, то 204, иначе 400 и текст ошибки
-        const verifyEmail = await authService.checkConfirmationCode(req.body.code)
+        const verifyEmail = await authService.checkConfirmationCode(req.body.code, req.body.email)
         if (!verifyEmail) {
             res.status(HTTP_STATUS.BAD_REQUEST_400).json({
-                errorsMessages: {
-                    // todo
-                }
+                errorsMessages: [
+                    {
+                        message: 'code is incorrect, expired or already been applied',
+                        field: 'code'
+                    }
+                ]
             })
         } else {
             res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
@@ -51,15 +54,39 @@ export const authRouter = () => {
     })
 
     router.post('/registration', validationReg, inputValidationMiddleware, async (req: Request, res: Response) => {
-        // если входные данные для регистрции правильные, то отправляем код подтверждения
-        await authService.createUser(req.body.login, req.body.password, req.body.email)
-        res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
+        // если входные данные для регистрции правильные, то создаем пользователя
+        const existUser = await usersService.findUserByEmail(req.body.email)
+        if (existUser) {
+            res.status(HTTP_STATUS.BAD_REQUEST_400).json({
+                errorsMessages: [
+                    {
+                        message: 'user with the given email or password already exists',
+                        field: 'email'
+                    }
+                ]
+            })
+        } else {
+            await authService.createUser(req.body.login, req.body.password, req.body.email)
+            res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
+        }
     })
 
     router.post('/registration-email-resending', validationEmail, inputValidationMiddleware, async (req: Request, res: Response) => {
         // проверяем, подтверждена ли почта, и только потом отправляем код подтверждения
-        await emailManager.sendEmailConfirmationMessage(req.body.email)
-        res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
+        const existUser = await usersService.findUserByEmail(req.body.email)
+        if (existUser) {
+            res.status(HTTP_STATUS.BAD_REQUEST_400).json({
+                errorsMessages: [
+                    {
+                        message: 'email is already confirmed',
+                        field: 'email'
+                    }
+                ]
+            })
+        } else {
+            await emailManager.sendEmailConfirmationMessage(req.body.email)
+            res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
+        }
     })
 
     router.get('/me', authMiddlewareBearer, async (req: Request, res: Response) => {
