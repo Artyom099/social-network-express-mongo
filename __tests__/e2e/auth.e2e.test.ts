@@ -34,16 +34,75 @@ describe('/auth', () => {
             .expect(HTTP_STATUS.UNAUTHORIZED_401)
     })
 
-    it('should return 204 and create user', async () => {
+    let createdUser1: any = null
+    const password1 = 'qwerty1'
+    it('should create user by admin with correct input data & confirmed email', async () => {
         const createResponse = await request(app)
+            .post('/users')
+            .auth('admin', 'qwerty', {type: 'basic'})
+            .send({
+                login: 'lg-647449',
+                password: password1,
+                email: 'valid-email@mail.ru'
+            })
+            .expect(HTTP_STATUS.CREATED_201)
+
+        createdUser1 = createResponse.body
+        expect(createdUser1).toEqual({
+            id: expect.any(String),
+            login: createdUser1.login,
+            email: createdUser1.email,
+            createdAt: expect.any(String),
+        })
+
+        await request(app)
+            .get('/users')
+            .auth('admin', 'qwerty', {type: 'basic'})
+            .expect(HTTP_STATUS.OK_200, { pagesCount: 1, page: 1, pageSize: 10, totalCount: 1, items: [createdUser1] })
+    })
+
+    it('should return 400 if email already confirmed', async () => {
+        await request(app)
+            .post('/auth/registration-email-resending')
+            .send({
+                email: createdUser1.email
+            })
+            .expect(HTTP_STATUS.BAD_REQUEST_400)
+    })
+
+    it('should return 400 if user\'s email already exist', async () => {
+        await request(app)
             .post('/auth/registration')
             .send({
-                login: 'valid-super-login',
-                password: 'qwerty1',
-                email: 'valid-super@mail.ru'
+                login: 'otherLogin',
+                password: password1,
+                email: createdUser1.email
             })
-            .expect(HTTP_STATUS.NO_CONTENT_204)
+            .expect(HTTP_STATUS.BAD_REQUEST_400, {
+                errorsMessages: [
+                    {
+                        message: 'user with the given email or login already exists',
+                        field: 'login'
+                    }
+                ]
+            })
+    })
 
-        //todo залезать в бд и оттуда брать код, либо как-то с помщью nodemailer
+    it('should return error if user\'s login already exist', async () => {
+        await request(app)
+            .post('/auth/registration')
+            .send({
+                login: createdUser1.login,
+                password: password1,
+                email: 'other-email@mail.com'
+            })
+            .expect(HTTP_STATUS.BAD_REQUEST_400, {
+                errorsMessages: [
+                    {
+                        message: 'user with the given email or login already exists',
+                        field: 'login'
+                    }
+                ]
+            })
     })
 })

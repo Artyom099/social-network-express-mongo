@@ -21,7 +21,7 @@ export const usersService = {
             emailConfirmation: {
                 confirmationCode: uuidv4(),
                 expirationDate: add(new Date, {minutes: 10}),
-                isConfirmed: false
+                isConfirmed: true
             }
         }
         return await usersRepository.createUser(newUser)
@@ -43,8 +43,8 @@ export const usersService = {
         return await usersRepository.findUserById(userId)
     },
 
-    async findUserByEmail(userEmail: string): Promise<UserAccountDBType | null> {
-        return await usersRepository.findUserByLoginOrEmail(userEmail)
+    async findUserByLoginOrEmail(LoginOrEmail: string): Promise<UserAccountDBType | null> {
+        return await usersRepository.findUserByLoginOrEmail(LoginOrEmail)
     },
 
     async deleteUser(userId: string) {

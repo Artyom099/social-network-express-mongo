@@ -30,8 +30,8 @@ describe('/users', () => {
         createdUser1 = createResponse.body
         expect(createdUser1).toEqual({
             id: expect.any(String),
-            login: 'lg-647449',
-            email: 'valid-email@mail.ru',
+            login: createdUser1.login,
+            email: createdUser1.email,
             createdAt: expect.any(String),
         })
 
@@ -58,8 +58,8 @@ describe('/users', () => {
             .get('/auth/me')
             .auth('token', {type: 'bearer'})
             .expect(HTTP_STATUS.OK_200, {
-                email: 'valid-email@mail.ru',
-                login: 'lg-647449',
+                email: createdUser1.email,
+                login: createdUser1.login,
                 userId: createdUser1.userId
             })
     })
