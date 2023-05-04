@@ -14,7 +14,7 @@ const validationAuth = [
     body('password').isString().trim().notEmpty()
 ]
 const validationEmail = [
-    body('email').isString().trim().notEmpty().isEmail
+    body('email').isString().trim().notEmpty().isEmail()
 ]
 const validationReg = [
     ...validationEmail,
@@ -73,6 +73,7 @@ export const authRouter = () => {
 
     router.post('/registration-email-resending', validationEmail, inputValidationMiddleware, async (req: Request, res: Response) => {
         // проверяем, подтверждена ли почта, и только потом отправляем код подтверждения
+        // а если пользовтеля не сущетвует
         const existUser = await usersService.findUserByEmail(req.body.email)
         if (existUser && existUser.emailConfirmation.isConfirmed) {
             res.status(HTTP_STATUS.BAD_REQUEST_400).json({
