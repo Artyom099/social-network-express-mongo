@@ -88,7 +88,7 @@ export const queryRepository = {
             page: pageNumber,                                   // текущая страница
             pageSize,                                           // количество пользователей на странице
             totalCount,                                         // общее количество пользователей
-            items: sortedUsers  //todo здесь тип TUser!
+            items: sortedUsers  //здесь тип TUser!
         }
     },
 
