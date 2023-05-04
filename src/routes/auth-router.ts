@@ -55,13 +55,14 @@ export const authRouter = () => {
 
     router.post('/registration', validationReg, inputValidationMiddleware, async (req: Request, res: Response) => {
         // если входные данные для регистрции правильные, то создаем пользователя
-        const existUser = await usersService.findUserByEmail(req.body.email)
-        if (existUser) {
+        const existUsersEmail = await usersService.findUserByLoginOrEmail(req.body.email)
+        const existUsersLogin = await usersService.findUserByLoginOrEmail(req.body.login)
+        if (existUsersEmail || existUsersLogin) {
             res.status(HTTP_STATUS.BAD_REQUEST_400).json({
                 errorsMessages: [
                     {
-                        message: 'user with the given email or password already exists',
-                        field: 'email'
+                        message: 'user with the given email or login already exists',
+                        field: 'login'
                     }
                 ]
             })
@@ -72,14 +73,13 @@ export const authRouter = () => {
     })
 
     router.post('/registration-email-resending', validationEmail, inputValidationMiddleware, async (req: Request, res: Response) => {
-        // проверяем, подтверждена ли почта, и только потом отправляем код подтверждения
-        // а если пользовтеля не сущетвует
-        const existUser = await usersService.findUserByEmail(req.body.email)
-        if (existUser && existUser.emailConfirmation.isConfirmed) {
-            res.status(HTTP_STATUS.BAD_REQUEST_400).json({
+        // проверяем, существует ли пользователь, подтверждена ли почта, и потом отправляем код
+        const existUser = await usersService.findUserByLoginOrEmail(req.body.email)
+        if (!existUser || existUser.emailConfirmation.isConfirmed) {
+            res.status(HTTP_STATUS.BAD_REQUEST_400).send({
                 errorsMessages: [
                     {
-                        message: 'email is already confirmed',
+                        message: 'email is already confirmed or doesn\'t exist',
                         field: 'email'
                     }
                 ]
