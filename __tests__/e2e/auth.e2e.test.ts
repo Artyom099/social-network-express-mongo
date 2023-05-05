@@ -88,7 +88,7 @@ describe('/auth', () => {
             })
     })
 
-    it('should return error if user\'s login already exist', async () => {
+    it('should return 400 if user\'s login already exist', async () => {
         await request(app)
             .post('/auth/registration')
             .send({
@@ -105,4 +105,16 @@ describe('/auth', () => {
                 ]
             })
     })
+
+    let createdUser2: any = null
+    // it('should return 400 if user\'s login already exist', async () => {
+    //     await request(app)
+    //         .post('/auth/registration')
+    //         .send({
+    //             login: createdUser1.login,
+    //             password: password1,
+    //             email: 'other-email@mail.com'
+    //         })
+    //         .expect(HTTP_STATUS.BAD_REQUEST_400)
+    // })
 })

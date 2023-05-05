@@ -2,15 +2,13 @@ import nodemailer from "nodemailer"
 
 export const emailAdapter = {
     async sendEmail(email: string, subject: string, message: string) {
-        const testAccount = {
-            user: 'developbackend1@gmail.com',
-            pass: 'vgy78uhb'
-        }
         let transporter  = await nodemailer.createTransport({
-            service: 'gmail',
+            host: 'smtp.ethereal.email',
+            port: 587,
+            secure: false,
             auth: {
-                user: testAccount.user, // email, с которого мы отправляем
-                pass: testAccount.pass, // его пароль
+                user: 'avis.fisher93@ethereal.email',
+                pass: 'w5rPJ3dPdFBUw48T7V'
             }
         })
         return await transporter.sendMail({
