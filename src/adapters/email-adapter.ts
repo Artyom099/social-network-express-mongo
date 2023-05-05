@@ -6,16 +6,16 @@ export const emailAdapter = {
 
     async sendEmail(email: string, subject: string, message: string) {
         let transporter  = await nodemailer.createTransport({
-            host: 'smtp.ethereal.email',
-            port: 587,
-            secure: false,
+            host: 'smtp.mail.ru',
+            port: 465,
+            secure: true,
             auth: {
-                user: 'avis.fisher93@ethereal.email',
-                pass: 'w5rPJ3dPdFBUw48T7V'
+                user: 'artyom.dev@mail.ru',
+                pass: '3VLABWWkQsUXVJW7vJ8j'
             }
         })
         return await transporter.sendMail({
-            from: '"Fred Foo 👻" <avis.fisher93@ethereal.email>',    // sender address
+            from: '"Fred Foo 👻" <artyom.dev@mail.ru>',    // sender address
             to: email,                                  // list of receivers
             subject: subject,                           // Subject line
             html: message,                              // html body

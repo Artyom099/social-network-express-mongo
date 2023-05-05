@@ -111,7 +111,7 @@ describe('/auth', () => {
             .send({
                 login: 'valLog2',
                 password: password1,
-                email: 'valid2-email@mail.com'
+                email: 'artyomgolubev1@gmail.com'
             })
             .expect(HTTP_STATUS.NO_CONTENT_204)
     })
