@@ -47,7 +47,7 @@ export const usersService = {
         return await usersRepository.findUserByLoginOrEmail(LoginOrEmail)
     },
 
-    async deleteUser(userId: string) {
-        return await usersRepository.deleteUser(userId)
+    async deleteUserById(userId: string) {
+        return await usersRepository.deleteUserById(userId)
     }
 }
