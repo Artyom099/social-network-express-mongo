@@ -41,7 +41,7 @@ export const getUsersRouter = () => {
     router.delete('/:id', authMiddlewareBasic, async (req: Request, res: Response) => {
         const userForDelete = await usersService.findUserById(req.params.id)
         if (!userForDelete) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
-        await usersService.deleteUser(req.params.id)
+        await usersService.deleteUserById(req.params.id)
         res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
     })
 

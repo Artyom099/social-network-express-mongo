@@ -30,7 +30,7 @@ export const usersRepository = {
         else return null
     },
 
-    async deleteUser(userId: string) {
+    async deleteUserById(userId: string) {
         return await userCollection.deleteOne({id: userId})
     },
 

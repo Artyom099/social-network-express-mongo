@@ -37,7 +37,7 @@ export const authRouter = () => {
     })
 
     router.post('/registration-confirmation', async (req: Request, res: Response) => {
-        // нам приходит код на почту, если он верный, то 204, иначе 400 и текст ошибки
+        // код приходит на почту, если он верный, то 204, иначе 400 и текст ошибки
         const verifyEmail = await authService.checkConfirmationCode(req.body.code)
         if (!verifyEmail) {
             res.status(HTTP_STATUS.BAD_REQUEST_400).json({
@@ -56,9 +56,8 @@ export const authRouter = () => {
     router.post('/registration', validationReg, inputValidationMiddleware, async (req: Request, res: Response) => {
         // если входные данные для регистрции правильные, то создаем пользователя
         const existUserEmail = await usersService.findUserByLoginOrEmail(req.body.email)
-        const existUserLogin = await usersService.findUserByLoginOrEmail(req.body.login)
         if (existUserEmail) {
-            res.status(HTTP_STATUS.BAD_REQUEST_400).json({
+            return res.status(HTTP_STATUS.BAD_REQUEST_400).json({
                 errorsMessages: [
                     {
                         message: 'user with the given email already exists',
@@ -67,6 +66,7 @@ export const authRouter = () => {
                 ]
             })
         }
+        const existUserLogin = await usersService.findUserByLoginOrEmail(req.body.login)
         if (existUserLogin) {
             res.status(HTTP_STATUS.BAD_REQUEST_400).json({
                 errorsMessages: [
@@ -95,7 +95,7 @@ export const authRouter = () => {
                 ]
             })
         } else {
-            await emailManager.sendEmailConfirmationMessage(req.body.email)
+            await emailManager.sendEmailConfirmationMessage(req.body.email, existUser.emailConfirmation.confirmationCode)
             res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
         }
     })

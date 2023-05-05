@@ -8,13 +8,12 @@ describe('/auth', () => {
         await request(app).delete('/testing/all-data')
     })
 
-    it('should return 401', async () => {
+    it('1 – should return 401', async () => {
         await request(app)
             .get('/auth/me')
             .expect(HTTP_STATUS.UNAUTHORIZED_401)
     })
-
-    it('should return 401', async () => {
+    it('2 – should return 401', async () => {
         await request(app)
             .post('/auth/login')
             .send({
@@ -23,8 +22,7 @@ describe('/auth', () => {
             })
             .expect(HTTP_STATUS.UNAUTHORIZED_401)
     })
-
-    it('should return 401', async () => {
+    it('3 – should return 401', async () => {
         await request(app)
             .post('/auth/login')
             .send({
@@ -36,7 +34,7 @@ describe('/auth', () => {
 
     let createdUser1: any = null
     const password1 = 'qwerty1'
-    it('should create user by admin with correct input data & confirmed email', async () => {
+    it('4 – should create user by admin with correct input data & confirmed email', async () => {
         const createResponse = await request(app)
             .post('/users')
             .auth('admin', 'qwerty', {type: 'basic'})
@@ -61,7 +59,7 @@ describe('/auth', () => {
             .expect(HTTP_STATUS.OK_200, { pagesCount: 1, page: 1, pageSize: 10, totalCount: 1, items: [createdUser1] })
     })
 
-    it('should return 400 if email already confirmed', async () => {
+    it('5! – should return 400 if email already confirmed', async () => {
         await request(app)
             .post('/auth/registration-email-resending')
             .send({
@@ -70,7 +68,7 @@ describe('/auth', () => {
             .expect(HTTP_STATUS.BAD_REQUEST_400)
     })
 
-    it('should return 400 if user\'s email already exist', async () => {
+    it('6 – should return 400 if user\'s email already exist', async () => {
         await request(app)
             .post('/auth/registration')
             .send({
@@ -88,7 +86,7 @@ describe('/auth', () => {
             })
     })
 
-    it('should return 400 if user\'s login already exist', async () => {
+    it('7 – should return 400 if user\'s login already exist', async () => {
         await request(app)
             .post('/auth/registration')
             .send({
@@ -106,18 +104,31 @@ describe('/auth', () => {
             })
     })
 
-    let createdUser2: any = null
-    it('should return 204, create user & send confirmation email', async () => {
-        const createResponse = await request(app)
+
+    it('8 – should return 204, create user & send confirmation email with code', async () => {
+        await request(app)
             .post('/auth/registration')
             .send({
                 login: 'valLog2',
                 password: password1,
-                email: 'valid2-email@mail.com'
+                email: 'artyomgolubev1@gmail.com'
             })
             .expect(HTTP_STATUS.NO_CONTENT_204)
+    })
 
-        // createdUser2 = createResponse.body
-
+    it('9! – should return 400 if confirmation code doesnt exist', async () => {
+        await request(app)
+            .post('/auth/registration-confirmation')
+            .send({
+                code: 'invalid code',
+            })
+            .expect(HTTP_STATUS.BAD_REQUEST_400, {
+                errorsMessages: [
+                    {
+                        message: 'code is incorrect, expired or already been applied',
+                        field: 'code'
+                    }
+                ]
+            })
     })
 })
