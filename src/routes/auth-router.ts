@@ -55,9 +55,9 @@ export const authRouter = () => {
 
     router.post('/registration', validationReg, inputValidationMiddleware, async (req: Request, res: Response) => {
         // если входные данные для регистрции правильные, то создаем пользователя
-        const existUsersEmail = await usersService.findUserByLoginOrEmail(req.body.email)
-        const existUsersLogin = await usersService.findUserByLoginOrEmail(req.body.login)
-        if (existUsersEmail || existUsersLogin) {
+        const existUserEmail = await usersService.findUserByLoginOrEmail(req.body.email)
+        const existUserLogin = await usersService.findUserByLoginOrEmail(req.body.login)
+        if (existUserEmail || existUserLogin) {
             res.status(HTTP_STATUS.BAD_REQUEST_400).json({
                 errorsMessages: [
                     {
@@ -76,7 +76,7 @@ export const authRouter = () => {
         // проверяем, существует ли пользователь, подтверждена ли почта, и потом отправляем код
         const existUser = await usersService.findUserByLoginOrEmail(req.body.email)
         if (!existUser || existUser.emailConfirmation.isConfirmed) {
-            res.status(HTTP_STATUS.BAD_REQUEST_400).send({
+            res.status(HTTP_STATUS.BAD_REQUEST_400).json({
                 errorsMessages: [
                     {
                         message: 'email is already confirmed or doesn\'t exist',

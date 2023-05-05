@@ -16,13 +16,14 @@ describe('/users', () => {
     })
 
     let createdUser1: any = null
+    const password1 = 'qwerty1'
     it('should create user with correct input data', async () => {
         const createResponse = await request(app)
             .post('/users')
             .auth('admin', 'qwerty', {type: 'basic'})
             .send({
                 login: 'lg-647449',
-                password: 'qwerty1',
+                password: password1,
                 email: 'valid-email@mail.ru'
             })
             .expect(HTTP_STATUS.CREATED_201)
@@ -46,8 +47,8 @@ describe('/users', () => {
         const createResponse = await request(app)
             .post('/auth/login')
             .send({
-                loginOrEmail: 'lg-647449',
-                password: 'qwerty1',
+                loginOrEmail: createdUser1.login,
+                password: password1,
             })
             .expect(HTTP_STATUS.OK_200)
 
