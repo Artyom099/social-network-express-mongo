@@ -95,6 +95,7 @@ export const authRouter = () => {
                 ]
             })
         } else {
+            await authService.updateConfirmationCode(req.body.email)
             await emailManager.sendEmailConfirmationMessage(req.body.email, existUser.emailConfirmation.confirmationCode)
             res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
         }
