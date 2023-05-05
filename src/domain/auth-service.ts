@@ -47,6 +47,11 @@ export const authService = {
         } else {
             return false
         }
+    },
+
+    async updateConfirmationCode(email: string) {
+        const newConfirmationCode = uuidv4()
+        await usersRepository.updateConfirmationCode(email, newConfirmationCode)
     }
 
 }
