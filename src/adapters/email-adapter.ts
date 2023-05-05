@@ -12,7 +12,7 @@ export const emailAdapter = {
             }
         })
         return await transporter.sendMail({
-            from: '"Fred Foo 👻" <testAccount.user>',    // sender address
+            from: '"Fred Foo 👻" <avis.fisher93@ethereal.email>',    // sender address
             to: email,                                  // list of receivers
             subject: subject,                           // Subject line
             html: message,                              // html body
