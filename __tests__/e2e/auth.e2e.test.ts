@@ -41,9 +41,9 @@ describe('/auth', () => {
             .post('/users')
             .auth('admin', 'qwerty', {type: 'basic'})
             .send({
-                login: 'lg-647449',
+                login: 'lg-111111',
                 password: password1,
-                email: 'valid-email@mail.ru'
+                email: 'valid1-email@mail.ru'
             })
             .expect(HTTP_STATUS.CREATED_201)
 
@@ -81,8 +81,8 @@ describe('/auth', () => {
             .expect(HTTP_STATUS.BAD_REQUEST_400, {
                 errorsMessages: [
                     {
-                        message: 'user with the given email or login already exists',
-                        field: 'login'
+                        message: 'user with the given email already exists',
+                        field: 'email'
                     }
                 ]
             })
@@ -99,7 +99,7 @@ describe('/auth', () => {
             .expect(HTTP_STATUS.BAD_REQUEST_400, {
                 errorsMessages: [
                     {
-                        message: 'user with the given email or login already exists',
+                        message: 'user with the given login already exists',
                         field: 'login'
                     }
                 ]
@@ -108,13 +108,16 @@ describe('/auth', () => {
 
     let createdUser2: any = null
     it('should return 204, create user & send confirmation email', async () => {
-        await request(app)
+        const createResponse = await request(app)
             .post('/auth/registration')
             .send({
-                login: 'valLog',
+                login: 'valLog2',
                 password: password1,
-                email: 'other-email@mail.com'
+                email: 'valid2-email@mail.com'
             })
-            .expect(HTTP_STATUS.BAD_REQUEST_400)
+            .expect(HTTP_STATUS.NO_CONTENT_204)
+
+        // createdUser2 = createResponse.body
+
     })
 })

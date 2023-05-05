@@ -57,11 +57,21 @@ export const authRouter = () => {
         // если входные данные для регистрции правильные, то создаем пользователя
         const existUserEmail = await usersService.findUserByLoginOrEmail(req.body.email)
         const existUserLogin = await usersService.findUserByLoginOrEmail(req.body.login)
-        if (existUserEmail || existUserLogin) {
+        if (existUserEmail) {
             res.status(HTTP_STATUS.BAD_REQUEST_400).json({
                 errorsMessages: [
                     {
-                        message: 'user with the given email or login already exists',
+                        message: 'user with the given email already exists',
+                        field: 'email'
+                    }
+                ]
+            })
+        }
+        if (existUserLogin) {
+            res.status(HTTP_STATUS.BAD_REQUEST_400).json({
+                errorsMessages: [
+                    {
+                        message: 'user with the given login already exists',
                         field: 'login'
                     }
                 ]
