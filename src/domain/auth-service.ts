@@ -22,7 +22,6 @@ export const authService = {
             },
             emailConfirmation: {
                 confirmationCode: uuidv4(),
-                codeIsSent: false,
                 expirationDate: add(new Date, {minutes: 10}),
                 isConfirmed: false
             }
@@ -55,9 +54,9 @@ export const authService = {
         const newConfirmationCode = uuidv4()
         await usersRepository.updateConfirmationCode(email, newConfirmationCode)
         return newConfirmationCode
-    },
-
-    async updateSendingConfirmationCode(email: string) {
-        await usersRepository.updateSendingConfirmationCode(email)
     }
+
+    // async updateSendingConfirmationCode(email: string) {
+    //     await usersRepository.updateSendingConfirmationCode(email)
+    // }
 }
