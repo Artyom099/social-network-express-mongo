@@ -94,12 +94,11 @@ export const authRouter = () => {
                     }
                 ]
             })
+        } else {
+            const newCode = await authService.updateConfirmationCode(req.body.email)
+            await emailManager.sendEmailConfirmationMessage(req.body.email, newCode)
+            res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
         }
-        //проверяем время действия кода и была ли его отправка до этого
-        const newCode = await authService.updateConfirmationCode(req.body.email)
-        await emailManager.sendEmailConfirmationMessage(req.body.email, newCode)
-        // await authService.updateSendingConfirmationCode(req.body.email)
-        res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
     })
 
     router.get('/me', authMiddlewareBearer, async (req: Request, res: Response) => {
