@@ -30,7 +30,7 @@ export const authService = {
         const createResult = await usersRepository.createUser(newUser)
         try {
             await emailManager.sendEmailConfirmationMessage(email, newUser.emailConfirmation.confirmationCode)
-            await this.updateSendingConfirmationCode(email)
+            // await this.updateSendingConfirmationCode(email)
         } catch (error) {
             await usersService.deleteUserById(newUser.id)
             return null
