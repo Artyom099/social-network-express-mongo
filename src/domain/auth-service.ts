@@ -54,6 +54,7 @@ export const authService = {
     async updateConfirmationCode(email: string) {
         const newConfirmationCode = uuidv4()
         await usersRepository.updateConfirmationCode(email, newConfirmationCode)
+        return newConfirmationCode
     },
 
     async updateSendingConfirmationCode(email: string) {
