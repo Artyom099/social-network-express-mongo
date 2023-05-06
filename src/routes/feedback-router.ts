@@ -1,5 +1,6 @@
 import express, {Request, Response} from "express"
-import {convertResultErrorCodeToHttp, HTTP_STATUS} from "../utils"
+import {HTTP_STATUS} from "../types/constants";
+import {convertResultErrorCodeToHttp} from "../utils"
 import {feedbackService} from "../domain/feedbacks-service"
 import {authMiddlewareBearer} from "../middleware/auth-middleware";
 import {validationComment} from "./posts-router";

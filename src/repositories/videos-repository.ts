@@ -1,6 +1,6 @@
 import {videoCollection} from "../db/db";
-import {TVideo} from "../types/types";
-import {Result, ResultCode} from "../utils";
+import {Result, TVideo} from "../types/types";
+import {ResultCode} from "../types/constants";
 
 
 export const videosRepository = {

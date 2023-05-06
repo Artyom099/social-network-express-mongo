@@ -1,6 +1,5 @@
 import {blogsRepository} from "../repositories/blogs-repository";
-import {TBlog} from "../types/types";
-import {Result} from "../utils";
+import {Result, TBlog} from "../types/types";
 
 
 export const blogsService = {

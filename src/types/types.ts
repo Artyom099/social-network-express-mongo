@@ -1,4 +1,6 @@
 import {Request} from 'express'
+import {ResultCode} from "./constants";
+
 
 // ViewModels
 export type TVideo = {
@@ -154,4 +156,8 @@ export type OutputModel<T> = {
     pageSize: number
     totalCount: number
     items: T
+}
+export type Result<T> = {
+    code: ResultCode
+    data: T
 }

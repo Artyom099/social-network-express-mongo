@@ -1,4 +1,4 @@
-import {HTTP_STATUS} from "../utils";
+import {HTTP_STATUS} from "../types/constants";
 import {validationResult} from "express-validator";
 import {Request, Response, NextFunction} from "express";
 

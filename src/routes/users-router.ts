@@ -1,6 +1,6 @@
 import express, {Request, Response} from "express"
 import {inputValidationMiddleware} from "../middleware/input-validation-middleware"
-import {HTTP_STATUS} from "../utils"
+import {HTTP_STATUS} from "../types/constants";
 import {usersService} from "../domain/users-service"
 import {body} from "express-validator"
 import {ReqQueryType, UserGetDTO} from "../types/types"

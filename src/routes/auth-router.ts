@@ -1,6 +1,6 @@
 import express, {Request, Response} from "express";
 import {usersService} from "../domain/users-service";
-import {HTTP_STATUS} from "../utils";
+import {HTTP_STATUS} from "../types/constants";
 import {AuthDTO, ReqBodyType} from "../types/types";
 import {body} from "express-validator";
 import {inputValidationMiddleware} from "../middleware/input-validation-middleware";
@@ -86,7 +86,7 @@ export const authRouter = () => {
         // проверяем, существует ли пользователь, подтверждена ли почта, и потом отправляем код
         const existUser = await usersService.findUserByLoginOrEmail(req.body.email)
         if (!existUser || existUser.emailConfirmation.isConfirmed) {
-            res.status(HTTP_STATUS.BAD_REQUEST_400).json({
+            return res.status(HTTP_STATUS.BAD_REQUEST_400).json({
                 errorsMessages: [
                     {
                         message: 'email is already confirmed or doesn\'t exist',
@@ -94,11 +94,12 @@ export const authRouter = () => {
                     }
                 ]
             })
-        } else {
-            // await authService.updateConfirmationCode(req.body.email)
-            await emailManager.sendEmailConfirmationMessage(req.body.email, existUser.emailConfirmation.confirmationCode)
-            res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
         }
+        if (existUser.emailConfirmation.expirationDate < new Date()) {
+            await authService.updateConfirmationCode(req.body.email)
+        }
+        await emailManager.sendEmailConfirmationMessage(req.body.email, existUser.emailConfirmation.confirmationCode)
+        res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
     })
 
     router.get('/me', authMiddlewareBearer, async (req: Request, res: Response) => {

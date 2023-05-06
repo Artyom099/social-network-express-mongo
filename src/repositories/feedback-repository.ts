@@ -1,5 +1,5 @@
 import {commentCollection} from "../db/db";
-import {ResultCode} from "../utils";
+import {ResultCode} from "../types/constants";
 import {CommentBDType, TComment} from "../types/types";
 
 
