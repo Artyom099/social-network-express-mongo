@@ -98,7 +98,7 @@ export const authRouter = () => {
         //проверяем время действия кода и была ли его отправка до этого
         const newCode = await authService.updateConfirmationCode(req.body.email)
         await emailManager.sendEmailConfirmationMessage(req.body.email, newCode)
-        await authService.updateSendingConfirmationCode(req.body.email)
+        // await authService.updateSendingConfirmationCode(req.body.email)
         res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
     })
 
