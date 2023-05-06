@@ -59,7 +59,7 @@ describe('/auth', () => {
             .expect(HTTP_STATUS.OK_200, { pagesCount: 1, page: 1, pageSize: 10, totalCount: 1, items: [createdUser1] })
     })
 
-    it('5! – should return 400 if email already confirmed', async () => {
+    it('5 – should return 400 if email already confirmed', async () => {
         await request(app)
             .post('/auth/registration-email-resending')
             .send({
@@ -104,7 +104,6 @@ describe('/auth', () => {
             })
     })
 
-
     it('8 – should return 204, create user & send confirmation email with code', async () => {
         await request(app)
             .post('/auth/registration')
@@ -116,7 +115,7 @@ describe('/auth', () => {
             .expect(HTTP_STATUS.NO_CONTENT_204)
     })
 
-    it('9! – should return 400 if confirmation code doesnt exist', async () => {
+    it('9 – should return 400 if confirmation code doesnt exist', async () => {
         await request(app)
             .post('/auth/registration-confirmation')
             .send({
