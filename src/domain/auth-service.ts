@@ -22,6 +22,7 @@ export const authService = {
             },
             emailConfirmation: {
                 confirmationCode: uuidv4(),
+                codeIsSent: false,
                 expirationDate: add(new Date, {minutes: 10}),
                 isConfirmed: false
             }
@@ -29,6 +30,7 @@ export const authService = {
         const createResult = await usersRepository.createUser(newUser)
         try {
             await emailManager.sendEmailConfirmationMessage(email, newUser.emailConfirmation.confirmationCode)
+            await this.updateSendingConfirmationCode(email)
         } catch (error) {
             await usersService.deleteUserById(newUser.id)
             return null
@@ -52,6 +54,9 @@ export const authService = {
     async updateConfirmationCode(email: string) {
         const newConfirmationCode = uuidv4()
         await usersRepository.updateConfirmationCode(email, newConfirmationCode)
-    }
+    },
 
+    async updateSendingConfirmationCode(email: string) {
+        await usersRepository.updateSendingConfirmationCode(email)
+    }
 }
