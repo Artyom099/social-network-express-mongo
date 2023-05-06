@@ -1,9 +1,10 @@
 import {body} from "express-validator";
 import express, {Request, Response} from "express";
 import { ReqBodyType, ReqParamsBodyType, ReqParamsType, TVideo, IdDTO, VideoPostDTO, VideoPutDTO} from "../types/types";
-import {convertResultErrorCodeToHttp, HTTP_STATUS} from "../utils";
+import {convertResultErrorCodeToHttp} from "../utils";
 import {videosService} from "../domain/videos-service";
 import {inputValidationMiddleware} from "../middleware/input-validation-middleware";
+import {HTTP_STATUS} from "../types/constants";
 
 
 export const videoResolutions = ['P144', 'P240', 'P360', 'P480', 'P720', 'P1080', 'P1440', 'P2160']

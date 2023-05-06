@@ -1,5 +1,5 @@
 import express, {Request, Response} from "express";
-import {HTTP_STATUS} from "../utils";
+import {HTTP_STATUS} from "../types/constants";
 import {testsRepository} from "../repositories/tests-repository";
 
 export const getTestsRouter = () => {

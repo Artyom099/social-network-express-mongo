@@ -8,7 +8,8 @@ import {
     ReqQueryType,
     TBlog
 } from "../types/types";
-import {convertResultErrorCodeToHttp, HTTP_STATUS} from "../utils";
+import {HTTP_STATUS} from "../types/constants";
+import {convertResultErrorCodeToHttp} from "../utils";
 import {blogsService} from "../domain/blogs-service";
 import {postsService} from "../domain/posts-service";
 import {inputValidationMiddleware} from "../middleware/input-validation-middleware";

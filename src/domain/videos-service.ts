@@ -1,5 +1,4 @@
-import {TVideo} from "../types/types";
-import {Result} from "../utils";
+import {Result, TVideo} from "../types/types";
 import {videosRepository} from "../repositories/videos-repository";
 
 

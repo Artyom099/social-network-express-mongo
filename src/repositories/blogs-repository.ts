@@ -1,6 +1,6 @@
 import {blogCollection} from "../db/db";
-import {TBlog} from "../types/types";
-import {Result, ResultCode} from "../utils";
+import {Result, TBlog} from "../types/types";
+import {ResultCode} from "../types/constants";
 
 
 export const blogsRepository = {
