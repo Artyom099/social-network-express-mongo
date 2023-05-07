@@ -85,7 +85,6 @@ describe('/auth', () => {
                 ]
             })
     })
-
     it('7 – should return 400 if user\'s login already exist', async () => {
         await request(app)
             .post('/auth/registration')
@@ -130,4 +129,6 @@ describe('/auth', () => {
                 ]
             })
     })
+
+    //todo как выводить процент покрытия тестов?
 })
