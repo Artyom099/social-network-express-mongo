@@ -5,7 +5,7 @@ import {Filter, Sort} from "mongodb"
 
 export const queryRepository = {
     async findBlogById(blogId: string): Promise<TBlog | null> {    // get, put, delete
-        const blog = await blogCollection.findOne({id: blogId}, {projection: {_id: false}})
+        const blog = await blogCollection.findOne({id: blogId}, {projection: {_id: 0}})
         if (blog) return blog
         else return null
     },
@@ -20,7 +20,7 @@ export const queryRepository = {
         if (searchNameTerm) filter.name = {$regex: searchNameTerm, $options: "i"}
 
         const totalCount: number = await blogCollection.countDocuments(filter)
-        const sortedBlogs: TBlog[] = await blogCollection.find(filter, {projection: {_id: false}})
+        const sortedBlogs: TBlog[] = await blogCollection.find(filter, {projection: {_id: 0}})
             .sort({[sortBy]: sortNum}).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
         return {
             pagesCount: Math.ceil(totalCount / pageSize),    // общее количество страниц
@@ -39,7 +39,7 @@ export const queryRepository = {
         if (sortDirection === 'desc') sortNum = -1
 
         const totalCount: number = await postCollection.countDocuments(filter)
-        const sortedPosts: TPost[] = await postCollection.find(filter, {projection: {_id: false}})
+        const sortedPosts: TPost[] = await postCollection.find(filter, {projection: {_id: 0}})
             .sort({[sortBy]: sortNum}).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
         return {
             pagesCount: Math.ceil(totalCount / pageSize),    // общее количество страниц
@@ -57,7 +57,7 @@ export const queryRepository = {
         if (sortDirection === 'desc') sortNum = -1
 
         const totalCount: number = await postCollection.countDocuments()
-        const sortedPosts: TPost[] = await postCollection.find({}, {projection: {_id: false}})
+        const sortedPosts: TPost[] = await postCollection.find({}, {projection: {_id: 0}})
             .sort({[sortBy]: sortNum}).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
         return {
             pagesCount: Math.ceil(totalCount / pageSize),    // общее количество страниц
