@@ -1,7 +1,7 @@
 import express, {Request, Response} from "express";
 import {usersService} from "../domain/users-service";
 import {HTTP_STATUS} from "../types/constants";
-import {AuthDTO, ReqBodyType} from "../types/types";
+import {AuthDTO, ReqBodyType, UserRegDTO} from "../types/types";
 import {body} from "express-validator";
 import {inputValidationMiddleware} from "../middleware/input-validation-middleware";
 import {jwtService} from "../application/jwt-service";
@@ -36,6 +36,10 @@ export const authRouter = () => {
         }
     })
 
+    router.post('/refresh-token', async (req:Request, res: Response) => {
+
+    })
+
     router.post('/registration-confirmation', async (req: Request, res: Response) => {
         // код приходит на почту, если он верный, то 204, иначе 400 и текст ошибки
         const verifyEmail = await authService.checkConfirmationCode(req.body.code)
@@ -53,7 +57,7 @@ export const authRouter = () => {
         }
     })
 
-    router.post('/registration', validationReg, inputValidationMiddleware, async (req: Request, res: Response) => {
+    router.post('/registration', validationReg, inputValidationMiddleware, async (req: ReqBodyType<UserRegDTO>, res: Response) => {
         // если входные данные для регистрции правильные, то создаем пользователя
         const existUserEmail = await usersService.findUserByLoginOrEmail(req.body.email)
         if (existUserEmail) {

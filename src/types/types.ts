@@ -134,6 +134,11 @@ export type UserGetDTO = {
     sortBy: string
     sortDirection: string
 }
+export type UserRegDTO = {
+    login: string
+    password: string
+    email: string
+}
 export type AuthDTO = {
     loginOrEmail: string
     password: string
