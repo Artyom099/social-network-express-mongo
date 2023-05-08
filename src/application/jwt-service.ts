@@ -1,4 +1,4 @@
-import {UserAccountDBType, UserDBType} from "../types/types"
+import {UserAccountDBType} from "../types/types"
 import jwt from 'jsonwebtoken'
 import {settings} from '../settings'
 

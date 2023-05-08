@@ -105,6 +105,10 @@ export const authRouter = () => {
         }
     })
 
+    router.post('/logout', async (req: Request, res: Response) => {
+
+    })
+
     router.get('/me', authMiddlewareBearer, async (req: Request, res: Response) => {
         res.status(HTTP_STATUS.OK_200).json({
             email: req.user!.email,

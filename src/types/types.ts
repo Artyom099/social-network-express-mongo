@@ -46,14 +46,6 @@ export type TComment = {
     createdAt: string
 }
 
-export type UserDBType = {
-    id: string
-    login: string
-    email: string
-    passwordHash: string
-    passwordSalt: string
-    createdAt: string
-}
 export type UserAccountDBType = {
     id: string
     accountData: {
