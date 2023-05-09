@@ -46,14 +46,6 @@ export type TComment = {
     createdAt: string
 }
 
-export type UserDBType = {
-    id: string
-    login: string
-    email: string
-    passwordHash: string
-    passwordSalt: string
-    createdAt: string
-}
 export type UserAccountDBType = {
     id: string
     accountData: {
@@ -87,7 +79,7 @@ export type PagingDTO = {
     pageNumber: number
     pageSize: number
     sortBy: string
-    sortDirection: string
+    sortDirection: 'asc' | 'desc'
 }
 export type PagingWithSearchDTO = {
     searchNameTerm: string
@@ -132,7 +124,12 @@ export type UserGetDTO = {
     pageNumber: string
     pageSize: string
     sortBy: string
-    sortDirection: string
+    sortDirection: 'asc' | 'desc'
+}
+export type UserRegDTO = {
+    login: string
+    password: string
+    email: string
 }
 export type AuthDTO = {
     loginOrEmail: string

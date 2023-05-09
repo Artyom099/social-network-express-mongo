@@ -7,11 +7,13 @@ import {getUsersRouter} from "./routes/users-router";
 import {authRouter} from "./routes/auth-router";
 import {feedbackRouter} from "./routes/feedback-router";
 import {emailRouter} from "./routes/email-router";
+import cookieParser from "cookie-parser";
 
 export const app = express()
 export const jsonBodyMiddleware = express.json()
 
 app.use(jsonBodyMiddleware)
+app.use(cookieParser())
 
 app.use('/testing', getTestsRouter())
 app.use('/videos', getVideosRouter())
