@@ -79,7 +79,7 @@ export type PagingDTO = {
     pageNumber: number
     pageSize: number
     sortBy: string
-    sortDirection: string
+    sortDirection: 'asc' | 'desc'
 }
 export type PagingWithSearchDTO = {
     searchNameTerm: string
@@ -124,7 +124,7 @@ export type UserGetDTO = {
     pageNumber: string
     pageSize: string
     sortBy: string
-    sortDirection: string
+    sortDirection: 'asc' | 'desc'
 }
 export type UserRegDTO = {
     login: string
