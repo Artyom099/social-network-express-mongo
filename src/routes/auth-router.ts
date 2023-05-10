@@ -28,16 +28,24 @@ export const authRouter = () => {
 
     router.post('/login', validationAuth, inputValidationMiddleware, async (req: ReqBodyType<AuthDTO>, res: Response) => {
         const user = await usersService.checkCredentials(req.body.loginOrEmail, req.body.password)
-        if (user) {
-            const token = await jwtService.createJWT(user)                      // todo добавить тест для этой строки
-            res.status(HTTP_STATUS.OK_200).json({'accessToken': token})   // todo добавить тест для этой строки
+        if (user) {                                                             // todo добавить тест для этого пути
+            const token = await jwtService.createJWT(user)
+            res.cookie('refreshToken', token.refreshToken, {httpOnly: true, secure: true})
+            res.status(HTTP_STATUS.OK_200).json({'accessToken': token.accessToken})
         } else {
             res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
         }
     })
 
     router.post('/refresh-token', async (req:Request, res: Response) => {
-
+        const refreshToken= req.cookies.refreshToken
+        if (!refreshToken || ) {
+            res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
+        } else {
+            // todo добавить, что старый refreshToken протухает
+            res.cookie('refreshToken', token.refreshToken, {httpOnly: true, secure: true})
+            res.status(HTTP_STATUS.OK_200).json({'accessToken': token})
+        }
     })
 
     router.post('/registration-confirmation', async (req: Request, res: Response) => {
@@ -52,8 +60,8 @@ export const authRouter = () => {
                     }
                 ]
             })
-        } else {
-            res.sendStatus(HTTP_STATUS.NO_CONTENT_204)      // todo добавить тест для этой строки
+        } else {        // todo добавить тест для этого пути
+            res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
         }
     })
 
@@ -106,11 +114,17 @@ export const authRouter = () => {
     })
 
     router.post('/logout', async (req: Request, res: Response) => {
-
+        const refreshToken= req.cookies.refreshToken
+        if (!refreshToken || ) {
+            res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
+        } else {
+            // todo отметить refreshToken как невалидный
+            res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
+        }
     })
 
     router.get('/me', authMiddlewareBearer, async (req: Request, res: Response) => {
-        res.status(HTTP_STATUS.OK_200).json({                       // todo добавить тест для этой строки - начать с этого
+        res.status(HTTP_STATUS.OK_200).json({                       // todo добавить тест для этого пути
             email: req.user!.email,
             login: req.user!.login,
             userId: req.user!.id
