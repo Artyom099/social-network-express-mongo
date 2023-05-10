@@ -37,7 +37,7 @@ export const getBlogsRouter = () => {
         const pageNumber = req.query.pageNumber ?? 1
         const pageSize = req.query.pageSize ?? 10
         const sortBy = req.query.sortBy ?? DEFAULT_SORT_BY
-        const sortDirection = req.query.sortDirection ?? DEFAULT_SORT_DIRECTION// === DEFAULT_SORT_DIRECTION ? 1 : -1
+        const sortDirection = req.query.sortDirection ?? DEFAULT_SORT_DIRECTION
 
 
         const foundSortedBlogs = await queryRepository.findBlogsAndSort(searchNameTerm, Number(pageNumber), Number(pageSize), sortBy, sortDirection)

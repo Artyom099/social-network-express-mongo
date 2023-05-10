@@ -1,6 +1,4 @@
 import {emailAdapter} from "../adapters/email-adapter";
-import {v4 as uuidv4} from "uuid";
-import {usersService} from "../domain/users-service";
 
 
 export const emailManager = {
@@ -12,6 +10,4 @@ export const emailManager = {
             ' </p>\n'
         await emailAdapter.sendEmail(email, subject, message)
     }
-
-    // async sendResendingCode
 }

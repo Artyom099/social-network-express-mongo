@@ -86,7 +86,7 @@ export type PagingWithSearchDTO = {
     pageNumber: number
     pageSize: number
     sortBy: string
-    sortDirection: string
+    sortDirection: 'asc' | 'desc'
 }
 
 export type VideoPostDTO = {

@@ -29,8 +29,8 @@ export const authRouter = () => {
     router.post('/login', validationAuth, inputValidationMiddleware, async (req: ReqBodyType<AuthDTO>, res: Response) => {
         const user = await usersService.checkCredentials(req.body.loginOrEmail, req.body.password)
         if (user) {
-            const token = await jwtService.createJWT(user)
-            res.status(HTTP_STATUS.OK_200).json({'accessToken': token})
+            const token = await jwtService.createJWT(user)                      // todo добавить тест для этой строки
+            res.status(HTTP_STATUS.OK_200).json({'accessToken': token})   // todo добавить тест для этой строки
         } else {
             res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
         }
@@ -53,7 +53,7 @@ export const authRouter = () => {
                 ]
             })
         } else {
-            res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
+            res.sendStatus(HTTP_STATUS.NO_CONTENT_204)      // todo добавить тест для этой строки
         }
     })
 
@@ -110,7 +110,7 @@ export const authRouter = () => {
     })
 
     router.get('/me', authMiddlewareBearer, async (req: Request, res: Response) => {
-        res.status(HTTP_STATUS.OK_200).json({
+        res.status(HTTP_STATUS.OK_200).json({                       // todo добавить тест для этой строки - начать с этого
             email: req.user!.email,
             login: req.user!.login,
             userId: req.user!.id
