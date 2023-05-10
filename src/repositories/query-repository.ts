@@ -2,10 +2,6 @@ import {OutputModel, TBlog, TComment, TPost, UserAccountDBType} from "../types/t
 import {blogCollection, commentCollection, postCollection, userCollection} from "../db/db";
 import {Filter, Sort} from "mongodb"
 
-// const sortDirToNum = (sortDirection: 'asc' | 'desc'): 1 | -1 => {
-//     if (sortDirection === 'asc') return 1     // 1 - возрстание
-//     if (sortDirection === 'desc') return -1   // -1 - убывание
-// }
 
 export const queryRepository = {
     async findBlogById(blogId: string): Promise<TBlog | null> {    // get, put, delete
@@ -15,17 +11,13 @@ export const queryRepository = {
     },
 
     async findBlogsAndSort(searchNameTerm: string | null = null, pageNumber: number, pageSize: number, sortBy: string,
-                           sortDirection: string): Promise<OutputModel<TBlog[]>> {
-        let sortNum: 1 | -1 = -1
-        if (sortDirection === 'asc') sortNum = 1     // 1 - возрстание
-        if (sortDirection === 'desc') sortNum = -1   // -1 - убывание
-
+                           sortDirection: 'asc' | 'desc'): Promise<OutputModel<TBlog[]>> {
         const filter: Filter<TBlog> = {}
         if (searchNameTerm) filter.name = {$regex: searchNameTerm, $options: "i"}
 
         const totalCount: number = await blogCollection.countDocuments(filter)
         const sortedBlogs: TBlog[] = await blogCollection.find(filter, {projection: {_id: 0}})
-            .sort({[sortBy]: sortNum}).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
+            .sort({[sortBy]: sortDirection}).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
         return {
             pagesCount: Math.ceil(totalCount / pageSize),    // общее количество страниц
             page: pageNumber,                                   // текущая страница
@@ -36,15 +28,12 @@ export const queryRepository = {
     },
 
     async findPostsThisBlogById(blogId: string, pageNumber: number, pageSize: number, sortBy: string,
-                                sortDirection: string): Promise<OutputModel<TPost[]>> {   // get
+                                sortDirection: 'asc' | 'desc'): Promise<OutputModel<TPost[]>> {   // get
         const filter: {blogId: string} = {blogId: blogId}
-        let sortNum: Sort = -1
-        if (sortDirection === 'asc') sortNum = 1
-        if (sortDirection === 'desc') sortNum = -1
 
         const totalCount: number = await postCollection.countDocuments(filter)
         const sortedPosts: TPost[] = await postCollection.find(filter, {projection: {_id: 0}})
-            .sort({[sortBy]: sortNum}).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
+            .sort({[sortBy]: sortDirection}).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
         return {
             pagesCount: Math.ceil(totalCount / pageSize),    // общее количество страниц
             page: pageNumber,                                   // текущая страница
@@ -55,14 +44,10 @@ export const queryRepository = {
     },
 
     async findPostsAndSort(pageNumber: number, pageSize: number, sortBy: string,
-                           sortDirection: string): Promise<OutputModel<TPost[]>> {
-        let sortNum: Sort = -1
-        if (sortDirection === 'asc') sortNum = 1
-        if (sortDirection === 'desc') sortNum = -1
-
+                           sortDirection: 'asc' | 'desc'): Promise<OutputModel<TPost[]>> {
         const totalCount: number = await postCollection.countDocuments()
         const sortedPosts: TPost[] = await postCollection.find({}, {projection: {_id: 0}})
-            .sort({[sortBy]: sortNum}).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
+            .sort({[sortBy]: sortDirection}).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
         return {
             pagesCount: Math.ceil(totalCount / pageSize),    // общее количество страниц
             page: pageNumber,                                   // текущая страница
@@ -74,10 +59,6 @@ export const queryRepository = {
 
     async findUsersAndSort(searchEmailTerm: string | null, searchLoginTerm: string | null, pageNumber: number, pageSize: number, sortBy: string,
                            sortDirection: 'asc' | 'desc'): Promise<OutputModel<UserAccountDBType[]>> {
-        // let sortNum: Sort = -1
-        // if (sortDirection === 'asc') sortNum = 1     // 1 - возрстание
-        // if (sortDirection === 'desc') sortNum = -1   // -1 - убывание
-
         const filter: Filter<UserAccountDBType> = {
             $or: [{'accountData.login': {$regex: searchLoginTerm ?? '', $options: "i"}},
                 {'accountData.email': {$regex: searchEmailTerm ?? '', $options: "i"}}]
@@ -92,7 +73,7 @@ export const queryRepository = {
             page: pageNumber,                                   // текущая страница
             pageSize,                                           // количество пользователей на странице
             totalCount,                                         // общее количество пользователей
-            items: sortedUsers  //здесь тип TUser!
+            items: sortedUsers  //todo здесь тип TUser!
         }
     },
 

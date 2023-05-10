@@ -33,9 +33,11 @@ describe('/auth', () => {
     })
 
     let createdUser1: any = null
+    let createResponse: any = null
+    let token: string = ''
     const password1 = 'qwerty1'
     it('4 – should create user by admin with correct input data & confirmed email', async () => {
-        const createResponse = await request(app)
+        createResponse = await request(app)
             .post('/users')
             .auth('admin', 'qwerty', {type: 'basic'})
             .send({
@@ -59,7 +61,29 @@ describe('/auth', () => {
             .expect(HTTP_STATUS.OK_200, { pagesCount: 1, page: 1, pageSize: 10, totalCount: 1, items: [createdUser1] })
     })
 
-    it('5 – should return 400 if email already confirmed', async () => {
+    it('5 - should return created user', async () => {
+        //чтобы .split не ругался на возможный undefined
+        if (!createResponse.headers.authorization) return new Error()
+        token = createResponse.headers.authorization.split(' ')[1]
+        await request(app)
+            .get('/me')
+            .auth('token', {type: 'bearer'})
+            .expect(HTTP_STATUS.OK_200, {
+                email: createdUser1.email,
+                login: createdUser1.login,
+                userId: createdUser1.userId
+            })
+    })
+
+    it('6 – should return 400 if email doesn\'t exist', async () => {
+        await request(app)
+            .post('/auth/registration-email-resending')
+            .send({
+                email: 'unknown-email@mail.com'
+            })
+            .expect(HTTP_STATUS.BAD_REQUEST_400)
+    })
+    it('7 – should return 400 if email already confirmed', async () => {
         await request(app)
             .post('/auth/registration-email-resending')
             .send({
@@ -68,7 +92,7 @@ describe('/auth', () => {
             .expect(HTTP_STATUS.BAD_REQUEST_400)
     })
 
-    it('6 – should return 400 if user\'s email already exist', async () => {
+    it('8 – should return 400 if user\'s email already exist', async () => {
         await request(app)
             .post('/auth/registration')
             .send({
@@ -85,7 +109,7 @@ describe('/auth', () => {
                 ]
             })
     })
-    it('7 – should return 400 if user\'s login already exist', async () => {
+    it('9 – should return 400 if user\'s login already exist', async () => {
         await request(app)
             .post('/auth/registration')
             .send({
@@ -103,7 +127,7 @@ describe('/auth', () => {
             })
     })
 
-    it('8 – should return 204, create user & send confirmation email with code', async () => {
+    it('10 – should return 204, create user & send confirmation email with code', async () => {
         await request(app)
             .post('/auth/registration')
             .send({
@@ -113,8 +137,16 @@ describe('/auth', () => {
             })
             .expect(HTTP_STATUS.NO_CONTENT_204)
     })
+    it('11 – should return 204 if user exist & send confirmation email with code', async () => {
+        await request(app)
+            .post('/auth/registration-email-resending')
+            .send({
+                email: 'artyomgolubev1@gmail.com'
+            })
+            .expect(HTTP_STATUS.NO_CONTENT_204)
+    })
 
-    it('9 – should return 400 if confirmation code doesnt exist', async () => {
+    it('12 – should return 400 if confirmation code doesn\'t exist', async () => {
         await request(app)
             .post('/auth/registration-confirmation')
             .send({
@@ -129,6 +161,4 @@ describe('/auth', () => {
                 ]
             })
     })
-
-
 })

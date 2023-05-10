@@ -8,7 +8,7 @@ describe('/users', () => {
         await request(app).delete ('/testing/all-data')
     })
 
-    it('should return 200 and empty array', async () => {
+    it('1 - should return 200 and empty array', async () => {
         await request(app)
             .get('/users')
             .auth('admin', 'qwerty', {type: 'basic'})
@@ -17,7 +17,7 @@ describe('/users', () => {
 
     let createdUser1: any = null
     const password1 = 'qwerty1'
-    it('should create user with correct input data', async () => {
+    it('2 - should create user with correct input data', async () => {
         const createResponse = await request(app)
             .post('/users')
             .auth('admin', 'qwerty', {type: 'basic'})
@@ -43,7 +43,7 @@ describe('/users', () => {
     })
 
     let token: string = ''
-    it('should login to system with correct input data', async () => {
+    it('3 - should login to system with correct input data', async () => {
         const createResponse = await request(app)
             .post('/auth/login')
             .send({
