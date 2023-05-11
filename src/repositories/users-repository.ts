@@ -46,5 +46,15 @@ export const usersRepository = {
 
     async updateConfirmationCode(email: string, code: string) {
         await userCollection.updateOne({'accountData.email': email}, {$set: {'emailConfirmation.confirmationCode': code}})
+    },
+
+    async addTokenToBlackList(userId: string, token: string) {
+        await userCollection.updateOne({id: userId}, {$addToSet: {tokensBlackList: token}})
+    },
+
+    async checkTokenInBlackList(userId: string, token: string) {
+        const user = await userCollection.findOne({id: userId})
+        if (token in user!.tokensBlackList) return true
+        else return null
     }
 }

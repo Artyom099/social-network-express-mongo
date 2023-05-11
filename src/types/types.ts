@@ -54,12 +54,13 @@ export type UserAccountDBType = {
         passwordHash: string
         passwordSalt: string
         createdAt: string
-    },
+    }
     emailConfirmation: {
         confirmationCode: string
         expirationDate: Date
         isConfirmed: boolean
     }
+    tokensBlackList: string[]
 }
 export type CommentBDType = {
     id: string

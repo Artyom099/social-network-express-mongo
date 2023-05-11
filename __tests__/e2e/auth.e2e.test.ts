@@ -22,6 +22,7 @@ describe('/auth', () => {
             })
             .expect(HTTP_STATUS.UNAUTHORIZED_401)
     })
+    // todo 3 дублирует 2
     it('3 – should return 401', async () => {
         await request(app)
             .post('/auth/login')
@@ -33,11 +34,11 @@ describe('/auth', () => {
     })
 
     let createdUser1: any = null
-    let createResponse: any = null
+    let createResponse1: any = null
     let token: string = ''
     const password1 = 'qwerty1'
     it('4 – should create user by admin with correct input data & confirmed email', async () => {
-        createResponse = await request(app)
+        createResponse1 = await request(app)
             .post('/users')
             .auth('admin', 'qwerty', {type: 'basic'})
             .send({
@@ -47,7 +48,7 @@ describe('/auth', () => {
             })
             .expect(HTTP_STATUS.CREATED_201)
 
-        createdUser1 = createResponse.body
+        createdUser1 = createResponse1.body
         expect(createdUser1).toEqual({
             id: expect.any(String),
             login: createdUser1.login,
@@ -60,13 +61,12 @@ describe('/auth', () => {
             .auth('admin', 'qwerty', {type: 'basic'})
             .expect(HTTP_STATUS.OK_200, { pagesCount: 1, page: 1, pageSize: 10, totalCount: 1, items: [createdUser1] })
     })
-
     it('5 - should return created user', async () => {
         //чтобы .split не ругался на возможный undefined
-        if (!createResponse.headers.authorization) return new Error()
-        token = createResponse.headers.authorization.split(' ')[1]
+        if (!createResponse1.headers.authorization) return new Error()
+        token = createResponse1.headers.authorization.split(' ')[1]
         await request(app)
-            .get('/me')
+            .get('/auth/me')
             .auth('token', {type: 'bearer'})
             .expect(HTTP_STATUS.OK_200, {
                 email: createdUser1.email,
@@ -160,5 +160,18 @@ describe('/auth', () => {
                     }
                 ]
             })
+    })
+
+    // todo начать с того, что 13 выдает 400 вместо 200
+    it('13 - should return 200 and login', async () => {
+        const createResponse2 = await request(app)
+            .post('/auth/login')
+            .send({
+                email: createdUser1.login,
+                password: password1
+            })
+            .expect(HTTP_STATUS.OK_200)
+
+        expect(createResponse2.body).toEqual({accessToken: expect.any(String)})
     })
 })

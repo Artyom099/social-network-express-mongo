@@ -24,7 +24,8 @@ export const authService = {
                 confirmationCode: uuidv4(),
                 expirationDate: add(new Date, {minutes: 10}),
                 isConfirmed: false
-            }
+            },
+            tokensBlackList: []
         }
         const createResult = await usersRepository.createUser(newUser)
         try {
@@ -53,5 +54,13 @@ export const authService = {
         const newConfirmationCode = uuidv4()
         await usersRepository.updateConfirmationCode(email, newConfirmationCode)
         return newConfirmationCode
+    },
+
+    async addTokenToBlackList(userId: string, token: string) {
+        await usersRepository.addTokenToBlackList(userId, token)
+    },
+
+    async checkTokenInBlackList(userId: string, token: string) {
+        return await usersRepository.checkTokenInBlackList(userId, token)
     }
 }
