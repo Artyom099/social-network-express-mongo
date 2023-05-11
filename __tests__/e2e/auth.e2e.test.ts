@@ -60,13 +60,12 @@ describe('/auth', () => {
             .auth('admin', 'qwerty', {type: 'basic'})
             .expect(HTTP_STATUS.OK_200, { pagesCount: 1, page: 1, pageSize: 10, totalCount: 1, items: [createdUser1] })
     })
-
     it('5 - should return created user', async () => {
         //чтобы .split не ругался на возможный undefined
         if (!createResponse.headers.authorization) return new Error()
         token = createResponse.headers.authorization.split(' ')[1]
         await request(app)
-            .get('/me')
+            .get('/auth/me')
             .auth('token', {type: 'bearer'})
             .expect(HTTP_STATUS.OK_200, {
                 email: createdUser1.email,
@@ -160,5 +159,18 @@ describe('/auth', () => {
                     }
                 ]
             })
+    })
+
+    it('13 - should return 200 and log in', async () => {
+        const createResponse2 = await request(app)
+            .post('/auth/login')
+            .send({
+                email: createdUser1.login,
+                password: password1
+            })
+            .expect(HTTP_STATUS.OK_200)
+
+        expect(createResponse2.body).toEqual({accessToken: expect.any(String)})
+
     })
 })
