@@ -22,17 +22,18 @@ export const usersService = {
                 confirmationCode: uuidv4(),
                 expirationDate: add(new Date, {minutes: 10}),
                 isConfirmed: true
-            }
+            },
+            tokensBlackList: []
         }
         return await usersRepository.createUser(newUser)
     },
 
-    async checkCredentials(loginOrEmail: string, password: string) {
+    async checkCredentials(loginOrEmail: string, password: string): Promise<string | null> {
         const user = await usersRepository.findUserByLoginOrEmail(loginOrEmail)
-        if (!user) return false
+        if (!user) return null
         const passwordHash = await this._generateHash(password, user.accountData.passwordSalt)
-        if (user.accountData.passwordHash === passwordHash) return user
-        else return false
+        if (user.accountData.passwordHash === passwordHash) return user.id
+        else return null
     },
 
     async _generateHash(password: string, salt: string) {
