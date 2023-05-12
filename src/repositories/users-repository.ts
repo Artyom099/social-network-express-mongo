@@ -34,7 +34,7 @@ export const usersRepository = {
         return await userCollection.deleteOne({id: userId})
     },
 
-    async findUserByConfirmationCode(code: string) {
+    async findUserByConfirmationCode(code: string): Promise<UserAccountDBType | null> {
         const user = await userCollection.findOne({'emailConfirmation.confirmationCode': code})
         if (user) return user
         else return null
@@ -52,7 +52,7 @@ export const usersRepository = {
         await userCollection.updateOne({id: userId}, {$addToSet: {tokensBlackList: token}})
     },
 
-    async checkTokenInBlackList(userId: string, token: string) {
+    async checkTokenInBlackList(userId: string, token: string): Promise<true | null> {
         const user = await userCollection.findOne({id: userId})
         if (token in user!.tokensBlackList) return true
         else return null
