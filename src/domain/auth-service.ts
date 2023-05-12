@@ -50,7 +50,7 @@ export const authService = {
         }
     },
 
-    async updateConfirmationCode(email: string) {
+    async updateConfirmationCode(email: string): Promise<string> {
         const newConfirmationCode = uuidv4()
         await usersRepository.updateConfirmationCode(email, newConfirmationCode)
         return newConfirmationCode
@@ -60,7 +60,7 @@ export const authService = {
         await usersRepository.addTokenToBlackList(userId, token)
     },
 
-    async checkTokenInBlackList(userId: string, token: string) {
+    async checkTokenInBlackList(userId: string, token: string): Promise<true | null> {
         return await usersRepository.checkTokenInBlackList(userId, token)
     }
 }

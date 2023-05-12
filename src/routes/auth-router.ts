@@ -40,8 +40,10 @@ export const authRouter = () => {
     router.post('/refresh-token', async (req: Request, res: Response) => {
         const refreshToken= req.cookies.refreshToken
         const userId = await jwtService.getUserIdByToken(refreshToken)
+        if (!userId) {
+            return res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
+        }
         const tokenInBlackList = await authService.checkTokenInBlackList(userId, refreshToken)
-
         if (!refreshToken || refreshToken.exp < new Date() || tokenInBlackList) {
             res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
         } else {
@@ -120,8 +122,10 @@ export const authRouter = () => {
     router.post('/logout', async (req: Request, res: Response) => {
         const refreshToken= req.cookies.refreshToken
         const userId = await jwtService.getUserIdByToken(refreshToken)
+        if (!userId) {
+            return res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
+        }
         const tokenInBlackList = await authService.checkTokenInBlackList(userId, refreshToken)
-
         if (!refreshToken || refreshToken.exp < new Date() || tokenInBlackList) {
             res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
         } else {
