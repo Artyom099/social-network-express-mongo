@@ -162,7 +162,7 @@ describe('/auth', () => {
             })
     })
 
-    // todo начать с того, что 13 выдает 400 вместо 200
+    // todo 13 выдает 400 вместо 200
     it('13 - should return 200 and login', async () => {
         const createResponse2 = await request(app)
             .post('/auth/login')
