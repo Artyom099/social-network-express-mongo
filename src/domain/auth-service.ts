@@ -60,7 +60,7 @@ export const authService = {
         await usersRepository.addTokenToBlackList(userId, token)
     },
 
-    async checkTokenInBlackList(userId: string, token: string) {
+    async checkTokenInBlackList(userId: string, token: string): Promise<true | null> {
         return await usersRepository.checkTokenInBlackList(userId, token)
     }
 }
