@@ -13,7 +13,7 @@ export const jwtService = {
     async getUserIdByToken(token: string): Promise<string | null> {
         try {
             // jwt.verify возвращает объект - { userId: '1682507411257', iat: 1682507422, exp: 1682511022 }
-            const result: any = jwt.verify(token, settings.JWT_SECRET)
+            const result: any = jwt.verify(token, settings.JWT_SECRET,)
             return result.userId
         } catch (error) {
             return null

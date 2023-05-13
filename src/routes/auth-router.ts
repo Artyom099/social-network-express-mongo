@@ -8,6 +8,7 @@ import {jwtService} from "../application/jwt-service";
 import {authMiddlewareBearer} from "../middleware/auth-middleware";
 import {authService} from "../domain/auth-service";
 import {emailManager} from "../managers/email-manager";
+import {cookieMiddleware} from "../middleware/cookie-middleware";
 
 const validationAuth = [
     body('loginOrEmail').isString().trim().notEmpty(),
@@ -37,21 +38,21 @@ export const authRouter = () => {
         }
     })
 
-    router.post('/refresh-token', async (req: Request, res: Response) => {
-        const refreshToken= req.cookies.refreshToken
-        const userId = await jwtService.getUserIdByToken(refreshToken)
-        if (!userId) {
-            return res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
-        }
-        const tokenInBlackList = await authService.checkTokenInBlackList(userId, refreshToken)
-        if (!refreshToken || refreshToken.exp < new Date() || tokenInBlackList) {
-            res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
-        } else {
-            await authService.addTokenToBlackList(userId, refreshToken)
-            const token = await jwtService.createJWT(userId)
-            res.cookie('refreshToken', token.refreshToken, {httpOnly: true, secure: true})
-            res.status(HTTP_STATUS.OK_200).json({'accessToken': token.accessToken})
-        }
+    router.post('/refresh-token', cookieMiddleware, async (req: Request, res: Response) => {
+        // const refreshToken = req.cookies.refreshToken
+        // if (!refreshToken) return res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
+        // const userId = await jwtService.getUserIdByToken(refreshToken)
+        // if (!userId) return res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
+        // const tokenInBlackList = await authService.checkTokenInBlackList(userId, refreshToken)
+        // if (tokenInBlackList) {
+        //     res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
+        // } else {
+        //     await authService.addTokenToBlackList(userId, refreshToken)
+        // }
+
+        const token = await jwtService.createJWT(req.userId)
+        res.cookie('refreshToken', token.refreshToken, {httpOnly: true, secure: true})
+        res.status(HTTP_STATUS.OK_200).json({'accessToken': token.accessToken})
     })
 
     router.post('/registration-confirmation', async (req: Request, res: Response) => {
@@ -119,19 +120,19 @@ export const authRouter = () => {
         }
     })
 
-    router.post('/logout', async (req: Request, res: Response) => {
-        const refreshToken= req.cookies.refreshToken
-        const userId = await jwtService.getUserIdByToken(refreshToken)
-        if (!userId) {
-            return res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
-        }
-        const tokenInBlackList = await authService.checkTokenInBlackList(userId, refreshToken)
-        if (!refreshToken || refreshToken.exp < new Date() || tokenInBlackList) {
-            res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
-        } else {
-            await authService.addTokenToBlackList(userId, refreshToken)
-            res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
-        }
+    router.post('/logout', cookieMiddleware, async (req: Request, res: Response) => {
+        // const refreshToken = req.cookies.refreshToken
+        // if (!refreshToken) return res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
+        // const userId = await jwtService.getUserIdByToken(refreshToken)
+        // if (!userId) return res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
+        // const tokenInBlackList = await authService.checkTokenInBlackList(userId, refreshToken)
+        // if (tokenInBlackList) {
+        //     res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
+        // } else {
+        //     await authService.addTokenToBlackList(userId, refreshToken)
+        // }
+
+        res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
     })
 
     router.get('/me', authMiddlewareBearer, async (req: Request, res: Response) => {

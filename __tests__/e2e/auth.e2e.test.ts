@@ -2,6 +2,7 @@ import request from "supertest";
 import {app} from "../../src/app";
 import {HTTP_STATUS} from "../../src/types/constants";
 
+const sleep = (seconds: number) => new Promise((r) => setTimeout(r, seconds * 1000))
 
 describe('/auth', () => {
     beforeAll(async () => {
@@ -22,22 +23,12 @@ describe('/auth', () => {
             })
             .expect(HTTP_STATUS.UNAUTHORIZED_401)
     })
-    // todo 3 дублирует 2
-    it('3 – should return 401', async () => {
-        await request(app)
-            .post('/auth/login')
-            .send({
-                loginOrEmail: 'valid-unauthorized@mail.ru',
-                password: 'qwerty1'
-            })
-            .expect(HTTP_STATUS.UNAUTHORIZED_401)
-    })
 
     let createdUser1: any = null
     let createResponse1: any = null
-    let token: string = ''
+    let accessToken1: string = ''
     const password1 = 'qwerty1'
-    it('4 – should create user by admin with correct input data & confirmed email', async () => {
+    it('3 – should create user by admin with correct input data & confirmed email', async () => {
         createResponse1 = await request(app)
             .post('/users')
             .auth('admin', 'qwerty', {type: 'basic'})
@@ -59,15 +50,15 @@ describe('/auth', () => {
         await request(app)
             .get('/users')
             .auth('admin', 'qwerty', {type: 'basic'})
-            .expect(HTTP_STATUS.OK_200, { pagesCount: 1, page: 1, pageSize: 10, totalCount: 1, items: [createdUser1] })
+            .expect(HTTP_STATUS.OK_200, {pagesCount: 1, page: 1, pageSize: 10, totalCount: 1, items: [createdUser1]})
     })
-    it('5 - should return created user', async () => {
+    it('4 - should return created user', async () => {
         //чтобы .split не ругался на возможный undefined
         if (!createResponse1.headers.authorization) return new Error()
-        token = createResponse1.headers.authorization.split(' ')[1]
+        accessToken1 = createResponse1.headers.authorization.split(' ')[1]
         await request(app)
             .get('/auth/me')
-            .auth('token', {type: 'bearer'})
+            .auth('accessToken', {type: 'bearer'})
             .expect(HTTP_STATUS.OK_200, {
                 email: createdUser1.email,
                 login: createdUser1.login,
@@ -75,7 +66,7 @@ describe('/auth', () => {
             })
     })
 
-    it('6 – should return 400 if email doesn\'t exist', async () => {
+    it('5 – should return 400 if email doesn\'t exist', async () => {
         await request(app)
             .post('/auth/registration-email-resending')
             .send({
@@ -83,7 +74,7 @@ describe('/auth', () => {
             })
             .expect(HTTP_STATUS.BAD_REQUEST_400)
     })
-    it('7 – should return 400 if email already confirmed', async () => {
+    it('6 – should return 400 if email already confirmed', async () => {
         await request(app)
             .post('/auth/registration-email-resending')
             .send({
@@ -92,7 +83,7 @@ describe('/auth', () => {
             .expect(HTTP_STATUS.BAD_REQUEST_400)
     })
 
-    it('8 – should return 400 if user\'s email already exist', async () => {
+    it('7 – should return 400 if user\'s email already exist', async () => {
         await request(app)
             .post('/auth/registration')
             .send({
@@ -109,7 +100,7 @@ describe('/auth', () => {
                 ]
             })
     })
-    it('9 – should return 400 if user\'s login already exist', async () => {
+    it('8 – should return 400 if user\'s login already exist', async () => {
         await request(app)
             .post('/auth/registration')
             .send({
@@ -127,7 +118,7 @@ describe('/auth', () => {
             })
     })
 
-    it('10 – should return 204, create user & send confirmation email with code', async () => {
+    it('9 – should return 204, create user & send confirmation email with code', async () => {
         await request(app)
             .post('/auth/registration')
             .send({
@@ -137,7 +128,7 @@ describe('/auth', () => {
             })
             .expect(HTTP_STATUS.NO_CONTENT_204)
     })
-    it('11 – should return 204 if user exist & send confirmation email with code', async () => {
+    it('10 – should return 204 if user exist & send confirmation email with code', async () => {
         await request(app)
             .post('/auth/registration-email-resending')
             .send({
@@ -146,7 +137,7 @@ describe('/auth', () => {
             .expect(HTTP_STATUS.NO_CONTENT_204)
     })
 
-    it('12 – should return 400 if confirmation code doesn\'t exist', async () => {
+    it('11 – should return 400 if confirmation code doesn\'t exist', async () => {
         await request(app)
             .post('/auth/registration-confirmation')
             .send({
@@ -162,16 +153,73 @@ describe('/auth', () => {
             })
     })
 
-    // todo 13 выдает 400 вместо 200
+    it('12 - should return 401', async () => {
+        await request(app)
+            .post('/auth/refresh-token')
+            .send('noToken')
+            .expect(HTTP_STATUS.UNAUTHORIZED_401)
+    })
+
     it('13 - should return 200 and login', async () => {
-        const createResponse2 = await request(app)
+        const loginResponse = await request(app)
             .post('/auth/login')
             .send({
-                email: createdUser1.login,
+                loginOrEmail: createdUser1.login,
                 password: password1
             })
-            .expect(HTTP_STATUS.OK_200)
 
-        expect(createResponse2.body).toEqual({accessToken: expect.any(String)})
+        expect(loginResponse).toBeDefined()
+        expect(loginResponse.status).toBe(HTTP_STATUS.OK_200)
+        expect(loginResponse.body).toEqual({accessToken: expect.any(String)})
+        const {accessToken} = loginResponse.body
+
+        const refreshToken = loginResponse.headers['set-cookie'][0].split(';')[0]
+        expect(refreshToken).toBeDefined()
+        expect(refreshToken).toEqual(expect.any(String))
+
+        expect.setState({accessToken, firstRefreshToken: refreshToken})
+    })
+
+    it('14 - should return 200, refreshToken & accessToken', async () => {
+        const {accessToken, firstRefreshToken} = expect.getState()
+        await sleep(1.1)
+
+        const goodRefreshTokenResponse = await request(app)
+            .post('/auth/refresh-token')
+            .set('Cookie', firstRefreshToken)
+
+        expect(goodRefreshTokenResponse).toBeDefined()
+        expect(goodRefreshTokenResponse.status).toBe(HTTP_STATUS.OK_200)
+        expect(goodRefreshTokenResponse.body).toEqual({accessToken: expect.any(String)})
+
+        const newAccessToken = goodRefreshTokenResponse.body.accessToken
+        expect(newAccessToken).not.toBe(accessToken)
+
+        const newRefreshToken = goodRefreshTokenResponse.headers['set-cookie'][0].split(';')[0]
+        expect(newRefreshToken).toBeDefined()
+        expect(newRefreshToken).toEqual(expect.any(String))
+        expect(newRefreshToken).not.toBe(firstRefreshToken)
+
+        expect.setState({accessToken: newAccessToken, refreshToken: newRefreshToken})
+    })
+
+    it('15 - should return 200, refreshToken & accessToken', async () => {
+        const goodRefreshTokenResponse = await request(app)
+            .post('/auth/refresh-token')
+
+        expect(goodRefreshTokenResponse).toBeDefined()
+        expect(goodRefreshTokenResponse.status).toBe(HTTP_STATUS.UNAUTHORIZED_401)
+    })
+
+    it('16 - should return 401 because old token in black list', async () => {
+        const {firstRefreshToken} = expect.getState()
+        await sleep(1.1)
+
+        const goodRefreshTokenResponse = await request(app)
+            .post('/auth/refresh-token')
+            .set('Cookie', firstRefreshToken)
+
+        expect(goodRefreshTokenResponse).toBeDefined()
+        expect(goodRefreshTokenResponse.status).toBe(HTTP_STATUS.UNAUTHORIZED_401)
     })
 })
