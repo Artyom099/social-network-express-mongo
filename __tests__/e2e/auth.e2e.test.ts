@@ -35,7 +35,7 @@ describe('/auth', () => {
 
     let createdUser1: any = null
     let createResponse1: any = null
-    let token: string = ''
+    let accessToken: string = ''
     const password1 = 'qwerty1'
     it('4 – should create user by admin with correct input data & confirmed email', async () => {
         createResponse1 = await request(app)
@@ -64,10 +64,10 @@ describe('/auth', () => {
     it('5 - should return created user', async () => {
         //чтобы .split не ругался на возможный undefined
         if (!createResponse1.headers.authorization) return new Error()
-        token = createResponse1.headers.authorization.split(' ')[1]
+        accessToken = createResponse1.headers.authorization.split(' ')[1]
         await request(app)
             .get('/auth/me')
-            .auth('token', {type: 'bearer'})
+            .auth('accessToken', {type: 'bearer'})
             .expect(HTTP_STATUS.OK_200, {
                 email: createdUser1.email,
                 login: createdUser1.login,
@@ -162,16 +162,31 @@ describe('/auth', () => {
             })
     })
 
-    // todo 13 выдает 400 вместо 200
-    it('13 - should return 200 and login', async () => {
+    it('13 - should return 401', async () => {
+        await request(app)
+            .post('/auth/refresh-token')
+            .send('noToken')
+            .expect(HTTP_STATUS.UNAUTHORIZED_401)
+    })
+
+    let refreshToken: string = ''
+    it('14 - should return 200 and login', async () => {
         const createResponse2 = await request(app)
             .post('/auth/login')
             .send({
-                email: createdUser1.login,
+                loginOrEmail: createdUser1.login,
                 password: password1
             })
             .expect(HTTP_STATUS.OK_200)
 
-        expect(createResponse2.body).toEqual({accessToken: expect.any(String)})
+        accessToken = createResponse2.body.accessToken
+        expect(createResponse2.body).toEqual({accessToken: accessToken})
+
+        refreshToken = createResponse2.headers['set-cookie'][0].split(' ')[0].split('=')[1]
+        expect(createResponse2.headers['set-cookie']).toEqual([`refreshToken=${refreshToken} Path=/; HttpOnly; Secure`])
+    })
+
+    it('14 - should return 200, refreshToken & accessToken', async () => {
+
     })
 })
