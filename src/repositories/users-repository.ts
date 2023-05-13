@@ -54,7 +54,7 @@ export const usersRepository = {
 
     async checkTokenInBlackList(userId: string, token: string): Promise<true | null> {
         const user = await userCollection.findOne({id: userId})
-        if (token in user!.tokensBlackList) return true
+        if (user!.tokensBlackList.includes(token)) return true
         else return null
     }
 }
