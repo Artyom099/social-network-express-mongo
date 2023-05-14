@@ -1,9 +1,9 @@
-import {CommentBDType, TBlog, TPost, TVideo, UserAccountDBType} from "../types/types"
+import {CommentBDType, expiredTokenType, TBlog, TPost, TVideo, UserAccountDBType} from "../types/types"
 import {MongoClient} from 'mongodb'
 import dotenv from 'dotenv'
+
+
 dotenv.config()
-
-
 const mongoUri = process.env.MONGO_URL || 'mongodb://0.0.0.0:27017'
 if (!mongoUri) throw new Error('UR doesn\'t found')
 const client = new MongoClient(mongoUri)
@@ -14,6 +14,7 @@ export const blogCollection = database.collection<TBlog>('blogs')
 export const postCollection = database.collection<TPost>('posts')
 export const userCollection = database.collection<UserAccountDBType>('users')
 export const commentCollection = database.collection<CommentBDType>('comments')
+export const expiredTokenCollection = database.collection<expiredTokenType>('expiredTokens')
 
 export async function runDb() {
     try {

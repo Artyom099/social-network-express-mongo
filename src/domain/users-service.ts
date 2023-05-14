@@ -22,8 +22,7 @@ export const usersService = {
                 confirmationCode: uuidv4(),
                 expirationDate: add(new Date, {minutes: 10}),
                 isConfirmed: true
-            },
-            tokensBlackList: []
+            }
         }
         return await usersRepository.createUser(newUser)
     },

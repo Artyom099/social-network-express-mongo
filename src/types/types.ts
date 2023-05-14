@@ -60,7 +60,6 @@ export type UserAccountDBType = {
         expirationDate: Date
         isConfirmed: boolean
     }
-    tokensBlackList: string[]
 }
 export type CommentBDType = {
     id: string
@@ -71,6 +70,9 @@ export type CommentBDType = {
         userLogin: string
     }
     createdAt: string
+}
+export type expiredTokenType = {
+    token: string
 }
 
 export type IdDTO = {

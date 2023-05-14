@@ -50,7 +50,7 @@ export const authRouter = () => {
         //     await authService.addTokenToBlackList(userId, refreshToken)
         // }
 
-        const token = await jwtService.createJWT(req.userId)
+        const token = await jwtService.createJWT(req.userId!)
         res.cookie('refreshToken', token.refreshToken, {httpOnly: true, secure: true})
         res.status(HTTP_STATUS.OK_200).json({'accessToken': token.accessToken})
     })
@@ -132,7 +132,7 @@ export const authRouter = () => {
         //     await authService.addTokenToBlackList(userId, refreshToken)
         // }
 
-        res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
+        res.sendStatus(HTTP_STATUS.NO_CONTENT_204)      // todo добавить тест для этого пути
     })
 
     router.get('/me', authMiddlewareBearer, async (req: Request, res: Response) => {
