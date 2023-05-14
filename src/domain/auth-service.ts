@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import {TUser, UserAccountDBType} from "../types/types";
+import {expiredTokenType, TUser, UserAccountDBType} from "../types/types";
 import {usersRepository} from "../repositories/users-repository";
 import {usersService} from "./users-service";
 import {emailManager} from "../managers/email-manager";
@@ -24,8 +24,7 @@ export const authService = {
                 confirmationCode: uuidv4(),
                 expirationDate: add(new Date, {minutes: 10}),
                 isConfirmed: false
-            },
-            tokensBlackList: []
+            }
         }
         const createResult = await usersRepository.createUser(newUser)
         try {
@@ -56,11 +55,11 @@ export const authService = {
         return newConfirmationCode
     },
 
-    async addTokenToBlackList(userId: string, token: string) {
-        await usersRepository.addTokenToBlackList(userId, token)
+    async addTokenToBlackList(token: expiredTokenType) {
+        await usersRepository.addTokenToBlackList(token)
     },
 
-    async checkTokenInBlackList(userId: string, token: string): Promise<true | null> {
-        return await usersRepository.checkTokenInBlackList(userId, token)
+    async checkTokenInBlackList(token: expiredTokenType): Promise<true | null> {
+        return await usersRepository.checkTokenInBlackList(token)
     }
 }

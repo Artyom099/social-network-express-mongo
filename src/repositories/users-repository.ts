@@ -1,5 +1,5 @@
-import {TUser, UserAccountDBType} from "../types/types";
-import {userCollection} from "../db/db";
+import {expiredTokenType, TUser, UserAccountDBType} from "../types/types";
+import {expiredTokenCollection, userCollection} from "../db/db";
 
 
 export const usersRepository = {
@@ -48,13 +48,13 @@ export const usersRepository = {
         await userCollection.updateOne({'accountData.email': email}, {$set: {'emailConfirmation.confirmationCode': code}})
     },
 
-    async addTokenToBlackList(userId: string, token: string) {
-        await userCollection.updateOne({id: userId}, {$addToSet: {tokensBlackList: token}})
+    async addTokenToBlackList(token: expiredTokenType) {
+        await expiredTokenCollection.insertOne(token)
     },
 
-    async checkTokenInBlackList(userId: string, token: string): Promise<true | null> {
-        const user = await userCollection.findOne({id: userId})
-        if (user!.tokensBlackList.includes(token)) return true
+    async checkTokenInBlackList(token: expiredTokenType): Promise<true | null> {
+        const tokenIsExpired = await expiredTokenCollection.findOne(token)
+        if (tokenIsExpired) return true
         else return null
     }
 }

@@ -50,7 +50,9 @@ export const authRouter = () => {
         //     await authService.addTokenToBlackList(userId, refreshToken)
         // }
 
-        const token = await jwtService.createJWT(req.userId)
+        // todo исправить ошибку req.userId
+
+        const token = await jwtService.createJWT(cookieMiddleware.userId)
         res.cookie('refreshToken', token.refreshToken, {httpOnly: true, secure: true})
         res.status(HTTP_STATUS.OK_200).json({'accessToken': token.accessToken})
     })
