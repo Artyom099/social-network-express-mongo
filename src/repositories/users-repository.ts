@@ -20,6 +20,7 @@ export const usersRepository = {
     },
 
     async findUserById(userId: string): Promise<TUser | null> {
+        // todo убрать projection
         const user = await userCollection.findOne({id: userId}, {projection: {_id: false}})
         if (user) return {
             id: user.id,
@@ -48,12 +49,12 @@ export const usersRepository = {
         await userCollection.updateOne({'accountData.email': email}, {$set: {'emailConfirmation.confirmationCode': code}})
     },
 
-    async addTokenToBlackList(token: expiredTokenType) {
-        await expiredTokenCollection.insertOne(token)
+    async addTokenToBlackList(token: string) {
+    await expiredTokenCollection.insertOne({token: token})
     },
 
     async checkTokenInBlackList(token: expiredTokenType): Promise<true | null> {
-        const tokenIsExpired = await expiredTokenCollection.findOne(token)
+        const tokenIsExpired = await expiredTokenCollection.findOne({token: token})
         if (tokenIsExpired) return true
         else return null
     }

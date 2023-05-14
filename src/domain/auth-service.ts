@@ -55,7 +55,7 @@ export const authService = {
         return newConfirmationCode
     },
 
-    async addTokenToBlackList(token: expiredTokenType) {
+    async addTokenToBlackList(token: string) {
         await usersRepository.addTokenToBlackList(token)
     },
 

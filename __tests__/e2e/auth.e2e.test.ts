@@ -180,7 +180,7 @@ describe('/auth', () => {
         expect.setState({accessToken, firstRefreshToken: refreshToken})
     })
 
-    it('14 - should return 200, refreshToken & accessToken', async () => {
+    it('14 - should return 200, newRefreshToken & newAccessToken', async () => {
         const {accessToken, firstRefreshToken} = expect.getState()
         await sleep(1.1)
 
