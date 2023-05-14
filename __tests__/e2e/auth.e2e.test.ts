@@ -216,21 +216,20 @@ describe('/auth', () => {
 
         const goodRefreshTokenResponse = await request(app)
             .post('/auth/refresh-token')
-            .set('Cookie', firstRefreshToken)
+            .set('cookie', firstRefreshToken)
 
         expect(goodRefreshTokenResponse).toBeDefined()
         expect(goodRefreshTokenResponse.status).toBe(HTTP_STATUS.UNAUTHORIZED_401)
     })
 
     it('17 - should return 204 & logout', async () => {
-        const {newRefreshToken} = expect.getState()
+        const {refreshToken} = expect.getState()
 
         const goodRefreshTokenResponse = await request(app)
             .post('/auth/logout')
-            .set('cookie', newRefreshToken)
+            .set('cookie', refreshToken)
 
         expect(goodRefreshTokenResponse).toBeDefined()
         expect(goodRefreshTokenResponse.status).toBe(HTTP_STATUS.NO_CONTENT_204)
-        // todo - fix this test
     })
 })

@@ -56,7 +56,7 @@ export const authRouter = () => {
                     }
                 ]
             })
-        } else {                                        // todo добавить тест для этого пути
+        } else {    // todo добавить тест для этого пути - надо мокать ф-ю, чтобы перать сюда реальный код  с почты
             res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
         }
     })
@@ -110,11 +110,11 @@ export const authRouter = () => {
     })
 
     router.post('/logout', cookieMiddleware, async (req: Request, res: Response) => {
-        res.sendStatus(HTTP_STATUS.NO_CONTENT_204)      // todo добавить тест для этого пути
+        res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
     })
 
     router.get('/me', authMiddlewareBearer, async (req: Request, res: Response) => {
-        res.status(HTTP_STATUS.OK_200).json({                       // todo добавить тест для этого пути
+        res.status(HTTP_STATUS.OK_200).json({   // todo добавить тест для этого пути
             email: req.user!.email,
             login: req.user!.login,
             userId: req.user!.id
