@@ -203,23 +203,33 @@ describe('/auth', () => {
         expect.setState({accessToken: newAccessToken, refreshToken: newRefreshToken})
     })
 
-    it('15 - should return 200, refreshToken & accessToken', async () => {
+    it('15 - should return 401 with no any token', async () => {
         const goodRefreshTokenResponse = await request(app)
             .post('/auth/refresh-token')
 
         expect(goodRefreshTokenResponse).toBeDefined()
         expect(goodRefreshTokenResponse.status).toBe(HTTP_STATUS.UNAUTHORIZED_401)
     })
-
     it('16 - should return 401 because old token in black list', async () => {
         const {firstRefreshToken} = expect.getState()
         await sleep(1.1)
 
         const goodRefreshTokenResponse = await request(app)
             .post('/auth/refresh-token')
-            .set('Cookie', firstRefreshToken)
+            .set('cookie', firstRefreshToken)
 
         expect(goodRefreshTokenResponse).toBeDefined()
         expect(goodRefreshTokenResponse.status).toBe(HTTP_STATUS.UNAUTHORIZED_401)
+    })
+
+    it('17 - should return 204 & logout', async () => {
+        const {refreshToken} = expect.getState()
+
+        const goodRefreshTokenResponse = await request(app)
+            .post('/auth/logout')
+            .set('cookie', refreshToken)
+
+        expect(goodRefreshTokenResponse).toBeDefined()
+        expect(goodRefreshTokenResponse.status).toBe(HTTP_STATUS.NO_CONTENT_204)
     })
 })

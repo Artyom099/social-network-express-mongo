@@ -29,7 +29,7 @@ export const authRouter = () => {
 
     router.post('/login', validationAuth, inputValidationMiddleware, async (req: ReqBodyType<AuthDTO>, res: Response) => {
         const userId = await usersService.checkCredentials(req.body.loginOrEmail, req.body.password)
-        if (userId) {                                                             // todo добавить тест для этого пути
+        if (userId) {
             const token = await jwtService.createJWT(userId)
             res.cookie('refreshToken', token.refreshToken, {httpOnly: true, secure: true})
             res.status(HTTP_STATUS.OK_200).json({'accessToken': token.accessToken})
@@ -39,17 +39,6 @@ export const authRouter = () => {
     })
 
     router.post('/refresh-token', cookieMiddleware, async (req: Request, res: Response) => {
-        // const refreshToken = req.cookies.refreshToken
-        // if (!refreshToken) return res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
-        // const userId = await jwtService.getUserIdByToken(refreshToken)
-        // if (!userId) return res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
-        // const tokenInBlackList = await authService.checkTokenInBlackList(userId, refreshToken)
-        // if (tokenInBlackList) {
-        //     res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
-        // } else {
-        //     await authService.addTokenToBlackList(userId, refreshToken)
-        // }
-
         const token = await jwtService.createJWT(req.userId!)
         res.cookie('refreshToken', token.refreshToken, {httpOnly: true, secure: true})
         res.status(HTTP_STATUS.OK_200).json({'accessToken': token.accessToken})
@@ -67,7 +56,7 @@ export const authRouter = () => {
                     }
                 ]
             })
-        } else {        // todo добавить тест для этого пути
+        } else {    // todo добавить тест для этого пути - надо мокать ф-ю, чтобы перать сюда реальный код  с почты
             res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
         }
     })
@@ -121,22 +110,11 @@ export const authRouter = () => {
     })
 
     router.post('/logout', cookieMiddleware, async (req: Request, res: Response) => {
-        // const refreshToken = req.cookies.refreshToken
-        // if (!refreshToken) return res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
-        // const userId = await jwtService.getUserIdByToken(refreshToken)
-        // if (!userId) return res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
-        // const tokenInBlackList = await authService.checkTokenInBlackList(userId, refreshToken)
-        // if (tokenInBlackList) {
-        //     res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
-        // } else {
-        //     await authService.addTokenToBlackList(userId, refreshToken)
-        // }
-
-        res.sendStatus(HTTP_STATUS.NO_CONTENT_204)      // todo добавить тест для этого пути
+        res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
     })
 
     router.get('/me', authMiddlewareBearer, async (req: Request, res: Response) => {
-        res.status(HTTP_STATUS.OK_200).json({                       // todo добавить тест для этого пути
+        res.status(HTTP_STATUS.OK_200).json({   // todo добавить тест для этого пути
             email: req.user!.email,
             login: req.user!.login,
             userId: req.user!.id
