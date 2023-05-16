@@ -1,4 +1,12 @@
-import {CommentBDType, expiredTokenType, TBlog, TPost, TVideo, UserAccountDBType} from "../types/types"
+import {
+    CommentBDType,
+    ExpiredTokenDBType,
+    IPDBType,
+    TBlog,
+    TPost,
+    TVideo,
+    UserAccountDBType
+} from "../types/types"
 import {MongoClient} from 'mongodb'
 import dotenv from 'dotenv'
 
@@ -14,7 +22,8 @@ export const blogCollection = database.collection<TBlog>('blogs')
 export const postCollection = database.collection<TPost>('posts')
 export const userCollection = database.collection<UserAccountDBType>('users')
 export const commentCollection = database.collection<CommentBDType>('comments')
-export const expiredTokenCollection = database.collection<expiredTokenType>('expiredTokens')
+export const expiredTokenCollection = database.collection<ExpiredTokenDBType>('expiredTokens')
+export const ipCollection = database.collection<IPDBType>('ip')
 
 export async function runDb() {
     try {

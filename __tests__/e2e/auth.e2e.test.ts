@@ -186,7 +186,7 @@ describe('/auth', () => {
 
         const goodRefreshTokenResponse = await request(app)
             .post('/auth/refresh-token')
-            .set('Cookie', firstRefreshToken)
+            .set('cookie', firstRefreshToken)
 
         expect(goodRefreshTokenResponse).toBeDefined()
         expect(goodRefreshTokenResponse.status).toBe(HTTP_STATUS.OK_200)

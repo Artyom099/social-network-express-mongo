@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import {expiredTokenType, TUser, UserAccountDBType} from "../types/types";
+import {ExpiredTokenDBType, TUser, UserAccountDBType} from "../types/types";
 import {usersRepository} from "../repositories/users-repository";
 import {usersService} from "./users-service";
 import {emailManager} from "../managers/email-manager";
@@ -59,7 +59,7 @@ export const authService = {
         await usersRepository.addTokenToBlackList(token)
     },
 
-    async checkTokenInBlackList(token: expiredTokenType): Promise<true | null> {
+    async checkTokenInBlackList(token: ExpiredTokenDBType): Promise<true | null> {
         return await usersRepository.checkTokenInBlackList(token)
     }
 }

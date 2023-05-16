@@ -71,8 +71,13 @@ export type CommentBDType = {
     }
     createdAt: string
 }
-export type expiredTokenType = {
+export type ExpiredTokenDBType = {
     token: string
+}
+export type IPDBType = {
+    IP: string
+    URL: string
+    date: Date
 }
 
 export type IdDTO = {
