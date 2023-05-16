@@ -1,23 +1,25 @@
 import {Request, Response, NextFunction} from "express";
 import {HTTP_STATUS} from "../types/constants";
-import {ipService} from "../domain/ip-service";
+import {ipService} from "../application/ip-service";
 
 
 export const rateLimitMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     const ip = req.socket.localAddress
     const url = req.baseUrl
-    const date = new Date()
+    const dateNow = new Date()
+    const date = new Date(dateNow.getSeconds() - 10)
     if (!ip) {
         return res.sendStatus(HTTP_STATUS.BAD_REQUEST_400)
     }
-    const foundIP = await ipService.findIpAndUrl(ip, url)
-    if (!foundIP) {
+    const countFoundIP = await ipService.countIpAndUrl(ip, url, date)
+    if (!countFoundIP) {
         return res.sendStatus(HTTP_STATUS.BAD_REQUEST_400)
     }
 
-    if (foundIP.date >= new Date(date.getSeconds() - 10)) {
+    if (countFoundIP > 10) {
         res.sendStatus(HTTP_STATUS.TOO_MANY_REQUESTS_429)
     } else {
+        req.ip = ip
         return next()
     }
 }
