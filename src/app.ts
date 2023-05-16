@@ -8,6 +8,7 @@ import {authRouter} from "./routes/auth-router";
 import {feedbackRouter} from "./routes/feedback-router";
 import {emailRouter} from "./routes/email-router";
 import cookieParser from "cookie-parser";
+import {securityRouter} from "./routes/security-router";
 
 export const app = express()
 export const jsonBodyMiddleware = express.json()
@@ -23,3 +24,4 @@ app.use('/users', getUsersRouter())
 app.use('/auth', authRouter())
 app.use('/comments', feedbackRouter())
 app.use('/email', emailRouter())
+app.use('/security', securityRouter())
