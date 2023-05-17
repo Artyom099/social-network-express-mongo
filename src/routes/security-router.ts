@@ -11,7 +11,7 @@ export const securityRouter = () => {
         const ip = req.ip
 
         const loginDevices = await securityService.finaAllLoginDevicesByUserId(userId)
-        res.status(HTTP_STATUS.OK_200).json()
+        res.status(HTTP_STATUS.OK_200).json(loginDevices)
     })
 
     router.delete('/devices', cookieMiddleware, async (req: Request, res: Response) => {
