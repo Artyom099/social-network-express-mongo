@@ -4,16 +4,7 @@ import {DeviceViewModel} from "../types/types";
 
 export const securityRepository = {
     async finaAllLoginDevicesByUserId(userId: string): Promise<DeviceViewModel[]> {
-        const loginDevices = await devicesCollection.find({userId: userId})
-        // const foundActiveDevices = await devicesCollection.find({userId: userId})
-        // if (foundActiveDevices) return foundActiveDevices
-        // else return null
-        return {
-            ip: loginDevices.ip,
-            title: loginDevices.title,
-            lastActiveDate: loginDevices.lastActiveDate,
-            deviceId: loginDevices.deviceId,
-        }
+        return await devicesCollection.find({userId: userId}, {projection: {_id: 0, userId: 0}}).toArray()
     },
 
     async findActiveSessionByDeviceId(deviceId: string): Promise<DeviceViewModel | null> {
