@@ -48,7 +48,7 @@ export type TComment = {
 export type DeviceViewModel = {
     ip: string
     title: string
-    lastActiveDate: Date
+    lastActiveDate: string
     deviceId: string
 }
 
@@ -89,8 +89,9 @@ export type IPDBType = {
 export type DeviceDBType = {
     ip: string
     title: string
-    lastActiveDate: Date
+    lastActiveDate: string
     deviceId: string
+    userId: string      // todo возможно нужно ?
 }
 
 // DTO
