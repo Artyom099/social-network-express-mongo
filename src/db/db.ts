@@ -1,5 +1,5 @@
 import {
-    CommentBDType,
+    CommentBDType, DeviceDBType,
     ExpiredTokenDBType,
     IPDBType,
     TBlog,
@@ -23,7 +23,8 @@ export const postCollection = database.collection<TPost>('posts')
 export const userCollection = database.collection<UserAccountDBType>('users')
 export const commentCollection = database.collection<CommentBDType>('comments')
 export const expiredTokenCollection = database.collection<ExpiredTokenDBType>('expiredTokens')
-export const ipCollection = database.collection<IPDBType>('ip')
+export const apiRequestCollection = database.collection<IPDBType>('ip')
+export const devicesCollection = database.collection<DeviceDBType>('devices')
 
 export async function runDb() {
     try {

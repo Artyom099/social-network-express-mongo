@@ -9,6 +9,7 @@ import {authMiddlewareBearer} from "../middleware/auth-middleware";
 import {authService} from "../domain/auth-service";
 import {emailManager} from "../managers/email-manager";
 import {cookieMiddleware} from "../middleware/cookie-middleware";
+import {rateLimitMiddleware} from "../middleware/rate-limit-middleware";
 
 const validationAuth = [
     body('loginOrEmail').isString().trim().notEmpty(),
@@ -27,7 +28,7 @@ const validationReg = [
 export const authRouter = () => {
     const router = express.Router()
 
-    router.post('/login', validationAuth, inputValidationMiddleware, async (req: ReqBodyType<AuthDTO>, res: Response) => {
+    router.post('/login', validationAuth, inputValidationMiddleware, rateLimitMiddleware, async (req: ReqBodyType<AuthDTO>, res: Response) => {
         const userId = await usersService.checkCredentials(req.body.loginOrEmail, req.body.password)
         if (userId) {
             const token = await jwtService.createJWT(userId)
@@ -44,7 +45,7 @@ export const authRouter = () => {
         res.status(HTTP_STATUS.OK_200).json({'accessToken': token.accessToken})
     })
 
-    router.post('/registration-confirmation', async (req: Request, res: Response) => {
+    router.post('/registration-confirmation', rateLimitMiddleware, async (req: Request, res: Response) => {
         // код приходит на почту, если он верный, то 204, иначе 400 и текст ошибки
         const verifyEmail = await authService.checkConfirmationCode(req.body.code)
         if (!verifyEmail) {
@@ -61,7 +62,7 @@ export const authRouter = () => {
         }
     })
 
-    router.post('/registration', validationReg, inputValidationMiddleware, async (req: ReqBodyType<UserRegDTO>, res: Response) => {
+    router.post('/registration', validationReg, inputValidationMiddleware, rateLimitMiddleware, async (req: ReqBodyType<UserRegDTO>, res: Response) => {
         // если входные данные для регистрции правильные, то создаем пользователя
         const existUserEmail = await usersService.findUserByLoginOrEmail(req.body.email)
         if (existUserEmail) {
@@ -90,7 +91,7 @@ export const authRouter = () => {
         }
     })
 
-    router.post('/registration-email-resending', validationEmail, inputValidationMiddleware, async (req: Request, res: Response) => {
+    router.post('/registration-email-resending', validationEmail, inputValidationMiddleware, rateLimitMiddleware, async (req: Request, res: Response) => {
         // проверяем, существует ли пользователь, подтверждена ли почта, и потом отправляем код
         const existUser = await usersService.findUserByLoginOrEmail(req.body.email)
         if (!existUser || existUser.emailConfirmation.isConfirmed) {

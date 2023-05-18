@@ -45,7 +45,14 @@ export type TComment = {
     }
     createdAt: string
 }
+export type DeviceViewModel = {
+    ip: string
+    title: string
+    lastActiveDate: string
+    deviceId: string
+}
 
+// DBTypes
 export type UserAccountDBType = {
     id: string
     accountData: {
@@ -79,7 +86,15 @@ export type IPDBType = {
     URL: string
     date: Date
 }
+export type DeviceDBType = {
+    ip: string
+    title: string
+    lastActiveDate: string
+    deviceId: string
+    userId: string      // todo возможно нужно ?
+}
 
+// DTO
 export type IdDTO = {
     id: string
 }
