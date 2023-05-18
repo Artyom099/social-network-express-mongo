@@ -10,10 +10,8 @@ export const securityRouter = () => {
     const router = express.Router()
 
     router.get('/devices', cookieMiddleware, async (req: Request, res: Response) => {
-        // Returns all devices with active sessions for current user
-        const ip = req.ip
+        // Returns all devices with active sessions for current user const ip = req.ip
         const refreshToken = req.cookies.refreshToken
-
         const userId = await jwtService.getUserIdByToken(refreshToken)
         const loginDevices = await securityService.finaAllLoginDevicesByUserId(userId!)
         res.status(HTTP_STATUS.OK_200).json(loginDevices)
@@ -27,8 +25,12 @@ export const securityRouter = () => {
     router.delete('/devices/:deviceId', cookieMiddleware, async (req: ReqParamsType<{ deviceId: string }>, res: Response) => {
         // Terminate specified device session
         // todo добавить проверку, что девайс принадлежит этому юзеру
+        const refreshToken = req.cookies.refreshToken
+        const userId = await jwtService.getUserIdByToken(refreshToken)
+        const loginDevices = await securityService.finaAllLoginDevicesByUserId(userId!)
         const foundDevice = securityService.findActiveSessionByDeviceId(req.params.deviceId)
-        if (!foundDevice) {
+
+        if (!foundDevice && !loginDevices.includes(foundDevice)) {
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
         } else {
             await securityService.deleteActiveSessionByDeviceId(req.params.deviceId)
