@@ -7,7 +7,7 @@
     "watch": "tsc -w",
     "dev": "yarn nodemon --inspect dist/index.js",
     "test": "jest -i --detectOpenHandles --no-cache --coverage",
-    "test_1": "jest ./__tests__/e2e/auth.e2e.test.ts --detectOpenHandles --coverage"
+    "test_1": "jest ./__tests__/e2e/security.e2e.test.ts --detectOpenHandles --coverage"
   },
   "dependencies": {
     "@types/bcrypt": "^5.0.0",
