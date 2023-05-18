@@ -19,7 +19,8 @@ export const rateLimitMiddleware = async (req: Request, res: Response, next: Nex
     if (countFoundIP > 5) {
         res.sendStatus(HTTP_STATUS.TOO_MANY_REQUESTS_429)
     } else {
-        req.ip = ip
+        req.ip = ip     // todo это скорее всего не нужно
+        await ipService.addIpAndUrl(ip, url, dateNow.toISOString())
         return next()
     }
 }

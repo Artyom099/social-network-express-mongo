@@ -6,5 +6,9 @@ export const ipRepository = {
         const countIp = await apiRequestCollection.countDocuments({ $and: [ {ip: ip}, {url: url}, {date: {$gt: date}} ]})
         if (countIp) return countIp
         else return null
+    },
+
+    async addIpAndUrl(ip: string, url: string, date: string) {
+        await apiRequestCollection.insertOne({IP: ip, URL: url, date: date})  //ip, url, date
     }
 }
