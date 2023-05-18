@@ -18,6 +18,10 @@ export const securityRepository = {
         }
     },
 
+    async deleteOtherActiveSessionsByUserId(userId: string) {
+        await devicesCollection.deleteMany({userId: userId})
+    },
+
     async deleteActiveSessionByDeviceId(deviceId: string) {
         await devicesCollection.deleteOne({deviceId: deviceId})
     }

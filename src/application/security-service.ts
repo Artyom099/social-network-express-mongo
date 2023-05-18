@@ -11,6 +11,10 @@ export const securityService = {
         return await securityRepository.findActiveSessionByDeviceId(deviceId)
     },
 
+    async deleteOtherActiveSessionsByUserId(userId: string) {
+        return await securityRepository.deleteOtherActiveSessionsByUserId(userId)
+    },
+
     async deleteActiveSessionByDeviceId(deviceId: string) {
         return await securityRepository.deleteActiveSessionByDeviceId(deviceId)
     }
