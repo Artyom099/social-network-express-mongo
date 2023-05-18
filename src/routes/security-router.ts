@@ -19,7 +19,10 @@ export const securityRouter = () => {
 
     router.delete('/devices', cookieMiddleware, async (req: Request, res: Response) => {
         // Terminate all other (exclude current) device's sessions
-
+        const refreshToken = req.cookies.refreshToken
+        const userId = await jwtService.getUserIdByToken(refreshToken)
+        await securityService.deleteOtherActiveSessionsByUserId(userId!)
+        res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
     })
 
     router.delete('/devices/:deviceId', cookieMiddleware, async (req: ReqParamsType<{ deviceId: string }>, res: Response) => {
