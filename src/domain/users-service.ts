@@ -1,8 +1,8 @@
 import bcrypt from 'bcrypt'
 import {TUser, UserAccountDBType} from "../types/types";
 import {usersRepository} from "../repositories/users-repository";
-import {v4 as uuidv4} from "uuid";
 import add from "date-fns/add";
+import {randomUUID} from "crypto";
 
 
 export const usersService = {
@@ -10,7 +10,7 @@ export const usersService = {
         const passwordSalt = await bcrypt.genSalt(10)
         const passwordHash = await this._generateHash(password, passwordSalt)
         const newUser: UserAccountDBType = {
-            id: uuidv4().toString(),
+            id: randomUUID().toString(),
             accountData: {
                 login,
                 email,
@@ -19,7 +19,7 @@ export const usersService = {
                 createdAt: new Date().toISOString()
             },
             emailConfirmation: {
-                confirmationCode: uuidv4(),
+                confirmationCode: randomUUID(),
                 expirationDate: add(new Date, {minutes: 10}),
                 isConfirmed: true
             }

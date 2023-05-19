@@ -3,8 +3,8 @@ import {TUser, UserAccountDBType} from "../types/types";
 import {usersRepository} from "../repositories/users-repository";
 import {usersService} from "./users-service";
 import {emailManager} from "../managers/email-manager";
-import {v4 as uuidv4} from 'uuid'
 import add from 'date-fns/add'
+import {randomUUID} from "crypto";
 
 
 export const authService = {
@@ -12,7 +12,7 @@ export const authService = {
         const passwordSalt = await bcrypt.genSalt(10)
         const passwordHash = await usersService._generateHash(password, passwordSalt)
         const newUser: UserAccountDBType = {
-            id: uuidv4().toString(),
+            id: randomUUID().toString(),
             accountData: {
                 login,
                 email,
@@ -21,7 +21,7 @@ export const authService = {
                 createdAt: new Date().toISOString()
             },
             emailConfirmation: {
-                confirmationCode: uuidv4(),
+                confirmationCode: randomUUID(),
                 expirationDate: add(new Date, {minutes: 10}),
                 isConfirmed: false
             }
@@ -50,7 +50,7 @@ export const authService = {
     },
 
     async updateConfirmationCode(email: string): Promise<string> {
-        const newConfirmationCode = uuidv4()
+        const newConfirmationCode = randomUUID()
         await usersRepository.updateConfirmationCode(email, newConfirmationCode)
         return newConfirmationCode
     }

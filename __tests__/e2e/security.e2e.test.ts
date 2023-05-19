@@ -18,8 +18,8 @@ describe('/security', () => {
                 password: password1,
                 email: 'valid1-email@mail.ru'
             })
-            .expect(HTTP_STATUS.CREATED_201)
 
+        expect(createResponse1.status).toBe(HTTP_STATUS.CREATED_201)
         const createdUser1 = createResponse1.body
         expect(createdUser1).toEqual({
             id: expect.any(String),
@@ -34,6 +34,29 @@ describe('/security', () => {
             .expect(HTTP_STATUS.OK_200, {pagesCount: 1, page: 1, pageSize: 10, totalCount: 1, items: [createdUser1]})
 
         expect.setState({createdUser1, password1})
+    })
+
+    it('2 - should return 200 and login', async () => {
+        const {createdUser1, password1} = expect.getState()
+
+        const loginResponse = await request(app)
+            .post('/auth/login')
+            // .set(header('user-agent', 'device-1'))
+            .send({
+                loginOrEmail: createdUser1.login,
+                password: password1
+            })
+
+        expect(loginResponse).toBeDefined()
+        expect(loginResponse.status).toBe(HTTP_STATUS.OK_200)
+        expect(loginResponse.body).toEqual({accessToken: expect.any(String)})
+        const {accessToken} = loginResponse.body
+
+        const refreshToken = loginResponse.headers['set-cookie'][0].split(';')[0]
+        expect(refreshToken).toBeDefined()
+        expect(refreshToken).toEqual(expect.any(String))
+
+        expect.setState({accessToken, firstRefreshToken: refreshToken})
     })
 
 })

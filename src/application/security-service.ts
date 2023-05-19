@@ -3,6 +3,15 @@ import {securityRepository} from "../repositories/security-repository";
 
 
 export const securityService = {
+    async addActiveSession(ip: string, title: string, lastActiveDate: string, deviceId: string, userId: string) {
+        const createdDevice = {ip, title, lastActiveDate, deviceId, userId}
+        return await securityRepository.addActiveSession(createdDevice)
+    },
+
+    async updateLastActiveDateByDeviceId(deviceId: string, date: string) {
+        return await securityRepository.updateLastActiveDateByDeviceId(deviceId, date)
+    },
+
     async finaAllActiveSessionsByUserId(userId: string): Promise<DeviceViewModel[]> {
         return await securityRepository.finaAllActiveSessionsByUserId(userId)
     },
@@ -15,7 +24,7 @@ export const securityService = {
         return await securityRepository.deleteOtherActiveSessionsByUserId(userId)
     },
 
-    async deleteActiveSessionByDeviceId(deviceId: string) {
-        return await securityRepository.deleteActiveSessionByDeviceId(deviceId)
+    async deleteCurrentSessionByDeviceId(deviceId: string) {
+        return await securityRepository.deleteCurrentSessionByDeviceId(deviceId)
     }
 }
