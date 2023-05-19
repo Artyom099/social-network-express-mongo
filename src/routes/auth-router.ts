@@ -10,6 +10,8 @@ import {authService} from "../domain/auth-service";
 import {emailManager} from "../managers/email-manager";
 import {cookieMiddleware} from "../middleware/cookie-middleware";
 import {rateLimitMiddleware} from "../middleware/rate-limit-middleware";
+import {randomUUID} from "crypto";
+import {securityService} from "../application/security-service";
 
 const validationAuth = [
     body('loginOrEmail').isString().trim().notEmpty(),
@@ -31,7 +33,15 @@ export const authRouter = () => {
     router.post('/login', validationAuth, inputValidationMiddleware, rateLimitMiddleware, async (req: ReqBodyType<AuthDTO>, res: Response) => {
         const userId = await usersService.checkCredentials(req.body.loginOrEmail, req.body.password)
         if (userId) {
-            const token = await jwtService.createJWT(userId)
+            const title = req.headers['user-agent']// || 'test user-agent'
+            // const title = window.navigator.userAgent
+            console.log(title)
+            const deviceId = randomUUID()
+            const token = await jwtService.createJWT(userId, deviceId)
+            const tokenPayload = await jwtService.getPayloadByToken(token.refreshToken)
+            const tokenIssuedAt = tokenPayload.iat
+            await securityService.addActiveSession(req.ip, title!, tokenIssuedAt, deviceId, userId)
+
             res.cookie('refreshToken', token.refreshToken, {httpOnly: true, secure: true})
             res.status(HTTP_STATUS.OK_200).json({'accessToken': token.accessToken})
         } else {
@@ -40,9 +50,21 @@ export const authRouter = () => {
     })
 
     router.post('/refresh-token', cookieMiddleware, async (req: Request, res: Response) => {
-        const token = await jwtService.createJWT(req.userId!)
-        res.cookie('refreshToken', token.refreshToken, {httpOnly: true, secure: true})
-        res.status(HTTP_STATUS.OK_200).json({'accessToken': token.accessToken})
+        const refreshToken = req.cookies.refreshToken
+        const tokenPayload = await jwtService.getPayloadByToken(refreshToken)
+
+        const {deviceId, tokenIssuedAt} = tokenPayload
+        const lastActiveSession = await securityService.findActiveSessionByDeviceId(deviceId)
+
+        if (tokenIssuedAt === lastActiveSession!.lastActiveDate) {
+            const token = await jwtService.createJWT(tokenPayload.userId, deviceId)
+            const newTokenPayload = await jwtService.getPayloadByToken(token.refreshToken)
+            await securityService.updateLastActiveDateByDeviceId(deviceId, newTokenPayload.iat)
+            res.cookie('refreshToken', token.refreshToken, {httpOnly: true, secure: true})
+            res.status(HTTP_STATUS.OK_200).json({'accessToken': token.accessToken})
+        } else {
+            res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
+        }
     })
 
     router.post('/registration-confirmation', rateLimitMiddleware, async (req: Request, res: Response) => {

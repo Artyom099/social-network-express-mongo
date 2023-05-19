@@ -91,7 +91,7 @@ export type DeviceDBType = {
     title: string
     lastActiveDate: string
     deviceId: string
-    userId: string      // todo возможно нужно ?
+    userId: string
 }
 
 // DTO

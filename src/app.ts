@@ -15,6 +15,8 @@ export const jsonBodyMiddleware = express.json()
 
 app.use(jsonBodyMiddleware)
 app.use(cookieParser())
+app.set('trust proxy', true)
+
 
 app.use('/testing', getTestsRouter())
 app.use('/videos', getVideosRouter())
