@@ -8,7 +8,7 @@ export const securityRepository = {
     },
 
     async findActiveSessionByDeviceId(deviceId: string): Promise<DeviceViewModel | null> {
-        const activeSession = await devicesCollection.findOne({deviceId: deviceId})
+        const activeSession = await devicesCollection.findOne({deviceId: deviceId}, {projection: {_id: 0}})
         if (!activeSession) return null
         else return {
             ip: activeSession.ip,

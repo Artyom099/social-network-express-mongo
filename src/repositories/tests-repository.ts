@@ -3,7 +3,7 @@ import {
     blogCollection,
     postCollection,
     userCollection,
-    commentCollection, expiredTokenCollection, ipCollection,
+    commentCollection, expiredTokenCollection, apiRequestCollection, devicesCollection,
 } from "../db/db";
 
 
@@ -15,7 +15,8 @@ export const testsRepository = {
         await userCollection.deleteMany()
         await commentCollection.deleteMany()
         await expiredTokenCollection.deleteMany()
-        await ipCollection.deleteMany()
+        await apiRequestCollection.deleteMany()
+        await devicesCollection.deleteMany()
         return
     }
 }
