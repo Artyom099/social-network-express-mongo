@@ -33,12 +33,14 @@ export const authRouter = () => {
     router.post('/login', validationAuth, inputValidationMiddleware, rateLimitMiddleware, async (req: ReqBodyType<AuthDTO>, res: Response) => {
         const userId = await usersService.checkCredentials(req.body.loginOrEmail, req.body.password)
         if (userId) {
-            const title = req.headers['user-agent'] || 'test user-agent'
+            const title = req.headers['user-agent']// || 'test user-agent'
+            // const title = window.navigator.userAgent
+            console.log(title)
             const deviceId = randomUUID()
             const token = await jwtService.createJWT(userId, deviceId)
             const tokenPayload = await jwtService.getPayloadByToken(token.refreshToken)
             const tokenIssuedAt = tokenPayload.iat
-            await securityService.addActiveSession(req.ip, title, tokenIssuedAt, deviceId, userId)
+            await securityService.addActiveSession(req.ip, title!, tokenIssuedAt, deviceId, userId)
 
             res.cookie('refreshToken', token.refreshToken, {httpOnly: true, secure: true})
             res.status(HTTP_STATUS.OK_200).json({'accessToken': token.accessToken})

@@ -36,12 +36,12 @@ describe('/security', () => {
         expect.setState({createdUser1, password1})
     })
 
-    it('2 - should return 200 and login', async () => {
+    it('2 - should return 200 and login - 1st device', async () => {
         const {createdUser1, password1} = expect.getState()
 
         const loginResponse = await request(app)
             .post('/auth/login')
-            // .set(header('user-agent', 'device-1'))
+            .set('user-agent', 'device-1')
             .send({
                 loginOrEmail: createdUser1.login,
                 password: password1
@@ -49,6 +49,8 @@ describe('/security', () => {
 
         expect(loginResponse).toBeDefined()
         expect(loginResponse.status).toBe(HTTP_STATUS.OK_200)
+        console.log(loginResponse.headers)
+        // expect(loginResponse.headers['user-agent']).toEqual('device-1')
         expect(loginResponse.body).toEqual({accessToken: expect.any(String)})
         const {accessToken} = loginResponse.body
 
@@ -56,7 +58,76 @@ describe('/security', () => {
         expect(refreshToken).toBeDefined()
         expect(refreshToken).toEqual(expect.any(String))
 
-        expect.setState({accessToken, firstRefreshToken: refreshToken})
+        expect.setState({firstAccessToken: accessToken, firstRefreshToken: refreshToken})
+    })
+    it('3 - should return 200 and login - 2nd device', async () => {
+        const {createdUser1, password1} = expect.getState()
+
+        const loginResponse = await request(app)
+            .post('/auth/login')
+            .set('user-agent', 'device-2')
+            .send({
+                loginOrEmail: createdUser1.login,
+                password: password1
+            })
+
+        expect(loginResponse).toBeDefined()
+        expect(loginResponse.status).toBe(HTTP_STATUS.OK_200)
+        // expect(loginResponse.headers['user-agent']).toEqual('device-2')
+        expect(loginResponse.body).toEqual({accessToken: expect.any(String)})
+        const {accessToken} = loginResponse.body
+
+        const refreshToken = loginResponse.headers['set-cookie'][0].split(';')[0]
+        expect(refreshToken).toBeDefined()
+        expect(refreshToken).toEqual(expect.any(String))
+
+        expect.setState({secondAccessToken: accessToken, secondRefreshToken: refreshToken})
+    })
+    it('4 - should return 200 and login - 3rd device', async () => {
+        const {createdUser1, password1} = expect.getState()
+
+        const loginResponse = await request(app)
+            .post('/auth/login')
+            .set('user-agent', 'device-3')
+            .send({
+                loginOrEmail: createdUser1.login,
+                password: password1
+            })
+
+        expect(loginResponse).toBeDefined()
+        expect(loginResponse.status).toBe(HTTP_STATUS.OK_200)
+        // expect(loginResponse.headers['user-agent']).toEqual('device-3')
+        expect(loginResponse.body).toEqual({accessToken: expect.any(String)})
+        const {accessToken} = loginResponse.body
+
+        const refreshToken = loginResponse.headers['set-cookie'][0].split(';')[0]
+        expect(refreshToken).toBeDefined()
+        expect(refreshToken).toEqual(expect.any(String))
+
+        expect.setState({thirdAccessToken: accessToken, thirdRefreshToken: refreshToken})
+    })
+    it('5 - should return 200 and login - 4th device', async () => {
+        const {createdUser1, password1} = expect.getState()
+
+        const loginResponse = await request(app)
+            .post('/auth/login')
+            .set('user-agent', 'device-4')
+            .send({
+                loginOrEmail: createdUser1.login,
+                password: password1
+            })
+
+        expect(loginResponse).toBeDefined()
+        expect(loginResponse.status).toBe(HTTP_STATUS.OK_200)
+        // expect(loginResponse.headers['user-agent']).toEqual('device-4')
+        expect(loginResponse.body).toEqual({accessToken: expect.any(String)})
+        const {accessToken} = loginResponse.body
+
+        const refreshToken = loginResponse.headers['set-cookie'][0].split(';')[0]
+        expect(refreshToken).toBeDefined()
+        expect(refreshToken).toEqual(expect.any(String))
+
+        expect.setState({thirdAccessToken: accessToken, thirdRefreshToken: refreshToken})
     })
 
 })

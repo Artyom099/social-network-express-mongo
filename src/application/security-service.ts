@@ -5,6 +5,7 @@ import {securityRepository} from "../repositories/security-repository";
 export const securityService = {
     async addActiveSession(ip: string, title: string, lastActiveDate: string, deviceId: string, userId: string) {
         const createdDevice = {ip, title, lastActiveDate, deviceId, userId}
+        console.log(createdDevice)
         return await securityRepository.addActiveSession(createdDevice)
     },
 

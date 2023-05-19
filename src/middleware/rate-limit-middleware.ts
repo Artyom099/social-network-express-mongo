@@ -5,7 +5,6 @@ import {ipService} from "../application/ip-service";
 
 export const rateLimitMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     const ip = req.ip
-    console.log(ip)
     const url = req.baseUrl
     const dateNow = new Date()
     const timeLimit = new Date(dateNow.getSeconds() - 10).toISOString()
