@@ -3,8 +3,8 @@ import {securityRepository} from "../repositories/security-repository";
 
 
 export const securityService = {
-    async finaAllLoginDevicesByUserId(userId: string): Promise<DeviceViewModel[]> {
-        return await securityRepository.finaAllLoginDevicesByUserId(userId)
+    async finaAllActiveSessionsByUserId(userId: string): Promise<DeviceViewModel[]> {
+        return await securityRepository.finaAllActiveSessionsByUserId(userId)
     },
 
     async findActiveSessionByDeviceId(deviceId: string): Promise<DeviceViewModel | null> {

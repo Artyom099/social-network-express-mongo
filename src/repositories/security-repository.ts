@@ -3,7 +3,7 @@ import {DeviceViewModel} from "../types/types";
 
 
 export const securityRepository = {
-    async finaAllLoginDevicesByUserId(userId: string): Promise<DeviceViewModel[]> {
+    async finaAllActiveSessionsByUserId(userId: string): Promise<DeviceViewModel[]> {
         return await devicesCollection.find({userId: userId}, {projection: {_id: 0, userId: 0}}).toArray()
     },
 
@@ -16,6 +16,10 @@ export const securityRepository = {
             lastActiveDate: activeSession.lastActiveDate,
             deviceId: activeSession.deviceId,
         }
+    },
+
+    async addActiveSession() {
+
     },
 
     async deleteOtherActiveSessionsByUserId(userId: string) {

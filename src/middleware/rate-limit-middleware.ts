@@ -7,11 +7,11 @@ export const rateLimitMiddleware = async (req: Request, res: Response, next: Nex
     const ip = req.socket.localAddress
     const url = req.baseUrl
     const dateNow = new Date()
-    const date = new Date(dateNow.getSeconds() - 10).toISOString()
+    const timeLimit = new Date(dateNow.getSeconds() - 10).toISOString()
     if (!ip) {
         return res.sendStatus(HTTP_STATUS.BAD_REQUEST_400)
     }
-    const countFoundIP = await ipService.countIpAndUrl(ip, url, date)
+    const countFoundIP = await ipService.countIpAndUrl(ip, url, timeLimit)
     if (!countFoundIP) {
         return res.sendStatus(HTTP_STATUS.BAD_REQUEST_400)
     }
@@ -19,7 +19,6 @@ export const rateLimitMiddleware = async (req: Request, res: Response, next: Nex
     if (countFoundIP > 5) {
         res.sendStatus(HTTP_STATUS.TOO_MANY_REQUESTS_429)
     } else {
-        req.ip = ip     // todo это скорее всего не нужно
         await ipService.addIpAndUrl(ip, url, dateNow.toISOString())
         return next()
     }
