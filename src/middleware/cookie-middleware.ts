@@ -9,10 +9,10 @@ export const cookieMiddleware = async (req: Request, res: Response, next: NextFu
     const tokenInBlackList = await tokensService.checkTokenInBlackList(refreshToken)
     const tokenPayload = await jwtService.getPayloadByToken(refreshToken)
 
-    if (!refreshToken || tokenInBlackList || tokenPayload!.userId) {
+    if (!refreshToken || tokenInBlackList || !tokenPayload!.userId) {
         res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
     } else {
-        await tokensService.addTokenToBlackList(refreshToken)
+        // await tokensService.addTokenToBlackList(refreshToken)
         req.userId = tokenPayload
         return next()
     }
