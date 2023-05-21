@@ -13,7 +13,7 @@ export const securityRouter = () => {
         // Returns all devices with active sessions for current user
         const refreshToken = req.cookies.refreshToken
         const tokenPayload = await jwtService.getPayloadByToken(refreshToken)
-        const activeSessions = await securityService.finaAllActiveSessionsByUserId(tokenPayload!.userId)
+        const activeSessions = await securityService.finaAllActiveSessionsByUserId(tokenPayload.userId)
 
         res.status(HTTP_STATUS.OK_200).json(activeSessions)
     })
@@ -31,11 +31,14 @@ export const securityRouter = () => {
         // Terminate specified device session
         const refreshToken = req.cookies.refreshToken
         const tokenPayload = await jwtService.getPayloadByToken(refreshToken)
-        const activeSessions = await securityService.finaAllActiveSessionsByUserId(tokenPayload!.userId)
-        const currentSession = securityService.findActiveSessionByDeviceId(req.params.deviceId)
 
-        if (!currentSession && !activeSessions.includes(currentSession)) {
-            res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
+        const currentSession = await securityService.findActiveSessionByDeviceId(req.params.deviceId)
+        console.log(currentSession)
+        if (!currentSession) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
+
+        const activeSessions = await securityService.finaAllActiveSessionsByUserId(tokenPayload.userId)
+        if (!activeSessions.includes(currentSession)) {
+            res.sendStatus(HTTP_STATUS.FORBIDDEN_403)
         } else {
             await securityService.deleteCurrentSessionByDeviceId(req.params.deviceId)
             res.sendStatus(HTTP_STATUS.NO_CONTENT_204)

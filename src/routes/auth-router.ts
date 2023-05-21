@@ -34,8 +34,6 @@ export const authRouter = () => {
         const userId = await usersService.checkCredentials(req.body.loginOrEmail, req.body.password)
         if (userId) {
             const title = req.headers['user-agent']// || 'test user-agent'
-            // const title = window.navigator.userAgent
-            console.log(title)
             const deviceId = randomUUID()
             const token = await jwtService.createJWT(userId, deviceId)
             const tokenPayload = await jwtService.getPayloadByToken(token.refreshToken)
