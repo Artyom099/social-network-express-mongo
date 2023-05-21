@@ -12,7 +12,7 @@ export const securityRepository = {
     },
 
     async finaAllActiveSessionsByUserId(userId: string): Promise<DeviceViewModel[]> {
-        return await devicesCollection.find({userId: userId}, {projection: {_id: 0, userId: 0}}).toArray()
+        return await devicesCollection.find({userId: userId}, {projection: {_id: 0, userId: false}}).toArray()
     },
 
     async findActiveSessionByDeviceId(deviceId: string): Promise<DeviceViewModel | null> {

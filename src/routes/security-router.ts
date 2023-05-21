@@ -38,8 +38,8 @@ export const securityRouter = () => {
         const activeSessions = await securityService.finaAllActiveSessionsByUserId(tokenPayload.userId)
         // console.log('current - ', currentSession)
         // console.log('active - ', activeSessions)
-        // console.log(activeSessions.filter(session => session.deviceId !== currentSession.deviceId).length === 0)
-        // console.log(!activeSessions.includes(currentSession))
+        console.log(activeSessions.filter(session => session.deviceId !== currentSession.deviceId).length !== 0)
+        console.log(!activeSessions.includes(currentSession))
         // todo - !activeSessions.includes(currentSession) - не работает, возвращает true
 
         if (!activeSessions.includes(currentSession)) {
