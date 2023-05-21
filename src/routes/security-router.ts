@@ -33,7 +33,6 @@ export const securityRouter = () => {
         const tokenPayload = await jwtService.getPayloadByToken(refreshToken)
 
         const currentSession = await securityService.findActiveSessionByDeviceId(req.params.deviceId)
-        console.log(currentSession)
         if (!currentSession) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
 
         const activeSessions = await securityService.finaAllActiveSessionsByUserId(tokenPayload.userId)

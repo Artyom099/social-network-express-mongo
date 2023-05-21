@@ -33,12 +33,11 @@ export const authRouter = () => {
     router.post('/login', validationAuth, inputValidationMiddleware, rateLimitMiddleware, async (req: ReqBodyType<AuthDTO>, res: Response) => {
         const userId = await usersService.checkCredentials(req.body.loginOrEmail, req.body.password)
         if (userId) {
-            const title = req.headers['user-agent']// || 'test user-agent'
+            const title = req.headers['user-agent']
             const deviceId = randomUUID()
             const token = await jwtService.createJWT(userId, deviceId)
             const tokenPayload = await jwtService.getPayloadByToken(token.refreshToken)
-            const tokenIssuedAt = tokenPayload.iat
-            await securityService.addActiveSession(req.ip, title!, tokenIssuedAt, deviceId, userId)
+            await securityService.addActiveSession(req.ip, title!, tokenPayload.iat, deviceId, userId)
 
             res.cookie('refreshToken', token.refreshToken, {httpOnly: true, secure: true})
             res.status(HTTP_STATUS.OK_200).json({'accessToken': token.accessToken})
@@ -51,11 +50,11 @@ export const authRouter = () => {
         const refreshToken = req.cookies.refreshToken
         const tokenPayload = await jwtService.getPayloadByToken(refreshToken)
 
-        const {deviceId, tokenIssuedAt} = tokenPayload
+        const {userId, deviceId, iat} = tokenPayload
         const lastActiveSession = await securityService.findActiveSessionByDeviceId(deviceId)
 
-        if (tokenIssuedAt === lastActiveSession!.lastActiveDate) {
-            const token = await jwtService.createJWT(tokenPayload.userId, deviceId)
+        if (iat === lastActiveSession!.lastActiveDate) {
+            const token = await jwtService.createJWT(userId, deviceId)
             const newTokenPayload = await jwtService.getPayloadByToken(token.refreshToken)
             await securityService.updateLastActiveDateByDeviceId(deviceId, newTokenPayload.iat)
             res.cookie('refreshToken', token.refreshToken, {httpOnly: true, secure: true})
