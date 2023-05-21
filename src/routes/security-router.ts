@@ -33,10 +33,15 @@ export const securityRouter = () => {
         const tokenPayload = await jwtService.getPayloadByToken(refreshToken)
 
         const currentSession = await securityService.findActiveSessionByDeviceId(req.params.deviceId)
-        console.log(currentSession)
         if (!currentSession) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
 
         const activeSessions = await securityService.finaAllActiveSessionsByUserId(tokenPayload.userId)
+        // console.log('current - ', currentSession)
+        // console.log('active - ', activeSessions)
+        // console.log(activeSessions.filter(session => session.deviceId !== currentSession.deviceId).length === 0)
+        // console.log(!activeSessions.includes(currentSession))
+        // todo - !activeSessions.includes(currentSession) - не работает, возвращает true
+
         if (!activeSessions.includes(currentSession)) {
             res.sendStatus(HTTP_STATUS.FORBIDDEN_403)
         } else {
