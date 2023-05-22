@@ -1,6 +1,6 @@
 import {OutputModel, TBlog, TComment, TPost, UserAccountDBType} from "../types/types"
 import {blogCollection, commentCollection, postCollection, userCollection} from "../db/db";
-import {Filter, Sort} from "mongodb"
+import {Filter} from "mongodb"
 
 
 export const queryRepository = {
@@ -78,15 +78,11 @@ export const queryRepository = {
     },
 
     async findCommentsThisPostAndSort(postId: string, pageNumber: number, pageSize: number, sortBy: string,
-                              sortDirection: string): Promise<OutputModel<TComment[]>> {
+                              sortDirection: 'asc' | 'desc'): Promise<OutputModel<TComment[]>> {
         const filter: {postId: string} = {postId: postId}
-        let sortNum: Sort = -1
-        if (sortDirection === 'asc') sortNum = 1     // 1 - возрстание
-        if (sortDirection === 'desc') sortNum = -1   // -1 - убывание
-
         const totalCount: number = await commentCollection.countDocuments(filter)
-        const sortedComments: TComment[] = await commentCollection.find(filter, {projection: {_id: false, postId: false}})
-            .sort({[sortBy]: sortNum}).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
+        const sortedComments: TComment[] = await commentCollection.find(filter, {projection: {_id: 0, postId: 0}})
+            .sort({[sortBy]: sortDirection}).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
         return {
             pagesCount: Math.ceil(totalCount / pageSize),    // общее количество страниц
             page: pageNumber,                                   // текущая страница

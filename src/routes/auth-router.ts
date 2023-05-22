@@ -48,9 +48,7 @@ export const authRouter = () => {
 
     router.post('/refresh-token', cookieMiddleware, async (req: Request, res: Response) => {
         const refreshToken = req.cookies.refreshToken
-        const tokenPayload = await jwtService.getPayloadByToken(refreshToken)
-
-        const {userId, deviceId, iat} = tokenPayload
+        const {userId, deviceId, iat} = await jwtService.getPayloadByToken(refreshToken)
         const lastActiveSession = await securityService.findActiveSessionByDeviceId(deviceId)
 
         if (iat === lastActiveSession!.lastActiveDate) {
