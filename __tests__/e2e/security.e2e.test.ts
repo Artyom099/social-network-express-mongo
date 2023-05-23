@@ -2,7 +2,7 @@ import request from "supertest";
 import {app} from "../../src/app";
 import {HTTP_STATUS} from "../../src/types/constants";
 
-
+const sleep = (seconds: number) => new Promise((r) => setTimeout(r, seconds * 1000))
 describe('/security', () => {
     beforeAll(async () => {
         await request(app).delete('/testing/all-data')
@@ -303,8 +303,10 @@ describe('/security', () => {
         expect(getResponse.body.length).toEqual(1)
     })
 
+
     it('18 - return 429', async () => {
         const {createdUser1, password1} = expect.getState()
+        await sleep(10)
 
         await request(app)
             .post('/auth/login')
@@ -313,6 +315,7 @@ describe('/security', () => {
                 loginOrEmail: createdUser1.login,
                 password: password1
             })
+            .expect(HTTP_STATUS.OK_200)
 
         await request(app)
             .post('/auth/login')
@@ -321,6 +324,7 @@ describe('/security', () => {
                 loginOrEmail: createdUser1.login,
                 password: password1
             })
+            .expect(HTTP_STATUS.OK_200)
 
         await request(app)
             .post('/auth/login')
@@ -329,6 +333,7 @@ describe('/security', () => {
                 loginOrEmail: createdUser1.login,
                 password: password1
             })
+            .expect(HTTP_STATUS.OK_200)
 
         await request(app)
             .post('/auth/login')
@@ -337,6 +342,7 @@ describe('/security', () => {
                 loginOrEmail: createdUser1.login,
                 password: password1
             })
+            .expect(HTTP_STATUS.OK_200)
 
         await request(app)
             .post('/auth/login')
@@ -345,6 +351,7 @@ describe('/security', () => {
                 loginOrEmail: createdUser1.login,
                 password: password1
             })
+            .expect(HTTP_STATUS.OK_200)
 
         const loginResponse = await request(app)
             .post('/auth/login')
@@ -353,6 +360,7 @@ describe('/security', () => {
                 loginOrEmail: createdUser1.login,
                 password: password1
             })
+            .expect(HTTP_STATUS.TOO_MANY_REQUESTS_429)
 
         expect(loginResponse).toBeDefined()
         expect(loginResponse.status).toBe(HTTP_STATUS.TOO_MANY_REQUESTS_429)
