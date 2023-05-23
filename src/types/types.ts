@@ -82,8 +82,8 @@ export type ExpiredTokenDBType = {
     token: string
 }
 export type IPDBType = {
-    IP: string
-    URL: string
+    ip: string
+    url: string
     date: string
 }
 export type DeviceDBType = {

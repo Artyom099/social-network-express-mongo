@@ -145,7 +145,7 @@ describe('/security', () => {
             firstLastActiveDateFirstUser: getResponse.body[0].lastActiveDate,
             secondDeviceIdFirstUser: getResponse.body[1].deviceId
         })
-        console.log('devices 1 - ', getResponse.body)
+        // console.log('devices 1 - ', getResponse.body)
     })
 
     it('7 - return 404 if try to delete non-existent device', async () => {
@@ -241,7 +241,7 @@ describe('/security', () => {
         expect(getResponse.body[0].lastActiveDate).not.toEqual(firstLastActiveDateFirstUser)
 
         expect.setState({firstDeviceIdFirstUser: getResponse.body[0].deviceId})
-        console.log('devices 2 - ', getResponse.body)
+        // console.log('devices 2 - ', getResponse.body)
     })
     it('12 - return 204 & delete 1st user\'s 2nd device', async () => {
         const {newFirstRefreshToken, secondDeviceIdFirstUser} = expect.getState()
@@ -292,7 +292,7 @@ describe('/security', () => {
         expect(getResponse).toBeDefined()
         expect(getResponse.status).toBe(HTTP_STATUS.NO_CONTENT_204)
     })
-    it('17 - return all login devices 1st user - without 3rd device', async () => {
+    it('17 - return all login devices 1st user - only 1st device', async () => {
         const {newFirstRefreshToken} = expect.getState()
         const getResponse = await request(app)
             .get('/security/devices')
@@ -301,5 +301,60 @@ describe('/security', () => {
         expect(getResponse).toBeDefined()
         expect(getResponse.status).toBe(HTTP_STATUS.OK_200)
         expect(getResponse.body.length).toEqual(1)
+    })
+
+    it('18 - return 429', async () => {
+        const {createdUser1, password1} = expect.getState()
+
+        await request(app)
+            .post('/auth/login')
+            .set('user-agent', 'device-2')
+            .send({
+                loginOrEmail: createdUser1.login,
+                password: password1
+            })
+
+        await request(app)
+            .post('/auth/login')
+            .set('user-agent', 'device-3')
+            .send({
+                loginOrEmail: createdUser1.login,
+                password: password1
+            })
+
+        await request(app)
+            .post('/auth/login')
+            .set('user-agent', 'device-4')
+            .send({
+                loginOrEmail: createdUser1.login,
+                password: password1
+            })
+
+        await request(app)
+            .post('/auth/login')
+            .set('user-agent', 'device-5')
+            .send({
+                loginOrEmail: createdUser1.login,
+                password: password1
+            })
+
+        await request(app)
+            .post('/auth/login')
+            .set('user-agent', 'device-6')
+            .send({
+                loginOrEmail: createdUser1.login,
+                password: password1
+            })
+
+        const loginResponse = await request(app)
+            .post('/auth/login')
+            .set('user-agent', 'device-7')
+            .send({
+                loginOrEmail: createdUser1.login,
+                password: password1
+            })
+
+        expect(loginResponse).toBeDefined()
+        expect(loginResponse.status).toBe(HTTP_STATUS.TOO_MANY_REQUESTS_429)
     })
 })
