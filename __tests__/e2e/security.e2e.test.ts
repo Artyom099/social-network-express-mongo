@@ -282,4 +282,24 @@ describe('/security', () => {
         expect(getResponse.status).toBe(HTTP_STATUS.OK_200)
         expect(getResponse.body.length).toEqual(2)
     })
+
+    it('16 - return 204 & terminate all other (exclude current) device\'s sessions', async () => {
+        const {firstRefreshToken} = expect.getState()
+        const getResponse = await request(app)
+            .delete('/security/devices')
+            .set('cookie', firstRefreshToken)
+
+        expect(getResponse).toBeDefined()
+        expect(getResponse.status).toBe(HTTP_STATUS.NO_CONTENT_204)
+    })
+    it('17 - return all login devices 1st user - without 3rd device', async () => {
+        const {newFirstRefreshToken} = expect.getState()
+        const getResponse = await request(app)
+            .get('/security/devices')
+            .set('cookie', newFirstRefreshToken)
+
+        expect(getResponse).toBeDefined()
+        expect(getResponse.status).toBe(HTTP_STATUS.OK_200)
+        expect(getResponse.body.length).toEqual(1)
+    })
 })
