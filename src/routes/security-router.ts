@@ -36,17 +36,7 @@ export const securityRouter = () => {
         if (!currentSession) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
 
         const activeSessions = await securityService.finaAllActiveSessionsByUserId(tokenPayload.userId)
-
-        console.log('currentSession - ', currentSession)
-        console.log('activeSessions - ', activeSessions)
-        console.log(activeSessions.filter(session => session.deviceId !== currentSession.deviceId).length !== 0)
-        console.log(!activeSessions.includes(currentSession))
-        console.log(!activeSessions.indexOf(currentSession))
-        console.log(!activeSessions.find(session => session.deviceId !== currentSession.deviceId))
-
-        // todo - !activeSessions.includes(currentSession) - не работает, возвращает true
-
-        if (!activeSessions.includes(currentSession)) {
+        if (!activeSessions.find(session => session.deviceId === currentSession.deviceId)) {
             res.sendStatus(HTTP_STATUS.FORBIDDEN_403)
         } else {
             await securityService.deleteCurrentSessionByDeviceId(req.params.deviceId)
