@@ -9,6 +9,6 @@ export const ipRepository = {
     },
 
     async addIpAndUrl(ip: string, url: string, date: string) {
-        await apiRequestCollection.insertOne({IP: ip, URL: url, date: date})
+        await apiRequestCollection.insertOne({ip: ip, url: url, date: date})
     }
 }
