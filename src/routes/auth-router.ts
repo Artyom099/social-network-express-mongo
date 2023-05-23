@@ -30,7 +30,7 @@ const validationReg = [
 export const authRouter = () => {
     const router = express.Router()
 
-    router.post('/login', validationAuth, inputValidationMiddleware, rateLimitMiddleware, async (req: ReqBodyType<AuthDTO>, res: Response) => {
+    router.post('/login', rateLimitMiddleware, validationAuth, inputValidationMiddleware, async (req: ReqBodyType<AuthDTO>, res: Response) => {
         const userId = await usersService.checkCredentials(req.body.loginOrEmail, req.body.password)
         if (userId) {
             const title = req.headers['user-agent']
@@ -81,7 +81,7 @@ export const authRouter = () => {
         }
     })
 
-    router.post('/registration', validationReg, inputValidationMiddleware, rateLimitMiddleware, async (req: ReqBodyType<UserRegDTO>, res: Response) => {
+    router.post('/registration', rateLimitMiddleware, validationReg, inputValidationMiddleware, async (req: ReqBodyType<UserRegDTO>, res: Response) => {
         // если входные данные для регистрции правильные, то создаем пользователя
         const existUserEmail = await usersService.findUserByLoginOrEmail(req.body.email)
         if (existUserEmail) {
@@ -110,7 +110,7 @@ export const authRouter = () => {
         }
     })
 
-    router.post('/registration-email-resending', validationEmail, inputValidationMiddleware, rateLimitMiddleware, async (req: Request, res: Response) => {
+    router.post('/registration-email-resending', rateLimitMiddleware, validationEmail, inputValidationMiddleware, async (req: Request, res: Response) => {
         // проверяем, существует ли пользователь, подтверждена ли почта, и потом отправляем код
         const existUser = await usersService.findUserByLoginOrEmail(req.body.email)
         if (!existUser || existUser.emailConfirmation.isConfirmed) {
