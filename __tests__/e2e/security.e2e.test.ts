@@ -253,4 +253,14 @@ describe('/security', () => {
         // expect(deleteResponse.status).toBe(HTTP_STATUS.NO_CONTENT_204)
         console.log('2 DeviceId - ', secondDeviceIdFirstUser)
     })
+    it('13 - return all login devices 1st user - without 2nd device', async () => {
+        const {newFirstRefreshToken} = expect.getState()
+        const getResponse = await request(app)
+            .get('/security/devices')
+            .set('cookie', newFirstRefreshToken)
+
+        expect(getResponse).toBeDefined()
+        expect(getResponse.status).toBe(HTTP_STATUS.OK_200)
+        // expect(getResponse.body.length).toEqual(3)
+    })
 })

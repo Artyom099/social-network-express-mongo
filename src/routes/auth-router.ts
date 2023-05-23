@@ -37,7 +37,8 @@ export const authRouter = () => {
             const deviceId = randomUUID()
             const token = await jwtService.createJWT(userId, deviceId)
             const tokenPayload = await jwtService.getPayloadByToken(token.refreshToken)
-            await securityService.addActiveSession(req.ip, title!, tokenPayload.iat, deviceId, userId)
+            const lastActiveDate = (tokenPayload.iat * 1000).toString()
+            await securityService.addActiveSession(req.ip, title!, lastActiveDate, deviceId, userId)
 
             res.cookie('refreshToken', token.refreshToken, {httpOnly: true, secure: true})
             res.status(HTTP_STATUS.OK_200).json({'accessToken': token.accessToken})
@@ -48,13 +49,15 @@ export const authRouter = () => {
 
     router.post('/refresh-token', cookieMiddleware, async (req: Request, res: Response) => {
         const refreshToken = req.cookies.refreshToken
-        const {userId, deviceId, iat} = await jwtService.getPayloadByToken(refreshToken)
-        const lastActiveSession = await securityService.findActiveSessionByDeviceId(deviceId)
+        const refreshTokenPayload = await jwtService.getPayloadByToken(refreshToken)
+        const tokenIssuedAt = (refreshTokenPayload.iat * 1000).toString()
+        const lastActiveSession = await securityService.findActiveSessionByDeviceId(refreshTokenPayload.deviceId)
 
-        if (iat === lastActiveSession!.lastActiveDate) {
-            const token = await jwtService.createJWT(userId, deviceId)
+        if (tokenIssuedAt === lastActiveSession!.lastActiveDate) {
+            const token = await jwtService.createJWT(refreshTokenPayload.userId, refreshTokenPayload.deviceId)
             const newTokenPayload = await jwtService.getPayloadByToken(token.refreshToken)
-            await securityService.updateLastActiveDateByDeviceId(deviceId, newTokenPayload.iat)
+            const lastActiveDate = (newTokenPayload.iat * 1000).toString()
+            await securityService.updateLastActiveDateByDeviceId(refreshTokenPayload.deviceId, lastActiveDate)
             res.cookie('refreshToken', token.refreshToken, {httpOnly: true, secure: true})
             res.status(HTTP_STATUS.OK_200).json({'accessToken': token.accessToken})
         } else {
