@@ -6,9 +6,12 @@ import {ipService} from "../application/ip-service";
 export const rateLimitMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     const ip = req.ip
     const url = req.originalUrl
+    // console.log('ip - ', ip)
     // console.log('url - ', url)
     const dateNow = new Date()
-    const timeLimit = new Date(dateNow.getSeconds() - 10).toISOString()
+    const timeLimit = new Date(Date.now() - 10_000).toISOString()
+    console.log('dateNow', dateNow)
+    console.log('timeLimit', timeLimit)
     const countFoundIP = await ipService.countIpAndUrl(ip!, url, timeLimit)
 
     if (countFoundIP! > 5) {
