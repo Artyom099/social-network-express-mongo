@@ -26,8 +26,10 @@ export const securityRepository = {
         }
     },
 
-    async deleteOtherActiveSessionsByUserId(userId: string) {
-        await devicesCollection.deleteMany({$not: {userId: userId}})
+    async deleteOtherActiveSessionsByDeviceId(deviceId: string) {
+        // todo - можно ли заменить $nor на $not ?
+        await devicesCollection.deleteMany({$nor: [{deviceId: deviceId}] })
+
     },
 
     async deleteCurrentSessionByDeviceId(deviceId: string) {

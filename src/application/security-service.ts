@@ -20,8 +20,8 @@ export const securityService = {
         return await securityRepository.findActiveSessionByDeviceId(deviceId)
     },
 
-    async deleteOtherActiveSessionsByUserId(userId: string) {
-        return await securityRepository.deleteOtherActiveSessionsByUserId(userId)
+    async deleteOtherActiveSessionsByDeviceId(deviceId: string) {
+        return await securityRepository.deleteOtherActiveSessionsByDeviceId(deviceId)
     },
 
     async deleteCurrentSessionByDeviceId(deviceId: string) {
