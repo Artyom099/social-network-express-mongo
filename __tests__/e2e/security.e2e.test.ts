@@ -199,14 +199,14 @@ describe('/security', () => {
                 loginOrEmail: createResponse.body.login,
                 password: password
             })
+        const firstRefreshTokenSecondUser = loginResponse.headers['set-cookie'][0].split(';')[0]
 
         // try to delete 1st user's devise by 2nd user
-        const {firstDeviceIdFirstUser, firstRefreshToken} = expect.getState()
+        const {firstDeviceIdFirstUser} = expect.getState()
         const deleteResponse = await request(app)
             .delete(`/security/devices/${firstDeviceIdFirstUser}`)
-            .set('cookie', firstRefreshToken)
+            .set('cookie', firstRefreshTokenSecondUser)
 
-        // console.log(firstDeviceIdFirstUser)
         expect(loginResponse).toBeDefined()
         expect(loginResponse.status).toBe(HTTP_STATUS.OK_200)
         expect(deleteResponse).toBeDefined()
@@ -250,8 +250,7 @@ describe('/security', () => {
             .set('cookie', newFirstRefreshToken)
 
         expect(deleteResponse).toBeDefined()
-        // expect(deleteResponse.status).toBe(HTTP_STATUS.NO_CONTENT_204)
-        console.log('2 DeviceId - ', secondDeviceIdFirstUser)
+        expect(deleteResponse.status).toBe(HTTP_STATUS.NO_CONTENT_204)
     })
     it('13 - return all login devices 1st user - without 2nd device', async () => {
         const {newFirstRefreshToken} = expect.getState()
@@ -261,6 +260,6 @@ describe('/security', () => {
 
         expect(getResponse).toBeDefined()
         expect(getResponse.status).toBe(HTTP_STATUS.OK_200)
-        // expect(getResponse.body.length).toEqual(3)
+        expect(getResponse.body.length).toEqual(3)
     })
 })
