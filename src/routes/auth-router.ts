@@ -48,8 +48,7 @@ export const authRouter = () => {
     })
 
     router.post('/refresh-token', cookieMiddleware, async (req: Request, res: Response) => {
-        const refreshToken = req.cookies.refreshToken
-        const refreshTokenPayload = await jwtService.getPayloadByToken(refreshToken)
+        const refreshTokenPayload = await jwtService.getPayloadByToken(req.cookies.refreshToken)
         const tokenIssuedAt = new Date(refreshTokenPayload.iat * 1000).toISOString()
         const lastActiveSession = await securityService.findActiveSessionByDeviceId(refreshTokenPayload.deviceId)
 
@@ -131,6 +130,8 @@ export const authRouter = () => {
     })
 
     router.post('/logout', cookieMiddleware, async (req: Request, res: Response) => {
+        const refreshTokenPayload = await jwtService.getPayloadByToken(req.cookies.refreshToken)
+        await securityService.deleteCurrentSessionByDeviceId(refreshTokenPayload.deviceId)
         res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
     })
 
