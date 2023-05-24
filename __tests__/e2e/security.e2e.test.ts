@@ -363,6 +363,5 @@ describe('/security', () => {
             .expect(HTTP_STATUS.TOO_MANY_REQUESTS_429)
 
         expect(loginResponse).toBeDefined()
-        expect(loginResponse.status).toBe(HTTP_STATUS.TOO_MANY_REQUESTS_429)
     })
 })
