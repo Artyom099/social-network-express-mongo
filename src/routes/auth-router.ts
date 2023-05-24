@@ -124,7 +124,7 @@ export const authRouter = () => {
             })
         } else {
             const newCode = await authService.updateConfirmationCode(req.body.email)
-            await emailManager.sendEmailConfirmationMessage(req.body.email, newCode)
+            emailManager.sendEmailConfirmationMessage(req.body.email, newCode)
             res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
         }
     })
