@@ -303,7 +303,6 @@ describe('/security', () => {
         expect(getResponse.body.length).toEqual(1)
     })
 
-
     it('18 - return 429', async () => {
         const {createdUser1, password1} = expect.getState()
         await sleep(10)
@@ -360,6 +359,47 @@ describe('/security', () => {
                 loginOrEmail: createdUser1.login,
                 password: password1
             })
+            .expect(HTTP_STATUS.TOO_MANY_REQUESTS_429)
+
+        expect(loginResponse).toBeDefined()
+    })
+    it('19 - return 429', async () => {
+        const {createdUser1} = expect.getState()
+
+        await request(app)
+            .post('/auth/registration-email-resending')
+            .set('user-agent', 'device-2')
+            .send({loginOrEmail: createdUser1.email})
+            .expect(HTTP_STATUS.BAD_REQUEST_400)
+
+        await request(app)
+            .post('/auth/registration-email-resending')
+            .set('user-agent', 'device-3')
+            .send({loginOrEmail: createdUser1.email})
+            .expect(HTTP_STATUS.BAD_REQUEST_400)
+
+        await request(app)
+            .post('/auth/registration-email-resending')
+            .set('user-agent', 'device-4')
+            .send({loginOrEmail: createdUser1.email})
+            .expect(HTTP_STATUS.BAD_REQUEST_400)
+
+        await request(app)
+            .post('/auth/registration-email-resending')
+            .set('user-agent', 'device-5')
+            .send({loginOrEmail: createdUser1.email})
+            .expect(HTTP_STATUS.BAD_REQUEST_400)
+
+        await request(app)
+            .post('/auth/registration-email-resending')
+            .set('user-agent', 'device-6')
+            .send({loginOrEmail: createdUser1.email})
+            .expect(HTTP_STATUS.BAD_REQUEST_400)
+
+        const loginResponse = await request(app)
+            .post('/auth/registration-email-resending')
+            .set('user-agent', 'device-7')
+            .send({loginOrEmail: createdUser1.email})
             .expect(HTTP_STATUS.TOO_MANY_REQUESTS_429)
 
         expect(loginResponse).toBeDefined()
