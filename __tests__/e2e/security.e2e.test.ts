@@ -3,6 +3,11 @@ import {app} from "../../src/app";
 import {HTTP_STATUS} from "../../src/types/constants";
 
 const sleep = (seconds: number) => new Promise((r) => setTimeout(r, seconds * 1000))
+
+const getRefreshTokenByResponse = (response: { headers: { [x: string]: string[]; }; }) => {
+    return response.headers['set-cookie'][0].split(';')[0]
+}
+
 describe('/security', () => {
     beforeAll(async () => {
         await request(app).delete('/testing/all-data')
@@ -54,8 +59,7 @@ describe('/security', () => {
         const {accessToken} = loginResponse.body
         expect(loginResponse.body).toEqual({accessToken: expect.any(String)})
 
-
-        const refreshToken = loginResponse.headers['set-cookie'][0].split(';')[0]
+        const refreshToken = getRefreshTokenByResponse(loginResponse)
         expect(refreshToken).toBeDefined()
         expect(refreshToken).toEqual(expect.any(String))
 
@@ -78,7 +82,7 @@ describe('/security', () => {
         expect(loginResponse.body).toEqual({accessToken: expect.any(String)})
         const {accessToken} = loginResponse.body
 
-        const refreshToken = loginResponse.headers['set-cookie'][0].split(';')[0]
+        const refreshToken = getRefreshTokenByResponse(loginResponse)
         expect(refreshToken).toBeDefined()
         expect(refreshToken).toEqual(expect.any(String))
 
@@ -101,7 +105,7 @@ describe('/security', () => {
         expect(loginResponse.body).toEqual({accessToken: expect.any(String)})
         const {accessToken} = loginResponse.body
 
-        const refreshToken = loginResponse.headers['set-cookie'][0].split(';')[0]
+        const refreshToken = getRefreshTokenByResponse(loginResponse)
         expect(refreshToken).toBeDefined()
         expect(refreshToken).toEqual(expect.any(String))
 
@@ -124,11 +128,11 @@ describe('/security', () => {
         expect(loginResponse.body).toEqual({accessToken: expect.any(String)})
         const {accessToken} = loginResponse.body
 
-        const refreshToken = loginResponse.headers['set-cookie'][0].split(';')[0]
+        const refreshToken = getRefreshTokenByResponse(loginResponse)
         expect(refreshToken).toBeDefined()
         expect(refreshToken).toEqual(expect.any(String))
 
-        expect.setState({thirdAccessToken: accessToken, thirdRefreshToken: refreshToken})
+        expect.setState({fourthAccessToken: accessToken, fourthRefreshToken: refreshToken})
     })
 
     it('6 - return all login devices 1st user', async () => {
@@ -141,11 +145,11 @@ describe('/security', () => {
         expect(getResponse.status).toBe(HTTP_STATUS.OK_200)
         expect(getResponse.body[0].deviceId).toEqual(expect.any(String))
 
-        expect.setState({firstDeviceIdFirstUser: getResponse.body[0].deviceId,
+        expect.setState({
+            firstDeviceIdFirstUser: getResponse.body[0].deviceId,
             firstLastActiveDateFirstUser: getResponse.body[0].lastActiveDate,
             secondDeviceIdFirstUser: getResponse.body[1].deviceId
         })
-        // console.log('devices 1 - ', getResponse.body)
     })
 
     it('7 - return 404 if try to delete non-existent device', async () => {
@@ -199,7 +203,7 @@ describe('/security', () => {
                 loginOrEmail: createResponse.body.login,
                 password: password
             })
-        const firstRefreshTokenSecondUser = loginResponse.headers['set-cookie'][0].split(';')[0]
+        const firstRefreshTokenSecondUser = getRefreshTokenByResponse(loginResponse)
 
         // try to delete 1st user's devise by 2nd user
         const {firstDeviceIdFirstUser} = expect.getState()
@@ -223,7 +227,7 @@ describe('/security', () => {
         expect(goodRefreshTokenResponse.status).toBe(HTTP_STATUS.OK_200)
         expect(goodRefreshTokenResponse.body).toEqual({accessToken: expect.any(String)})
 
-        const newFirstRefreshToken = goodRefreshTokenResponse.headers['set-cookie'][0].split(';')[0]
+        const newFirstRefreshToken = getRefreshTokenByResponse(goodRefreshTokenResponse)
         expect(newFirstRefreshToken).toBeDefined()
         expect(newFirstRefreshToken).toEqual(expect.any(String))
         expect(newFirstRefreshToken).not.toBe(firstRefreshToken)
@@ -241,7 +245,6 @@ describe('/security', () => {
         expect(getResponse.body[0].lastActiveDate).not.toEqual(firstLastActiveDateFirstUser)
 
         expect.setState({firstDeviceIdFirstUser: getResponse.body[0].deviceId})
-        // console.log('devices 2 - ', getResponse.body)
     })
     it('12 - return 204 & delete 1st user\'s 2nd device', async () => {
         const {newFirstRefreshToken, secondDeviceIdFirstUser} = expect.getState()

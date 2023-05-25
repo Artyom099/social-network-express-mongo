@@ -9,7 +9,6 @@ import {authMiddlewareBearer} from "../middleware/auth-middleware";
 import {authService} from "../domain/auth-service";
 import {cookieMiddleware} from "../middleware/cookie-middleware";
 import {rateLimitMiddleware} from "../middleware/rate-limit-middleware";
-import {randomUUID} from "crypto";
 import {securityService} from "../application/security-service";
 
 const validationAuth = [
@@ -33,11 +32,10 @@ export const authRouter = () => {
         const userId = await usersService.checkCredentials(req.body.loginOrEmail, req.body.password)
         if (userId) {
             const title = req.headers['user-agent']
-            const deviceId = randomUUID()
-            const token = await jwtService.createJWT(userId, deviceId)
+            const token = await jwtService.createJWT(userId)
             const tokenPayload = await jwtService.getPayloadByToken(token.refreshToken)
             const lastActiveDate = new Date(tokenPayload.iat * 1000).toISOString()
-            await securityService.addActiveSession(req.ip, title!, lastActiveDate, deviceId, userId)
+            await securityService.addActiveSession(req.ip, title!, lastActiveDate, tokenPayload.deviceId, userId)
 
             res.cookie('refreshToken', token.refreshToken, {httpOnly: true, secure: true})
             res.status(HTTP_STATUS.OK_200).json({'accessToken': token.accessToken})
@@ -52,7 +50,7 @@ export const authRouter = () => {
         const lastActiveSession = await securityService.findActiveSessionByDeviceId(refreshTokenPayload.deviceId)
 
         if (tokenIssuedAt === lastActiveSession!.lastActiveDate) {
-            const token = await jwtService.createJWT(refreshTokenPayload.userId, refreshTokenPayload.deviceId)
+            const token = await jwtService.updateJWT(refreshTokenPayload.userId, refreshTokenPayload.deviceId)
             const newTokenPayload = await jwtService.getPayloadByToken(token.refreshToken)
             const lastActiveDate = new Date(newTokenPayload.iat * 1000).toISOString()
             await securityService.updateLastActiveDateByDeviceId(refreshTokenPayload.deviceId, lastActiveDate)

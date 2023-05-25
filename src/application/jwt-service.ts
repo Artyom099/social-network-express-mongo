@@ -1,9 +1,18 @@
 import jwt from 'jsonwebtoken'
 import {settings} from '../settings'
+import {randomUUID} from "crypto";
 
 
 export const jwtService = {
-    async createJWT(userId: string, deviceId: string) {
+    async createJWT(userId: string) {
+        const deviceId = randomUUID()
+        return {
+            accessToken: jwt.sign({userId: userId, deviceId: deviceId}, settings.JWT_SECRET, {expiresIn: '10s'}),
+            refreshToken: jwt.sign({userId: userId, deviceId: deviceId}, settings.JWT_SECRET, {expiresIn: '20s'})
+        }
+    },
+
+    async updateJWT(userId: string, deviceId: string) {
         return {
             accessToken: jwt.sign({userId: userId, deviceId: deviceId}, settings.JWT_SECRET, {expiresIn: '10s'}),
             refreshToken: jwt.sign({userId: userId, deviceId: deviceId}, settings.JWT_SECRET, {expiresIn: '20s'})
