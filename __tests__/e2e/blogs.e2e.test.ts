@@ -1,26 +1,27 @@
 import request from 'supertest'
 import {app} from "../../src/app"
-import {HTTP_STATUS} from "../../src/utils";
+import {HTTP_STATUS} from "../../src/types/constants";
+
 
 describe('/blogs', () => {
     beforeAll(async () => {
         await request(app).delete ('/testing/all-data')
     })
 
-    it('should return 200 and empty array', async () => {
+    it('1 - return 200 and empty array', async () => {
         await request(app)
             .get('/blogs')
             .expect(HTTP_STATUS.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
     })
 
-    it('should return 404 for not existing blog', async () => {
+    it('2 - return 404 for not existing blog', async () => {
         await request(app)
             .get('/blogs/1')
             .expect(HTTP_STATUS.NOT_FOUND_404)
     })
 
     // сначала делаем корректный POST без авторизации, чтобы БД осталась пустая
-    it('shouldn\'t create blog with correct input - NO Auth', async () => {
+    it('3 - shouldn\'t create blog with correct input - NO Auth', async () => {
         await request(app)
             .post('/blogs')
             .send({
@@ -34,7 +35,7 @@ describe('/blogs', () => {
             .expect(HTTP_STATUS.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
     })
 
-    it('shouldn\'t create blog with incorrect input data (name = null)', async () => {
+    it('4 - shouldn\'t create blog with incorrect input data (name = null)', async () => {
         await request(app)
             .post('/blogs')
             .auth('admin', 'qwerty', {type: 'basic'})
@@ -48,8 +49,7 @@ describe('/blogs', () => {
             .get('/blogs')
             .expect(HTTP_STATUS.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
     })
-
-    it('shouldn\'t create blog with correct input - (short description)', async () => {
+    it('5 - shouldn\'t create blog with incorrect input data - (short description)', async () => {
         await request(app)
             .post('/blogs')
             .auth('admin', 'qwerty', {type: 'basic'})
@@ -63,8 +63,7 @@ describe('/blogs', () => {
             .get('/blogs')
             .expect(HTTP_STATUS.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
     })
-
-    it('shouldn\'t create blog with correct input - (Invalid websiteUrl)', async () => {
+    it('6 - shouldn\'t create blog with incorrect input data - (Invalid websiteUrl)', async () => {
         await request(app)
             .post('/blogs')
             .auth('admin', 'qwerty', {type: 'basic'})
@@ -80,7 +79,7 @@ describe('/blogs', () => {
     })
 
     let createdBlog1: any = null
-    it('should create blog with correct input data', async () => {
+    it('7 - create blog with correct input data', async () => {
         const createResponse = await request(app)
             .post('/blogs')
             .auth('admin', 'qwerty', {type: 'basic'})
@@ -105,9 +104,8 @@ describe('/blogs', () => {
             .get('/blogs')
             .expect(HTTP_STATUS.OK_200, { pagesCount: 1, page: 1, pageSize: 10, totalCount: 1, items: [createdBlog1] })
     })
-
     let createdBlog2: any = null
-    it('should create blog with correct input data', async () => {
+    it('8 - create blog with correct input data', async () => {
         const createResponse = await request(app)
             .post('/blogs')
             .auth('admin', 'qwerty', {type: 'basic'})
@@ -133,7 +131,7 @@ describe('/blogs', () => {
             .expect(HTTP_STATUS.OK_200, { pagesCount: 1, page: 1, pageSize: 10, totalCount: 2, items: [createdBlog2, createdBlog1] })
     })
 
-    it('shouldn\'t update blog that not exist', async () => {
+    it('9 - shouldn\'t update blog that not exist', async () => {
         await request(app)
             .put('/blogs/' + -3)
             .auth('admin', 'qwerty', {type: 'basic'})
@@ -145,7 +143,7 @@ describe('/blogs', () => {
             .expect(HTTP_STATUS.NOT_FOUND_404)
     })
 
-    it('shouldn\'t update blog with incorrect input data', async () => {
+    it('10 - shouldn\'t update blog with incorrect input data', async () => {
         await request(app)
             .put('/blogs/' + createdBlog1.id)
             .auth('admin', 'qwerty', {type: 'basic'})
@@ -166,7 +164,7 @@ describe('/blogs', () => {
             .expect(HTTP_STATUS.OK_200, createdBlog1)
     })
 
-    it('should update blog with correct input data', async () => {
+    it('11 - update blog with correct input data', async () => {
             await request(app)
                 .put('/blogs/' + createdBlog1.id)
                 .auth('admin', 'qwerty', {type: 'basic'})
@@ -187,7 +185,14 @@ describe('/blogs', () => {
                 })
         })
 
-    it('should delete both blogs', async () => {
+    it('12 - return 404 for delete non-exist blog', async () => {
+        await request(app)
+            .delete('/blogs/1')
+            .auth('admin', 'qwerty', {type: 'basic'})
+            .expect(HTTP_STATUS.NOT_FOUND_404)
+    })
+
+    it('13 - delete both blogs', async () => {
         await request(app)
             .delete('/blogs/' + createdBlog1.id)
             .auth('admin', 'qwerty', {type: 'basic'})

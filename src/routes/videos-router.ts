@@ -21,7 +21,7 @@ const validationVideoPut = [
     body('publicationDate').isDate()
 ]
 
-export const getVideosRouter = () => {
+export const videosRouter = () => {
     const router = express.Router()
 
     router.get('/', async (req: Request, res: Response) => {

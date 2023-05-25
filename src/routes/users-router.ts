@@ -14,7 +14,7 @@ const validationUser = [
     body('email').isString().isEmail().trim().notEmpty(),
 ]
 
-export const getUsersRouter = () => {
+export const usersRouter = () => {
     const router = express.Router()
 
     router.get('/', authMiddlewareBasic, async (req: ReqQueryType<UserGetDTO>, res: Response) => {
