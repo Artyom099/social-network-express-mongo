@@ -1,13 +1,8 @@
 import {blogCollection} from "../db/db";
-import {Result, TBlog} from "../types/types";
-import {ResultCode} from "../types/constants";
+import {TBlog} from "../types/types";
 
 
 export const blogsRepository = {
-    async findExistBlogs(): Promise<TBlog[]> {      // get
-        return await blogCollection.find({}, {projection: {_id: false}}).toArray()
-    },
-
     async createBlog(createdBlog: TBlog): Promise<TBlog> {    // post
         await blogCollection.insertOne(createdBlog)
         return {
@@ -21,26 +16,14 @@ export const blogsRepository = {
     },
 
     async findBlogById(blogId: string): Promise<TBlog | null> {    // get, put, delete
-        const blog = await blogCollection.findOne({id: blogId}, {projection: {_id: false}})
+        const blog = await blogCollection.findOne({id: blogId}, {projection: {_id: 0}})
         if (blog) return blog
         else return null
     },
 
-    async updateBlogById(blogId: string, name: string,
-               description: string, websiteUrl: string): Promise<Result<boolean>> {   // put
-        const updatedResult = await blogCollection.updateOne({id: blogId},
-        {$set: {name: name, description: description, websiteUrl: websiteUrl}})
-        if(updatedResult.matchedCount < 1) {
-            return {
-                data: false,
-                code: ResultCode.NotFound
-            }
-        } else {
-            return {
-                data: true,
-                code: ResultCode.Success
-            }
-        }
+    async updateBlogById(blogId: string, name: string, description: string, websiteUrl: string): Promise<boolean> {   // put
+        const result = await blogCollection.updateOne({id: blogId}, {$set: {name: name, description: description, websiteUrl: websiteUrl}})
+        return result.matchedCount === 1
     },
 
     async deleteBlogById(blogId: string) {    // delete

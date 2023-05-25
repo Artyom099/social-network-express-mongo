@@ -9,7 +9,6 @@ import {
     TBlog
 } from "../types/types";
 import {HTTP_STATUS} from "../types/constants";
-import {convertResultErrorCodeToHttp} from "../utils";
 import {blogsService} from "../domain/blogs-service";
 import {postsService} from "../domain/posts-service";
 import {inputValidationMiddleware} from "../middleware/input-validation-middleware";
@@ -86,8 +85,8 @@ export const blogsRouter = () => {
     router.put('/:id', validationBlog, authMiddlewareBasic, inputValidationMiddleware, async (req: ReqParamsBodyType<IdDTO, BlogPutDTO>, res: Response) => {
         const {name, description, websiteUrl} = req.body
         const result = await blogsService.updateBlogById(req.params.id, name, description, websiteUrl)
-        if (!result.data) {
-            res.sendStatus(convertResultErrorCodeToHttp(result.code))
+        if (!result) {
+            res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
         } else {
             const updatedBlog = await blogsService.findBlogById(req.params.id)
             res.status(HTTP_STATUS.NO_CONTENT_204).json(updatedBlog)

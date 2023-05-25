@@ -1,20 +1,16 @@
 import {blogsRepository} from "../repositories/blogs-repository";
-import {Result, TBlog} from "../types/types";
+import {TBlog} from "../types/types";
+import {randomUUID} from "crypto";
 
 
 export const blogsService = {
-    async findExistBlogs(): Promise<TBlog[]> {      // get
-        return await blogsRepository.findExistBlogs()
-    },
-
     async createBlog(name: string, description: string, websiteUrl: string): Promise<TBlog> {    // post
-        const dateNow = new Date()
         const createdBlog: TBlog = {
-            id: (+dateNow).toString(),
+            id: randomUUID(),
             name,
             description,
             websiteUrl,
-            createdAt: dateNow.toISOString(),
+            createdAt: new Date().toISOString(),
             isMembership: false
         }
         return await blogsRepository.createBlog(createdBlog)
@@ -24,7 +20,7 @@ export const blogsService = {
         return await blogsRepository.findBlogById(blogId)
     },
 
-    async updateBlogById(blogId: string, name: string, description: string, websiteUrl: string): Promise<Result<boolean>> {   // put
+    async updateBlogById(blogId: string, name: string, description: string, websiteUrl: string): Promise<boolean> {   // put
         return await blogsRepository.updateBlogById(blogId, name, description, websiteUrl)
     },
 
