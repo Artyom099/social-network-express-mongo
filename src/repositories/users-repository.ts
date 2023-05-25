@@ -20,8 +20,7 @@ export const usersRepository = {
     },
 
     async findUserById(userId: string): Promise<TUser | null> {
-        // todo убрать projection
-        const user = await userCollection.findOne({id: userId}, {projection: {_id: false}})
+        const user = await userCollection.findOne({id: userId}, {projection: {_id: 0}})
         if (user) return {
             id: user.id,
             login: user.accountData.login,

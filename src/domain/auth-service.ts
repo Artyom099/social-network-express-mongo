@@ -28,6 +28,7 @@ export const authService = {
         }
         const createResult = await usersRepository.createUser(newUser)
         try {
+            // убрал await, чтобы работал rateLimitMiddleware (10 секунд)
             emailManager.sendEmailConfirmationMessage(email, newUser.emailConfirmation.confirmationCode)
         } catch (error) {
             await usersService.deleteUserById(newUser.id)
@@ -49,9 +50,15 @@ export const authService = {
         }
     },
 
-    async updateConfirmationCode(email: string): Promise<string> {
+    async updateConfirmationCode(email: string): Promise<string | null> {
         const newConfirmationCode = randomUUID()
         await usersRepository.updateConfirmationCode(email, newConfirmationCode)
+        try {
+            // убрал await, чтобы работал rateLimitMiddleware (10 секунд)
+            emailManager.sendEmailConfirmationMessage(email, newConfirmationCode)
+        } catch (error) {
+            return null
+        }
         return newConfirmationCode
     }
 }
