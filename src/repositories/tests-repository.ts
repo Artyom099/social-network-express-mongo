@@ -9,14 +9,16 @@ import {
 
 export const testsRepository = {
     async deleteAllData() {
-        await videoCollection.deleteMany()
-        await blogCollection.deleteMany()
-        await postCollection.deleteMany()
-        await userCollection.deleteMany()
-        await commentCollection.deleteMany()
-        await expiredTokenCollection.deleteMany()
-        await apiRequestCollection.deleteMany()
-        await devicesCollection.deleteMany()
+        await Promise.all([
+            videoCollection.deleteMany(),
+            blogCollection.deleteMany(),
+            postCollection.deleteMany(),
+            userCollection.deleteMany(),
+            commentCollection.deleteMany(),
+            expiredTokenCollection.deleteMany(),
+            apiRequestCollection.deleteMany(),
+            devicesCollection.deleteMany(),
+        ])
         return
     }
 }

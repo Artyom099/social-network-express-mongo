@@ -7,7 +7,6 @@ import {inputValidationMiddleware} from "../middleware/input-validation-middlewa
 import {jwtService} from "../application/jwt-service";
 import {authMiddlewareBearer} from "../middleware/auth-middleware";
 import {authService} from "../domain/auth-service";
-import {emailManager} from "../managers/email-manager";
 import {cookieMiddleware} from "../middleware/cookie-middleware";
 import {rateLimitMiddleware} from "../middleware/rate-limit-middleware";
 import {randomUUID} from "crypto";
@@ -123,8 +122,7 @@ export const authRouter = () => {
                 ]
             })
         } else {
-            const newCode = await authService.updateConfirmationCode(req.body.email)
-            emailManager.sendEmailConfirmationMessage(req.body.email, newCode)
+            await authService.updateConfirmationCode(req.body.email)
             res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
         }
     })

@@ -303,7 +303,7 @@ describe('/security', () => {
         expect(getResponse.body.length).toEqual(1)
     })
 
-    it('18 - return 429', async () => {
+    it('18 - return 429 - \'/auth/login\'', async () => {
         const {createdUser1, password1} = expect.getState()
         await sleep(10)
 
@@ -363,7 +363,7 @@ describe('/security', () => {
 
         expect(loginResponse).toBeDefined()
     })
-    it('19 - return 429', async () => {
+    it('19 - return 429 - \'/auth/registration-email-resending\'', async () => {
         const {createdUser1} = expect.getState()
 
         await request(app)

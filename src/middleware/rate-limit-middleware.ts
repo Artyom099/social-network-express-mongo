@@ -9,7 +9,7 @@ export const rateLimitMiddleware = async (req: Request, res: Response, next: Nex
     const dateNow = new Date()
     const timeLimit = new Date(Date.now() - 10_000).toISOString()
     const countFoundIP = await ipService.countIpAndUrl(ip!, url, timeLimit)
-    console.log('countFoundIP', countFoundIP, 'dateNow', dateNow, 'timeLimit', timeLimit)
+    // console.log('countFoundIP', countFoundIP, 'dateNow', dateNow, 'timeLimit', timeLimit)
 
     if (countFoundIP! >= 5) {
         res.sendStatus(HTTP_STATUS.TOO_MANY_REQUESTS_429)
