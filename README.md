@@ -1,5 +1,5 @@
 # Social-network API
-This is my pet project during study at it-incubator
+This is my pet project which describes endpoints for user interaction with a social network
 
 # Auth
 1. login
