@@ -1,10 +1,13 @@
 import request from 'supertest'
 import {app} from "../../src/app"
 import {HTTP_STATUS} from "../../src/types/constants";
+import mongoose from "mongoose";
+import {mongoURI2} from "../../src/db/db";
 
 
 describe('/blogs', () => {
     beforeAll(async () => {
+        await mongoose.connect(mongoURI2)
         await request(app).delete ('/testing/all-data')
     })
 
@@ -98,9 +101,16 @@ describe('/blogs', () => {
             isMembership: false
         })
 
+
         await request(app)
             .get('/blogs')
-            .expect(HTTP_STATUS.OK_200, { pagesCount: 1, page: 1, pageSize: 10, totalCount: 1, items: [createdBlog1] })
+            .expect(HTTP_STATUS.OK_200, {
+                pagesCount: 1,
+                page: 1,
+                pageSize: 10,
+                totalCount: 1,
+                items: [createdBlog1]
+            })
 
         expect.setState({createdBlog1: createdBlog1})
     })
@@ -128,7 +138,13 @@ describe('/blogs', () => {
 
         await request(app)
             .get('/blogs')
-            .expect(HTTP_STATUS.OK_200, { pagesCount: 1, page: 1, pageSize: 10, totalCount: 2, items: [createdBlog2, createdBlog1] })
+            .expect(HTTP_STATUS.OK_200, {
+                pagesCount: 1,
+                page: 1,
+                pageSize: 10,
+                totalCount: 2,
+                items: [createdBlog2, createdBlog1]
+            })
 
         expect.setState({createdBlog2: createdBlog2})
     })
@@ -217,5 +233,9 @@ describe('/blogs', () => {
         await request(app)
             .get('/blogs')
             .expect(HTTP_STATUS.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
+    })
+
+    afterAll(async () => {
+        await mongoose.connection.close()
     })
 })

@@ -23,6 +23,10 @@ const validationReg = [
     body('login').isString().trim().notEmpty().isLength({min: 3, max: 10}).matches('^[a-zA-Z0-9_-]*$'),
     body('password').isString().trim().notEmpty().isLength({min: 6, max: 20}),
 ]
+const validationPasswordAndCode = [
+    body('newPassword').isString().trim().notEmpty().isLength({min: 6, max: 20}),
+    body('recoveryCode').isString().trim().notEmpty()
+]
 
 
 export const authRouter = () => {
@@ -43,6 +47,28 @@ export const authRouter = () => {
             res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
         }
     })
+
+    // router.post('/password-recovery', rateLimitMiddleware, validationEmail, inputValidationMiddleware, async (req: Request, res: Response) => {
+    //     const foundUser = await usersService.findUserByLoginOrEmail(req.body.email)
+    //     if (!foundUser) {
+    //         res.status(HTTP_STATUS.BAD_REQUEST_400).json({
+    //             errorsMessages: [
+    //                 {
+    //                     message: 'user with the given email is not exists',
+    //                     field: 'email'
+    //                 }
+    //             ]
+    //         })
+    //     } else {
+    //         await authService.sendRecoveryCode(foundUser.accountData.email)
+    //         res.status(HTTP_STATUS.NO_CONTENT_204)
+    //     }
+    // })
+
+    // router.post('/new-password', rateLimitMiddleware, validationPasswordAndCode, inputValidationMiddleware, async (req: Request, res: Response) => {
+    //     const verifyRecoveryCode = await authService.checkRecoveryCode(req.body.code)
+    //     res.status(HTTP_STATUS.NO_CONTENT_204)
+    // })
 
     router.post('/refresh-token', cookieMiddleware, async (req: Request, res: Response) => {
         const refreshTokenPayload = await jwtService.getPayloadByToken(req.cookies.refreshToken)

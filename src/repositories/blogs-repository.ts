@@ -1,10 +1,10 @@
-import {blogCollection} from "../db/db";
+import {BlogModel} from "../db/db";
 import {TBlog} from "../types/types";
 
 
 export const blogsRepository = {
     async createBlog(createdBlog: TBlog): Promise<TBlog> {    // post
-        await blogCollection.insertOne(createdBlog)
+        await BlogModel.insertMany(createdBlog)
         return {
             id: createdBlog.id,
             name: createdBlog.name,
@@ -15,18 +15,17 @@ export const blogsRepository = {
         }
     },
 
-    async findBlogById(blogId: string): Promise<TBlog | null> {    // get, put, delete
-        const blog = await blogCollection.findOne({id: blogId}, {projection: {_id: 0}})
-        if (blog) return blog
-        else return null
+    async findBlogById(id: string): Promise<TBlog | null> {
+        return BlogModel.findOne({ id },{ _id: 0, __v: 0 })
     },
 
-    async updateBlogById(blogId: string, name: string, description: string, websiteUrl: string): Promise<boolean> {   // put
-        const result = await blogCollection.updateOne({id: blogId}, {$set: {name: name, description: description, websiteUrl: websiteUrl}})
-        return result.matchedCount === 1
+    async updateBlogById(id: string, name: string, description: string, websiteUrl: string): Promise<boolean> {
+        const res = await BlogModel.updateOne({ id },  { name, description, websiteUrl })
+        return res.matchedCount === 1
     },
 
-    async deleteBlogById(blogId: string) {    // delete
-        return await blogCollection.deleteOne({id: blogId})
+    async deleteBlogById(id: string): Promise<boolean> {
+        const res = await BlogModel.deleteOne({ id })
+        return res.deletedCount === 1
     }
 }

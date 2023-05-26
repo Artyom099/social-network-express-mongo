@@ -10,6 +10,7 @@ import {
 import {MongoClient} from 'mongodb'
 import dotenv from 'dotenv'
 import * as mongoose from "mongoose";
+import {BlogSchema} from "../shemas/blogs-schemas";
 
 
 dotenv.config()
@@ -18,7 +19,7 @@ if (!mongoUri) throw new Error('UR doesn\'t found')
 const client = new MongoClient(mongoUri)
 
 const dbName = 'home_works'
-const mongoURI2 = process.env.mongoURI || `mongodb://0.0.0.0:27017/${dbName}`
+export const mongoURI2 = process.env.MONGO_URL || `mongodb://0.0.0.0:27017/${dbName}`
 
 const database = client.db();
 export const videoCollection = database.collection<TVideo>('videos')
@@ -29,6 +30,8 @@ export const commentCollection = database.collection<CommentBDType>('comments')
 export const expiredTokenCollection = database.collection<ExpiredTokenDBType>('expiredTokens')
 export const apiRequestCollection = database.collection<IPDBType>('ip')
 export const devicesCollection = database.collection<DeviceDBType>('devices')
+
+export const BlogModel = mongoose.model<TBlog>('blogs', BlogSchema)
 
 export async function runDb() {
     try {
