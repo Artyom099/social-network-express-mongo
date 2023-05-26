@@ -51,20 +51,20 @@ export const authRouter = () => {
     router.post('/password-recovery', rateLimitMiddleware, validationEmail, inputValidationMiddleware, async (req: Request, res: Response) => {
         const foundUser = await usersService.findUserByLoginOrEmail(req.body.email)
         if (!foundUser) {
-            res.status(HTTP_STATUS.BAD_REQUEST_400)
+            res.sendStatus(HTTP_STATUS.BAD_REQUEST_400)
         } else {
             await authService.sendRecoveryCode(foundUser.accountData.email)
-            res.status(HTTP_STATUS.NO_CONTENT_204)
+            res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
         }
     })
 
     router.post('/new-password', rateLimitMiddleware, validationPasswordAndCode, inputValidationMiddleware, async (req: Request, res: Response) => {
         const verifyRecoveryCode = await authService.checkRecoveryCode(req.body.code)
         if (!verifyRecoveryCode) {
-            res.status(HTTP_STATUS.BAD_REQUEST_400)
+            res.sendStatus(HTTP_STATUS.BAD_REQUEST_400)
         } else {
             await authService.updatePassword(req.body.code, req.body.password)
-            res.status(HTTP_STATUS.NO_CONTENT_204)
+            res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
         }
     })
 
