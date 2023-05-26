@@ -1,15 +1,10 @@
-import {blogCollection} from "../db/db";
-import {Result, TBlog} from "../types/types";
-import {ResultCode} from "../types/constants";
+import {BlogModel} from "../db/db";
+import {TBlog} from "../types/types";
 
 
 export const blogsRepository = {
-    async findExistBlogs(): Promise<TBlog[]> {      // get
-        return await blogCollection.find({}, {projection: {_id: false}}).toArray()
-    },
-
     async createBlog(createdBlog: TBlog): Promise<TBlog> {    // post
-        await blogCollection.insertOne(createdBlog)
+        await BlogModel.insertMany(createdBlog)
         return {
             id: createdBlog.id,
             name: createdBlog.name,
@@ -20,30 +15,17 @@ export const blogsRepository = {
         }
     },
 
-    async findBlogById(blogId: string): Promise<TBlog | null> {    // get, put, delete
-        const blog = await blogCollection.findOne({id: blogId}, {projection: {_id: false}})
-        if (blog) return blog
-        else return null
+    async findBlogById(id: string): Promise<TBlog | null> {
+        return BlogModel.findOne({ id },{ _id: 0, __v: 0 })
     },
 
-    async updateBlogById(blogId: string, name: string,
-               description: string, websiteUrl: string): Promise<Result<boolean>> {   // put
-        const updatedResult = await blogCollection.updateOne({id: blogId},
-        {$set: {name: name, description: description, websiteUrl: websiteUrl}})
-        if(updatedResult.matchedCount < 1) {
-            return {
-                data: false,
-                code: ResultCode.NotFound
-            }
-        } else {
-            return {
-                data: true,
-                code: ResultCode.Success
-            }
-        }
+    async updateBlogById(id: string, name: string, description: string, websiteUrl: string): Promise<boolean> {
+        const res = await BlogModel.updateOne({ id },  { name, description, websiteUrl })
+        return res.matchedCount === 1
     },
 
-    async deleteBlogById(blogId: string) {    // delete
-        return await blogCollection.deleteOne({id: blogId})
+    async deleteBlogById(id: string): Promise<boolean> {
+        const res = await BlogModel.deleteOne({ id })
+        return res.deletedCount === 1
     }
 }

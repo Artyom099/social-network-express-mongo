@@ -1,13 +1,13 @@
 import express from "express";
-import {getTestsRouter} from "./routes/tests-router";
-import {getVideosRouter} from "./routes/videos-router";
-import {getBlogsRouter} from "./routes/blogs-router";
-import {getPostsRouter} from "./routes/posts-router";
-import {getUsersRouter} from "./routes/users-router";
+import cookieParser from "cookie-parser";
+import {testsRouter} from "./routes/tests-router";
+import {videosRouter} from "./routes/videos-router";
+import {blogsRouter} from "./routes/blogs-router";
+import {postsRouter} from "./routes/posts-router";
+import {usersRouter} from "./routes/users-router";
 import {authRouter} from "./routes/auth-router";
 import {feedbackRouter} from "./routes/feedback-router";
 import {emailRouter} from "./routes/email-router";
-import cookieParser from "cookie-parser";
 import {securityRouter} from "./routes/security-router";
 
 export const app = express()
@@ -18,11 +18,11 @@ app.use(cookieParser())
 app.set('trust proxy', true)
 
 
-app.use('/testing', getTestsRouter())
-app.use('/videos', getVideosRouter())
-app.use('/blogs', getBlogsRouter())
-app.use('/posts', getPostsRouter())
-app.use('/users', getUsersRouter())
+app.use('/testing', testsRouter())
+app.use('/videos', videosRouter())
+app.use('/blogs', blogsRouter())
+app.use('/posts', postsRouter())
+app.use('/users', usersRouter())
 app.use('/auth', authRouter())
 app.use('/comments', feedbackRouter())
 app.use('/email', emailRouter())

@@ -9,7 +9,6 @@ import {authMiddlewareBearer} from "../middleware/auth-middleware";
 import {authService} from "../domain/auth-service";
 import {cookieMiddleware} from "../middleware/cookie-middleware";
 import {rateLimitMiddleware} from "../middleware/rate-limit-middleware";
-import {randomUUID} from "crypto";
 import {securityService} from "../application/security-service";
 
 const validationAuth = [
@@ -24,6 +23,10 @@ const validationReg = [
     body('login').isString().trim().notEmpty().isLength({min: 3, max: 10}).matches('^[a-zA-Z0-9_-]*$'),
     body('password').isString().trim().notEmpty().isLength({min: 6, max: 20}),
 ]
+const validationPasswordAndCode = [
+    body('newPassword').isString().trim().notEmpty().isLength({min: 6, max: 20}),
+    body('recoveryCode').isString().trim().notEmpty()
+]
 
 
 export const authRouter = () => {
@@ -33,11 +36,10 @@ export const authRouter = () => {
         const userId = await usersService.checkCredentials(req.body.loginOrEmail, req.body.password)
         if (userId) {
             const title = req.headers['user-agent']
-            const deviceId = randomUUID()
-            const token = await jwtService.createJWT(userId, deviceId)
+            const token = await jwtService.createJWT(userId)
             const tokenPayload = await jwtService.getPayloadByToken(token.refreshToken)
             const lastActiveDate = new Date(tokenPayload.iat * 1000).toISOString()
-            await securityService.addActiveSession(req.ip, title!, lastActiveDate, deviceId, userId)
+            await securityService.addActiveSession(req.ip, title!, lastActiveDate, tokenPayload.deviceId, userId)
 
             res.cookie('refreshToken', token.refreshToken, {httpOnly: true, secure: true})
             res.status(HTTP_STATUS.OK_200).json({'accessToken': token.accessToken})
@@ -46,13 +48,35 @@ export const authRouter = () => {
         }
     })
 
+    // router.post('/password-recovery', rateLimitMiddleware, validationEmail, inputValidationMiddleware, async (req: Request, res: Response) => {
+    //     const foundUser = await usersService.findUserByLoginOrEmail(req.body.email)
+    //     if (!foundUser) {
+    //         res.status(HTTP_STATUS.BAD_REQUEST_400).json({
+    //             errorsMessages: [
+    //                 {
+    //                     message: 'user with the given email is not exists',
+    //                     field: 'email'
+    //                 }
+    //             ]
+    //         })
+    //     } else {
+    //         await authService.sendRecoveryCode(foundUser.accountData.email)
+    //         res.status(HTTP_STATUS.NO_CONTENT_204)
+    //     }
+    // })
+
+    // router.post('/new-password', rateLimitMiddleware, validationPasswordAndCode, inputValidationMiddleware, async (req: Request, res: Response) => {
+    //     const verifyRecoveryCode = await authService.checkRecoveryCode(req.body.code)
+    //     res.status(HTTP_STATUS.NO_CONTENT_204)
+    // })
+
     router.post('/refresh-token', cookieMiddleware, async (req: Request, res: Response) => {
         const refreshTokenPayload = await jwtService.getPayloadByToken(req.cookies.refreshToken)
         const tokenIssuedAt = new Date(refreshTokenPayload.iat * 1000).toISOString()
         const lastActiveSession = await securityService.findActiveSessionByDeviceId(refreshTokenPayload.deviceId)
 
         if (tokenIssuedAt === lastActiveSession!.lastActiveDate) {
-            const token = await jwtService.createJWT(refreshTokenPayload.userId, refreshTokenPayload.deviceId)
+            const token = await jwtService.updateJWT(refreshTokenPayload.userId, refreshTokenPayload.deviceId)
             const newTokenPayload = await jwtService.getPayloadByToken(token.refreshToken)
             const lastActiveDate = new Date(newTokenPayload.iat * 1000).toISOString()
             await securityService.updateLastActiveDateByDeviceId(refreshTokenPayload.deviceId, lastActiveDate)

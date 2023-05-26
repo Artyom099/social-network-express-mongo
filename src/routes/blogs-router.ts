@@ -9,7 +9,6 @@ import {
     TBlog
 } from "../types/types";
 import {HTTP_STATUS} from "../types/constants";
-import {convertResultErrorCodeToHttp} from "../utils";
 import {blogsService} from "../domain/blogs-service";
 import {postsService} from "../domain/posts-service";
 import {inputValidationMiddleware} from "../middleware/input-validation-middleware";
@@ -29,7 +28,7 @@ const validationPost = [
     body('content').isString().isLength({min: 3, max: 1000}).trim().notEmpty()
 ]
 
-export const getBlogsRouter = () => {
+export const blogsRouter = () => {
     const router = express.Router()
 
     router.get('/', async (req: ReqQueryType<PagingWithSearchDTO>, res: Response) => {
@@ -39,64 +38,69 @@ export const getBlogsRouter = () => {
         const sortBy = req.query.sortBy ?? DEFAULT_SORT_BY
         const sortDirection = req.query.sortDirection ?? DEFAULT_SORT_DIRECTION
 
-
         const foundSortedBlogs = await queryRepository.findBlogsAndSort(searchNameTerm, Number(pageNumber), Number(pageSize), sortBy, sortDirection)
         res.status(HTTP_STATUS.OK_200).json(foundSortedBlogs)
     })
 
-    router.post('/', validationBlog, authMiddlewareBasic, inputValidationMiddleware,
-    async (req: Request, res: Response) => {
+    router.post('/', validationBlog, authMiddlewareBasic, inputValidationMiddleware, async (req: Request, res: Response) => {
         const {name, description, websiteUrl} = req.body
         const createdBlog = await blogsService.createBlog(name, description, websiteUrl)
         res.status(HTTP_STATUS.CREATED_201).json(createdBlog)
     })
 
     router.get('/:id/posts', async (req: ReqParamsQueryType<IdDTO, PagingDTO>, res: Response) => {
-        const findBlog = await queryRepository.findBlogById(req.params.id)
-        if (!findBlog) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
-
-        const pageNumber = req.query.pageNumber ?? 1
-        const pageSize = req.query.pageSize ?? 10
-        const sortBy = req.query.sortBy ?? DEFAULT_SORT_BY
-        const sortDirection = req.query.sortDirection ?? DEFAULT_SORT_DIRECTION
-
-        const postsThisBlog = await queryRepository.findPostsThisBlogById(findBlog.id, Number(pageNumber), Number(pageSize), sortBy, sortDirection)
-        res.status(HTTP_STATUS.OK_200).json(postsThisBlog)
+        const findBlog = await queryRepository.findBlogById(req.params.id)    // todo - нет тесата на этот endpoint
+        if (!findBlog) {
+            res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
+        } else {
+            const pageNumber = req.query.pageNumber ?? 1
+            const pageSize = req.query.pageSize ?? 10
+            const sortBy = req.query.sortBy ?? DEFAULT_SORT_BY
+            const sortDirection = req.query.sortDirection ?? DEFAULT_SORT_DIRECTION
+            const postsThisBlog = await queryRepository.findPostsThisBlogById(findBlog.id, Number(pageNumber), Number(pageSize), sortBy, sortDirection)
+            res.status(HTTP_STATUS.OK_200).json(postsThisBlog)
+        }
     })
 
-    router.post('/:id/posts', validationPost, authMiddlewareBasic, inputValidationMiddleware,
-    async (req: ReqParamsBodyType<IdDTO, BlogPostDTO>, res: Response) => {
-        const findBlog = await blogsService.findBlogById(req.params.id)
-        if (!findBlog) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
-
-        const {title, shortDescription, content} = req.body
-        const createdPostThisBlog = await postsService.createPost(title, shortDescription, content, findBlog)
-        res.status(HTTP_STATUS.CREATED_201).json(createdPostThisBlog)
+    router.post('/:id/posts', validationPost, authMiddlewareBasic, inputValidationMiddleware, async (req: ReqParamsBodyType<IdDTO, BlogPostDTO>, res: Response) => {
+        const findBlog = await blogsService.findBlogById(req.params.id)     // todo - нет тесата на этот endpoint
+        if (!findBlog) {
+            res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
+        } else {
+            const {title, shortDescription, content} = req.body
+            const createdPostThisBlog = await postsService.createPost(title, shortDescription, content, findBlog)
+            res.status(HTTP_STATUS.CREATED_201).json(createdPostThisBlog)
+        }
     })
 
     router.get('/:id', async (req: Request, res: Response<TBlog>) => {
         const findBlog = await blogsService.findBlogById(req.params.id)
-        if (!findBlog) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)     // если не нашли блог по id, то выдаем ошибку и выходим из эндпоинта
-        res.status(HTTP_STATUS.OK_200).json(findBlog)
+        if (!findBlog) {    // если не нашли блог по id, то выдаем ошибку и выходим из эндпоинта
+            res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
+        }  else {
+            res.status(HTTP_STATUS.OK_200).json(findBlog)
+        }
     })
 
-    router.put('/:id', validationBlog, authMiddlewareBasic, inputValidationMiddleware,
-    async (req: ReqParamsBodyType<IdDTO, BlogPutDTO>, res: Response) => {
+    router.put('/:id', validationBlog, authMiddlewareBasic, inputValidationMiddleware, async (req: ReqParamsBodyType<IdDTO, BlogPutDTO>, res: Response) => {
         const {name, description, websiteUrl} = req.body
         const result = await blogsService.updateBlogById(req.params.id, name, description, websiteUrl)
-
-        if (!result.data) return res.sendStatus(convertResultErrorCodeToHttp(result.code))
-
-        const updatedBlog = await blogsService.findBlogById(req.params.id)
-        res.status(HTTP_STATUS.NO_CONTENT_204).json(updatedBlog)
+        if (!result) {
+            res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
+        } else {
+            const updatedBlog = await blogsService.findBlogById(req.params.id)
+            res.status(HTTP_STATUS.NO_CONTENT_204).json(updatedBlog)
+        }
     })
 
     router.delete('/:id', authMiddlewareBasic, async (req: Request, res: Response) => {
-        const blogForDelete = await blogsService.findBlogById(req.params.id)
-        if (!blogForDelete) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)    // если не нашли блог по id, то выдаем ошибку и выходим из эндпоинта
-
-        await blogsService.deleteBlogById(req.params.id)                        // эта строка удаляет найденный блог из бд
-        res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
+        const blogForDelete = await blogsService.findBlogById(req.params.id)// если не нашли блог по id, то выдаем ошибку и выходим из эндпоинта
+        if (!blogForDelete) {
+            res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
+        } else {
+            await blogsService.deleteBlogById(req.params.id)
+            res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
+        }
     })
 
     return router

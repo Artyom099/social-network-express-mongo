@@ -27,7 +27,7 @@ export const validationComment = [
     body('content').isString().isLength({min: 20, max: 300}).trim().not().isEmpty()
 ]
 
-export const getPostsRouter = () => {
+export const postsRouter = () => {
     const router = express.Router()
 
     router.get('/:id/comments', async (req: ReqParamsQueryType<IdDTO, PagingDTO>, res: Response) => {
