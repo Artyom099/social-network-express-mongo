@@ -61,7 +61,14 @@ export const authRouter = () => {
     router.post('/new-password', rateLimitMiddleware, validationPasswordAndCode, inputValidationMiddleware, async (req: Request, res: Response) => {
         const verifyRecoveryCode = await authService.checkRecoveryCode(req.body.code)
         if (!verifyRecoveryCode) {
-            res.sendStatus(HTTP_STATUS.BAD_REQUEST_400)
+            res.status(HTTP_STATUS.BAD_REQUEST_400).json({
+                errorsMessages: [
+                    {
+                        message: 'recovery code is incorrect',
+                        field: 'recoveryCode'
+                    }
+                ]
+            })
         } else {
             await authService.updatePassword(req.body.code, req.body.password)
             res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
