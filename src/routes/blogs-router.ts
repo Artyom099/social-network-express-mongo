@@ -49,7 +49,7 @@ export const blogsRouter = () => {
     })
 
     router.get('/:id/posts', async (req: ReqParamsQueryType<IdDTO, PagingDTO>, res: Response) => {
-        const findBlog = await queryRepository.findBlogById(req.params.id)    // todo - нет тесата на этот endpoint
+        const findBlog = await blogsService.findBlogById(req.params.id)
         if (!findBlog) {
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
         } else {
@@ -63,7 +63,7 @@ export const blogsRouter = () => {
     })
 
     router.post('/:id/posts', validationPost, authMiddlewareBasic, inputValidationMiddleware, async (req: ReqParamsBodyType<IdDTO, BlogPostDTO>, res: Response) => {
-        const findBlog = await blogsService.findBlogById(req.params.id)     // todo - нет тесата на этот endpoint
+        const findBlog = await blogsService.findBlogById(req.params.id)
         if (!findBlog) {
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
         } else {

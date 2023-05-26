@@ -4,25 +4,13 @@ import {Filter} from "mongodb"
 
 
 export const queryRepository = {
-    async findBlogById(id: string): Promise<TBlog | null> {    // get, put, delete
-        return BlogModel.findOne({ id },{ _id: 0 })
-        // const blog = await blogCollection.findOne({id: blogId}, {projection: {_id: 0}})
-        // if (blog) return blog
-        // else return null
-    },
-
     async findBlogsAndSort(searchNameTerm: string | null, pageNumber: number, pageSize: number, sortBy: string,
                            sortDirection: 'asc' | 'desc'): Promise<OutputModel<TBlog[]>> {
-        const findNameTerm = searchNameTerm ? {name: {$regex: searchNameTerm, $options: 'i'}} : {}
+        const filter = searchNameTerm ? {name: {$regex: searchNameTerm, $options: 'i'}} : {}
 
-        const totalCount: number = await BlogModel.countDocuments(findNameTerm)
-        const sortedBlogs: TBlog[] = await BlogModel.find(findNameTerm,{ _id: 0, __v: 0 })
+        const totalCount: number = await BlogModel.countDocuments(filter)
+        const sortedBlogs: TBlog[] = await BlogModel.find(filter,{ _id: 0, __v: 0 })
             .sort({[sortBy]: sortDirection}).skip((pageNumber - 1) * pageSize).limit(pageSize)
-
-
-        // const totalCount: number = await blogCollection.countDocuments(filter)
-        // const sortedBlogs: TBlog[] = await blogCollection.find(filter, {projection: {_id: 0}})
-        //     .sort({[sortBy]: sortDirection}).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
         return {
             pagesCount: Math.ceil(totalCount / pageSize),    // общее количество страниц
             page: pageNumber,                                   // текущая страница

@@ -22,8 +22,24 @@ describe('/blogs', () => {
             .get('/blogs/1')
             .expect(HTTP_STATUS.NOT_FOUND_404)
     })
+    it('3 - return 404 - can\'t get posts of not existing blog', async () => {
+        await request(app)
+            .get('/blogs/1/posts')
+            .expect(HTTP_STATUS.NOT_FOUND_404)
+    })
+    it('4 - return 404 - can\'t create posts of not existing blog', async () => {
+        await request(app)
+            .post(`/blogs/1/posts`)
+            .auth('admin', 'qwerty', {type: 'basic'})
+            .send({
+                title: 'valid-title',
+                shortDescription: 'valid-shortDescription',
+                content: 'valid-content'
+            })
+            .expect(HTTP_STATUS.NOT_FOUND_404)
+    })
 
-    it('3 - shouldn\'t create blog with correct input - NO Auth', async () => {
+    it('5 - shouldn\'t create blog with correct input - NO Auth', async () => {
         await request(app)
             .post('/blogs')
             .send({
@@ -37,7 +53,7 @@ describe('/blogs', () => {
             .get('/blogs')
             .expect(HTTP_STATUS.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
     })
-    it('4 - shouldn\'t create blog with incorrect input data (name = null)', async () => {
+    it('6 - shouldn\'t create blog with incorrect input data (name = null)', async () => {
         await request(app)
             .post('/blogs')
             .auth('admin', 'qwerty', {type: 'basic'})
@@ -51,7 +67,7 @@ describe('/blogs', () => {
             .get('/blogs')
             .expect(HTTP_STATUS.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
     })
-    it('5 - shouldn\'t create blog with incorrect input data - (short description)', async () => {
+    it('7 - shouldn\'t create blog with incorrect input data - (short description)', async () => {
         await request(app)
             .post('/blogs')
             .auth('admin', 'qwerty', {type: 'basic'})
@@ -65,7 +81,7 @@ describe('/blogs', () => {
             .get('/blogs')
             .expect(HTTP_STATUS.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
     })
-    it('6 - shouldn\'t create blog with incorrect input data - (Invalid websiteUrl)', async () => {
+    it('8 - shouldn\'t create blog with incorrect input data - (Invalid websiteUrl)', async () => {
         await request(app)
             .post('/blogs')
             .auth('admin', 'qwerty', {type: 'basic'})
@@ -80,7 +96,7 @@ describe('/blogs', () => {
             .expect(HTTP_STATUS.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
     })
 
-    it('7 - create blog with correct input data', async () => {
+    it('9 - create blog with correct input data', async () => {
         const createResponse = await request(app)
             .post('/blogs')
             .auth('admin', 'qwerty', {type: 'basic'})
@@ -114,7 +130,7 @@ describe('/blogs', () => {
 
         expect.setState({createdBlog1: createdBlog1})
     })
-    it('8 - create blog with correct input data', async () => {
+    it('10 - create blog with correct input data', async () => {
         const {createdBlog1} = expect.getState()
         const createResponse = await request(app)
             .post('/blogs')
@@ -149,7 +165,7 @@ describe('/blogs', () => {
         expect.setState({createdBlog2: createdBlog2})
     })
 
-    it('9 - shouldn\'t update blog that not exist', async () => {
+    it('11 - shouldn\'t update blog that not exist', async () => {
         await request(app)
             .put('/blogs/' + -3)
             .auth('admin', 'qwerty', {type: 'basic'})
@@ -160,7 +176,7 @@ describe('/blogs', () => {
             })
             .expect(HTTP_STATUS.NOT_FOUND_404)
     })
-    it('10 - shouldn\'t update blog with incorrect input data', async () => {
+    it('12 - shouldn\'t update blog with incorrect input data', async () => {
         const {createdBlog1} = expect.getState()
         await request(app)
             .put('/blogs/' + createdBlog1.id)
@@ -177,7 +193,7 @@ describe('/blogs', () => {
             .expect(HTTP_STATUS.OK_200, createdBlog1)
     })
 
-    it('11 - update blog with correct input data', async () => {
+    it('13 - update blog with correct input data', async () => {
         const {createdBlog1} = expect.getState()
             await request(app)
                 .put('/blogs/' + createdBlog1.id)
@@ -199,14 +215,55 @@ describe('/blogs', () => {
                 })
         })
 
-    it('12 - return 404 for delete non-exist blog', async () => {
+    it('14 - return 404 for delete non-exist blog', async () => {
         await request(app)
             .delete('/blogs/1')
             .auth('admin', 'qwerty', {type: 'basic'})
             .expect(HTTP_STATUS.NOT_FOUND_404)
     })
 
-    it('13 - delete both blogs', async () => {
+    it('15 - return 201 - create posts current blog', async () => {
+        const {createdBlog1} = expect.getState()
+        const createPostResponse = await request(app)
+            .post(`/blogs/${createdBlog1.id}/posts`)
+            .auth('admin', 'qwerty', {type: 'basic'})
+            .send({
+                title: 'valid-title',
+                shortDescription: 'valid-shortDescription',
+                content: 'valid-content'
+            })
+
+        expect(createPostResponse).toBeDefined()
+        expect(createPostResponse.status).toBe(HTTP_STATUS.CREATED_201)
+        expect(createPostResponse.body).toEqual({
+            id: expect.any(String),
+            title: 'valid-title',
+            shortDescription: 'valid-shortDescription',
+            content: 'valid-content',
+            blogId: createdBlog1.id,
+            blogName: 'val_name update',
+            createdAt: expect.any(String)
+        })
+
+        expect.setState({createdPost: createPostResponse.body})
+    })
+    it('16 - return 200 - get posts current blog with pagination', async () => {
+        const {createdBlog1, createdPost} = expect.getState()
+        const getPostsRequest = await request(app)
+            .get(`/blogs/${createdBlog1.id}/posts`)
+            .expect(HTTP_STATUS.OK_200)
+
+        expect(getPostsRequest).toBeDefined()
+        expect(getPostsRequest.status).toBe(HTTP_STATUS.OK_200)
+        expect(getPostsRequest.body).toEqual({
+            pagesCount: 1,
+            page: 1,
+            pageSize: 10,
+            totalCount: 1,
+            items: [createdPost]})
+    })
+
+    it('17 - delete both blogs', async () => {
         const {createdBlog1, createdBlog2} = expect.getState()
         await request(app)
             .delete('/blogs/' + createdBlog1.id)
