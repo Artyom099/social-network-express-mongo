@@ -48,27 +48,25 @@ export const authRouter = () => {
         }
     })
 
-    // router.post('/password-recovery', rateLimitMiddleware, validationEmail, inputValidationMiddleware, async (req: Request, res: Response) => {
-    //     const foundUser = await usersService.findUserByLoginOrEmail(req.body.email)
-    //     if (!foundUser) {
-    //         res.status(HTTP_STATUS.BAD_REQUEST_400).json({
-    //             errorsMessages: [
-    //                 {
-    //                     message: 'user with the given email is not exists',
-    //                     field: 'email'
-    //                 }
-    //             ]
-    //         })
-    //     } else {
-    //         await authService.sendRecoveryCode(foundUser.accountData.email)
-    //         res.status(HTTP_STATUS.NO_CONTENT_204)
-    //     }
-    // })
+    router.post('/password-recovery', rateLimitMiddleware, validationEmail, inputValidationMiddleware, async (req: Request, res: Response) => {
+        const foundUser = await usersService.findUserByLoginOrEmail(req.body.email)
+        if (!foundUser) {
+            res.status(HTTP_STATUS.BAD_REQUEST_400)
+        } else {
+            await authService.sendRecoveryCode(foundUser.accountData.email)
+            res.status(HTTP_STATUS.NO_CONTENT_204)
+        }
+    })
 
-    // router.post('/new-password', rateLimitMiddleware, validationPasswordAndCode, inputValidationMiddleware, async (req: Request, res: Response) => {
-    //     const verifyRecoveryCode = await authService.checkRecoveryCode(req.body.code)
-    //     res.status(HTTP_STATUS.NO_CONTENT_204)
-    // })
+    router.post('/new-password', rateLimitMiddleware, validationPasswordAndCode, inputValidationMiddleware, async (req: Request, res: Response) => {
+        const verifyRecoveryCode = await authService.checkRecoveryCode(req.body.code)
+        if (!verifyRecoveryCode) {
+            res.status(HTTP_STATUS.BAD_REQUEST_400)
+        } else {
+            await authService.updatePassword(req.body.code, req.body.password)
+            res.status(HTTP_STATUS.NO_CONTENT_204)
+        }
+    })
 
     router.post('/refresh-token', cookieMiddleware, async (req: Request, res: Response) => {
         const refreshTokenPayload = await jwtService.getPayloadByToken(req.cookies.refreshToken)

@@ -19,8 +19,8 @@ export const usersRepository = {
         else return null
     },
 
-    async findUserById(userId: string): Promise<TUser | null> {
-        const user = await userCollection.findOne({id: userId}, {projection: {_id: 0}})
+    async findUserById(id: string): Promise<TUser | null> {
+        const user = await userCollection.findOne({ id }, {projection: {_id: 0}})
         if (user) return {
             id: user.id,
             login: user.accountData.login,
@@ -30,8 +30,8 @@ export const usersRepository = {
         else return null
     },
 
-    async deleteUserById(userId: string) {
-        return await userCollection.deleteOne({id: userId})
+    async deleteUserById(id: string) {
+        return await userCollection.deleteOne({ id })
     },
 
     async findUserByConfirmationCode(code: string): Promise<UserAccountDBType | null> {
@@ -40,11 +40,24 @@ export const usersRepository = {
         else return null
     },
 
-    async updateEmailConfirmation(userId: string) {
-        await userCollection.updateOne({id: userId}, {$set: {'emailConfirmation.isConfirmed': true}})
+    async updateEmailConfirmation(id: string) {
+        await userCollection.updateOne({ id }, {$set: {'emailConfirmation.isConfirmed': true}})
     },
 
     async updateConfirmationCode(email: string, code: string) {
         await userCollection.updateOne({'accountData.email': email}, {$set: {'emailConfirmation.confirmationCode': code}})
+    },
+
+    async setRecoveryCode(email: string, recoveryCode: string) {
+        await userCollection.updateOne({'accountData.email': email}, {$set: {recoveryCode}})
+    },
+
+    async findUserByRecoveryCode(recoveryCode: string): Promise<boolean | null> {
+        const user = await userCollection.findOne({ recoveryCode })
+        return (user && recoveryCode === user.recoveryCode)
+    },
+
+    async updateSaltAndHash(recoveryCode: string, salt: string, hash: string) {
+        await userCollection.updateOne({ recoveryCode }, {$set:{'accountData.passwordSalt': salt, 'accountData.passwordHash': hash}})
     }
 }

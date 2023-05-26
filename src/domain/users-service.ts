@@ -22,7 +22,8 @@ export const usersService = {
                 confirmationCode: randomUUID(),
                 expirationDate: add(new Date, {minutes: 10}),
                 isConfirmed: true
-            }
+            },
+            recoveryCode: ''
         }
         return await usersRepository.createUser(newUser)
     },
