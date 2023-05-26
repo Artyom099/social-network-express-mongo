@@ -24,7 +24,8 @@ export const authService = {
                 confirmationCode: randomUUID(),
                 expirationDate: add(new Date, {minutes: 10}),
                 isConfirmed: false
-            }
+            },
+            recoveryCode: ''
         }
         const createResult = await usersRepository.createUser(newUser)
         try {
@@ -60,5 +61,28 @@ export const authService = {
             return null
         }
         return newConfirmationCode
+    },
+
+    async sendRecoveryCode(email: string) {
+        const recoveryCode = randomUUID()
+        await usersRepository.setRecoveryCode(email, recoveryCode)
+        try {
+            // убрал await, чтобы работал rateLimitMiddleware (10 секунд)
+            emailManager.sendEmailConfirmationMessage(email, recoveryCode)
+        } catch (error) {
+            return null
+        }
+        return recoveryCode
+    },
+
+    async checkRecoveryCode(code: string): Promise<boolean | null> {
+        return usersRepository.findUserByRecoveryCode(code)
+
+    },
+
+    async updatePassword(code: string, password: string) {
+        const passwordSalt = await bcrypt.genSalt(10)
+        const passwordHash = await usersService._generateHash(password, passwordSalt)
+        await usersRepository.updateSaltAndHash(code, passwordSalt, passwordHash)
     }
 }

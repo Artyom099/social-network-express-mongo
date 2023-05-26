@@ -58,8 +58,7 @@ export const queryRepository = {
         }
         const totalCount: number = await userCollection.countDocuments(filter)
         const sortedUsers: UserAccountDBType[] = await userCollection
-            .find(filter, {projection: {_id: 0, id: 1, login: '$accountData.login',
-                email: '$accountData.email', createdAt: '$accountData.createdAt'}})
+            .find(filter, {projection: {_id: 0, id: 1, login: '$accountData.login', email: '$accountData.email', createdAt: '$accountData.createdAt'}})
             .sort({[sortBy]: sortDirection}).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
         return {
             pagesCount: Math.ceil(totalCount / pageSize),    // общее количество страниц

@@ -4,7 +4,7 @@ import {HTTP_STATUS} from "../../src/types/constants";
 import mongoose from "mongoose";
 import {mongoURI2} from "../../src/db/db";
 
-
+// Stmts - 100%
 describe('/blogs', () => {
     beforeAll(async () => {
         await mongoose.connect(mongoURI2)
