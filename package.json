@@ -7,6 +7,7 @@
     "watch": "tsc -w",
     "dev": "yarn nodemon --inspect dist/index.js",
     "test": "jest -i --detectOpenHandles --no-cache --coverage",
+    "test_auth": "jest ./__tests__/e2e/auth.e2e.test.ts --detectOpenHandles --coverage",
     "test_blogs": "jest ./__tests__/e2e/blogs.e2e.test.ts --detectOpenHandles --coverage",
     "test_security": "jest ./__tests__/e2e/security.e2e.test.ts --detectOpenHandles --coverage"
   },

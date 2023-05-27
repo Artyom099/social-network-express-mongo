@@ -49,7 +49,7 @@ export const authRouter = () => {
     })
 
     router.post('/password-recovery', rateLimitMiddleware, validationEmail, inputValidationMiddleware, async (req: Request, res: Response) => {
-        const foundUser = await usersService.findUserByLoginOrEmail(req.body.email)
+        const foundUser = await usersService.findUserByLoginOrEmail(req.body.email) // todo - добавить тесты для этого ендпоинта
         if (!foundUser) {
             res.sendStatus(HTTP_STATUS.BAD_REQUEST_400)
         } else {
@@ -59,7 +59,7 @@ export const authRouter = () => {
     })
 
     router.post('/new-password', rateLimitMiddleware, validationPasswordAndCode, inputValidationMiddleware, async (req: Request, res: Response) => {
-        const verifyRecoveryCode = await authService.checkRecoveryCode(req.body.code)
+        const verifyRecoveryCode = await authService.checkRecoveryCode(req.body.code)   // todo - добавить тесты для этого ендпоинта
         if (!verifyRecoveryCode) {
             res.status(HTTP_STATUS.BAD_REQUEST_400).json({
                 errorsMessages: [
