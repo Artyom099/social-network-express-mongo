@@ -24,22 +24,19 @@ describe('/auth', () => {
             .expect(HTTP_STATUS.UNAUTHORIZED_401)
     })
 
-    let createdUser1: any = null
-    let createResponse1: any = null
-    let accessToken1: string = ''
-    const password1 = 'qwerty1'
     it('3 – should create user by admin with correct input data & confirmed email', async () => {
-        createResponse1 = await request(app)
+        const firstPassword = 'qwerty1'
+        const createResponse1 = await request(app)
             .post('/users')
             .auth('admin', 'qwerty', {type: 'basic'})
             .send({
                 login: 'lg-111111',
-                password: password1,
+                password: firstPassword,
                 email: 'valid1-email@mail.ru'
             })
             .expect(HTTP_STATUS.CREATED_201)
 
-        createdUser1 = createResponse1.body
+        const createdUser1 = createResponse1.body
         expect(createdUser1).toEqual({
             id: expect.any(String),
             login: createdUser1.login,
@@ -51,19 +48,24 @@ describe('/auth', () => {
             .get('/users')
             .auth('admin', 'qwerty', {type: 'basic'})
             .expect(HTTP_STATUS.OK_200, {pagesCount: 1, page: 1, pageSize: 10, totalCount: 1, items: [createdUser1]})
+
+        expect.setState({firstUser: createdUser1, firstResponse: createResponse1, firstPassword})
     })
     it('4 - should return created user', async () => {
+        const {firstUser, firstResponse} = expect.getState()
         //чтобы .split не ругался на возможный undefined
-        if (!createResponse1.headers.authorization) return new Error()
-        accessToken1 = createResponse1.headers.authorization.split(' ')[1]
+        if (!firstResponse.headers.authorization) return new Error()
+        const accessToken = firstResponse.headers.authorization.split(' ')[1]
         await request(app)
             .get('/auth/me')
             .auth('accessToken', {type: 'bearer'})
             .expect(HTTP_STATUS.OK_200, {
-                email: createdUser1.email,
-                login: createdUser1.login,
-                userId: createdUser1.userId
+                email: firstUser.email,
+                login: firstUser.login,
+                userId: firstUser.userId
             })
+
+        expect.setState({firstAccessToken: accessToken})
     })
 
     it('5 – should return 400 if email doesn\'t exist', async () => {
@@ -75,21 +77,23 @@ describe('/auth', () => {
             .expect(HTTP_STATUS.BAD_REQUEST_400)
     })
     it('6 – should return 400 if email already confirmed', async () => {
+        const {firstUser} = expect.getState()
         await request(app)
             .post('/auth/registration-email-resending')
             .send({
-                email: createdUser1.email
+                email: firstUser.email
             })
             .expect(HTTP_STATUS.BAD_REQUEST_400)
     })
 
     it('7 – should return 400 if user\'s email already exist', async () => {
+        const {firstUser, firstPassword} = expect.getState()
         await request(app)
             .post('/auth/registration')
             .send({
                 login: 'otherLogin',
-                password: password1,
-                email: createdUser1.email
+                password: firstPassword,
+                email: firstUser.email
             })
             .expect(HTTP_STATUS.BAD_REQUEST_400, {
                 errorsMessages: [
@@ -101,11 +105,12 @@ describe('/auth', () => {
             })
     })
     it('8 – should return 400 if user\'s login already exist', async () => {
+        const {firstUser, firstPassword} = expect.getState()
         await request(app)
             .post('/auth/registration')
             .send({
-                login: createdUser1.login,
-                password: password1,
+                login: firstUser.login,
+                password: firstPassword,
                 email: 'other-email@mail.com'
             })
             .expect(HTTP_STATUS.BAD_REQUEST_400, {
@@ -119,11 +124,12 @@ describe('/auth', () => {
     })
 
     it('9 – should return 204, create user & send confirmation email with code', async () => {
+        const {firstPassword} = expect.getState()
         await request(app)
             .post('/auth/registration')
             .send({
                 login: 'valLog2',
-                password: password1,
+                password: firstPassword,
                 email: 'artyomgolubev1@gmail.com'
             })
             .expect(HTTP_STATUS.NO_CONTENT_204)
@@ -161,11 +167,12 @@ describe('/auth', () => {
     })
 
     it('13 - should return 200 and login', async () => {
+        const {firstUser, firstPassword} = expect.getState()
         const loginResponse = await request(app)
             .post('/auth/login')
             .send({
-                loginOrEmail: createdUser1.login,
-                password: password1
+                loginOrEmail: firstUser.login,
+                password: firstPassword
             })
 
         expect(loginResponse).toBeDefined()
