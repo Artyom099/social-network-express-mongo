@@ -77,7 +77,6 @@ export const authService = {
 
     async checkRecoveryCode(code: string): Promise<boolean | null> {
         return usersRepository.findUserByRecoveryCode(code)
-
     },
 
     async updatePassword(code: string, password: string) {
