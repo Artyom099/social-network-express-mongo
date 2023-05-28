@@ -13,13 +13,13 @@ This is my pet project which describes endpoints for user interaction with a soc
 9. get information about current user
 
 ## Blogs
-1.
-2.
-3.
-4.
-5.
-6.
-7.
+1. get blogs with paging
+2. create new blog
+3. get all posts for specified blog
+4. create new post for specified blog
+5. get blog by id
+6. update existing blog by id with input model
+7. delete blog specified by id
 
 ## Comments
 1. update existing comment gy id with input model
