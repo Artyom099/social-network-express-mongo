@@ -68,7 +68,7 @@ export const authService = {
         await usersRepository.setRecoveryCode(email, recoveryCode)
         try {
             // убрал await, чтобы работал rateLimitMiddleware (10 секунд)
-            emailManager.sendEmailConfirmationMessage(email, recoveryCode)
+            await emailManager.sendEmailConfirmationMessage(email, recoveryCode)
         } catch (error) {
             return null
         }
