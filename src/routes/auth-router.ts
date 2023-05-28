@@ -59,7 +59,7 @@ export const authRouter = () => {
     })
 
     router.post('/new-password', rateLimitMiddleware, validationPasswordAndCode, inputValidationMiddleware, async (req: Request, res: Response) => {
-        const verifyRecoveryCode = await authService.checkRecoveryCode(req.body.code)   // todo - добавить тесты для этого ендпоинта
+        const verifyRecoveryCode = await authService.checkRecoveryCode(req.body.recoveryCode)   // todo - добавить тесты для этого ендпоинта
         if (!verifyRecoveryCode) {
             res.status(HTTP_STATUS.BAD_REQUEST_400).json({
                 errorsMessages: [
@@ -70,7 +70,7 @@ export const authRouter = () => {
                 ]
             })
         } else {
-            await authService.updatePassword(req.body.code, req.body.password)
+            await authService.updatePassword(req.body.recoveryCode, req.body.newPassword)
             res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
         }
     })

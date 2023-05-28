@@ -2,8 +2,6 @@ import nodemailer from "nodemailer"
 
 
 export const emailAdapter = {
-
-
     async sendEmail(email: string, subject: string, message: string) {
         let transporter  = await nodemailer.createTransport({
             host: 'smtp.mail.ru',
