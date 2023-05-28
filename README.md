@@ -41,9 +41,9 @@ This is my pet project which describes endpoints for user interaction with a soc
 3. terminate specified device session
 
 ## Users
-1.
-2.
-3.
+1. get all users
+2. add new user to the system by admin
+3. delete user specified by id
 
 ## Testing
 Clean the datebase
