@@ -253,6 +253,7 @@ describe('/auth', () => {
         expect(recoveryResponse.status).toBe(HTTP_STATUS.NO_CONTENT_204)
     })
 
+
     it('19 - return 204 & logout', async () => {
         const {secondRefreshToken} = expect.getState()
         const goodRefreshTokenResponse = await request(app)
