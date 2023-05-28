@@ -12,7 +12,7 @@ This is my pet project which describes endpoints for user interaction with a soc
 8. logout
 9. get information about current user
 
-# Blogs
+## Blogs
 1.
 2.
 3.
@@ -21,12 +21,12 @@ This is my pet project which describes endpoints for user interaction with a soc
 6.
 7.
 
-# Comments
+## Comments
 1.
 2.
 3.
 
-# Posts
+## Posts
 1.
 2.
 3.
@@ -35,15 +35,15 @@ This is my pet project which describes endpoints for user interaction with a soc
 6.
 7.
 
-# Security devices
+## Security devices
 1.
 2.
 3.
 
-# Users
+## Users
 1.
 2.
 3.
 
-# Testing
+## Testing
 Clean the datebase
