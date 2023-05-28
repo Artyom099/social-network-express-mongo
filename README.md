@@ -1,7 +1,7 @@
 # Social-network API
 This is my pet project which describes endpoints for user interaction with a social network
 
-# Auth
+## Auth
 1. login
 2. password recovery by email
 3. set new password
