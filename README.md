@@ -22,9 +22,9 @@ This is my pet project which describes endpoints for user interaction with a soc
 7.
 
 ## Comments
-1.
-2.
-3.
+1. update existing comment gy id with input model
+2. delete comment specified by id
+3. ger comment by id
 
 ## Posts
 1.
@@ -36,9 +36,9 @@ This is my pet project which describes endpoints for user interaction with a soc
 7.
 
 ## Security devices
-1.
-2.
-3.
+1. get all devices with active sessions for current user
+2. terminate all other (exclude current) device's sessions
+3. terminate specified device session
 
 ## Users
 1.
