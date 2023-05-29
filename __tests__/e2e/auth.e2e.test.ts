@@ -248,8 +248,7 @@ describe('/auth', () => {
         expect(recoveryResponse).toBeDefined()
         expect(recoveryResponse.status).toBe(HTTP_STATUS.NO_CONTENT_204)
     })
-    // Error: Message failed: 550 Message was not accepted -- invalid mailbox.
-    // Local mailbox valid1-email@mail.ru is unavailable: user not found
+
     it('19 - return 429 - \'/auth/password-recovery\'', async () => {
         const {firstUser} = expect.getState()
         await sleep(10)
