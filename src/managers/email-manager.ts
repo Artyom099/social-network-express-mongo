@@ -15,7 +15,7 @@ export const emailManager = {
         const subject = 'Password recovery'
         const message = ' <h1>Password recovery</h1>\n' +
             '<p>To finish password recovery please follow the link below:\n' +
-                `<a href = https://somesite.com/password-recovery?recoveryCode=${code}'>recovery password</a>\n` +
+                `<a href = 'https://somesite.com/password-recovery?recoveryCode=${code}'>recovery password</a>\n` +
             '</p>\n'
         await emailAdapter.sendEmail(email, subject, message)
     }
