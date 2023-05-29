@@ -1,7 +1,7 @@
 import express, {Request, Response} from "express";
 import {usersService} from "../domain/users-service";
 import {HTTP_STATUS} from "../types/constants";
-import {AuthDTO, ReqBodyType, UserRegDTO} from "../types/types";
+import {AuthDTO, PassCodeDTO, ReqBodyType, UserRegDTO} from "../types/types";
 import {body} from "express-validator";
 import {inputValidationMiddleware} from "../middleware/input-validation-middleware";
 import {jwtService} from "../application/jwt-service";
@@ -42,24 +42,23 @@ export const authRouter = () => {
             await securityService.addActiveSession(req.ip, title!, lastActiveDate, tokenPayload.deviceId, userId)
 
             res.cookie('refreshToken', token.refreshToken, {httpOnly: true, secure: true})
-            res.status(HTTP_STATUS.OK_200).json({'accessToken': token.accessToken})
+            res.status(HTTP_STATUS.OK_200).json({accessToken: token.accessToken})
         } else {
             res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
         }
     })
 
-    router.post('/password-recovery', rateLimitMiddleware, validationEmail, inputValidationMiddleware, async (req: Request, res: Response) => {
-        // const foundUser = await usersService.findUserByLoginOrEmail(req.body.email)
-        // if (!foundUser) {
-        //     res.sendStatus(HTTP_STATUS.BAD_REQUEST_400)
-        // } else {
-        // todo - сделать старый пароль и рефреш токен невалидными
-        await authService.sendRecoveryCode(req.body.email)
-        res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
+    router.post('/password-recovery', rateLimitMiddleware, cookieMiddleware, validationEmail, inputValidationMiddleware, async (req: Request, res: Response) => {
+        // todo - сделать старый пароль и рефреш токен? невалидными
+        const recoveryCode = await authService.sendRecoveryCode(req.body.email)
+        console.log(recoveryCode) //здесь recoveryCode создается
+        res.status(HTTP_STATUS.NO_CONTENT_204).json({recoveryCode: recoveryCode})
     })
 
-    router.post('/new-password', rateLimitMiddleware, validationPasswordAndCode, inputValidationMiddleware, async (req: Request, res: Response) => {
+    router.post('/new-password', rateLimitMiddleware, validationPasswordAndCode, inputValidationMiddleware, async (req: ReqBodyType<PassCodeDTO>, res: Response) => {
+        console.log('123')
         const verifyRecoveryCode = await authService.checkRecoveryCode(req.body.recoveryCode)   // todo - добавить тесты для этого ендпоинта
+        // console.log({verifyRecoveryCode: verifyRecoveryCode})
         if (!verifyRecoveryCode) {
             res.status(HTTP_STATUS.BAD_REQUEST_400).json({
                 errorsMessages: [
@@ -86,7 +85,7 @@ export const authRouter = () => {
             const lastActiveDate = new Date(newTokenPayload.iat * 1000).toISOString()
             await securityService.updateLastActiveDateByDeviceId(refreshTokenPayload.deviceId, lastActiveDate)
             res.cookie('refreshToken', token.refreshToken, {httpOnly: true, secure: true})
-            res.status(HTTP_STATUS.OK_200).json({'accessToken': token.accessToken})
+            res.status(HTTP_STATUS.OK_200).json({accessToken: token.accessToken})
         } else {
             res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
         }

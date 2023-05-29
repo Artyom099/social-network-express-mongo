@@ -49,12 +49,12 @@ export const usersRepository = {
     },
 
     async setRecoveryCode(email: string, recoveryCode: string) {
-        await userCollection.updateOne({'accountData.email': email}, {$set: {recoveryCode}})
+        await userCollection.updateOne({'accountData.email': email}, {$set: {recoveryCode: recoveryCode}})
     },
 
     async findUserByRecoveryCode(recoveryCode: string): Promise<boolean | null> {
         const user = await userCollection.findOne({ recoveryCode })
-        return (user && recoveryCode === user.recoveryCode)
+        return (recoveryCode === user!.recoveryCode)
     },
 
     async updateSaltAndHash(recoveryCode: string, salt: string, hash: string) {

@@ -159,6 +159,10 @@ export type AuthDTO = {
     loginOrEmail: string
     password: string
 }
+export type PassCodeDTO = {
+    recoveryCode: string
+    newPassword: string
+}
 
 // ResBody - типизация ответа
 // Locals - возможно переменные окружения
