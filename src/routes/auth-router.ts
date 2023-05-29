@@ -23,7 +23,7 @@ const validationReg = [
     body('login').isString().trim().notEmpty().isLength({min: 3, max: 10}).matches('^[a-zA-Z0-9_-]*$'),
     body('password').isString().trim().notEmpty().isLength({min: 6, max: 20}),
 ]
-const validationPasswordAndCode = [
+const validationPassAndCode = [
     body('newPassword').isString().trim().notEmpty().isLength({min: 6, max: 20}),
     body('recoveryCode').isString().trim().notEmpty()
 ]
@@ -48,16 +48,16 @@ export const authRouter = () => {
         }
     })
 
-    router.post('/password-recovery', rateLimitMiddleware, cookieMiddleware, validationEmail, inputValidationMiddleware, async (req: Request, res: Response) => {
+    router.post('/password-recovery', rateLimitMiddleware, validationEmail, inputValidationMiddleware, async (req: Request, res: Response) => {
         // todo - сделать старый пароль и рефреш токен? невалидными
         const recoveryCode = await authService.sendRecoveryCode(req.body.email)
-        console.log(recoveryCode) //здесь recoveryCode создается
+        console.log(recoveryCode) //здесь recoveryCode возвращается
         res.status(HTTP_STATUS.NO_CONTENT_204).json({recoveryCode: recoveryCode})
     })
 
-    router.post('/new-password', rateLimitMiddleware, validationPasswordAndCode, inputValidationMiddleware, async (req: ReqBodyType<PassCodeDTO>, res: Response) => {
-        console.log('123')
-        const verifyRecoveryCode = await authService.checkRecoveryCode(req.body.recoveryCode)   // todo - добавить тесты для этого ендпоинта
+    router.post('/new-password', rateLimitMiddleware, validationPassAndCode, inputValidationMiddleware, async (req: ReqBodyType<PassCodeDTO>, res: Response) => {
+        console.log('123')  // даже не попадаю в этот ендпоинт, получаю 400 раньше
+        const verifyRecoveryCode = await authService.checkRecoveryCode(req.body.recoveryCode)
         // console.log({verifyRecoveryCode: verifyRecoveryCode})
         if (!verifyRecoveryCode) {
             res.status(HTTP_STATUS.BAD_REQUEST_400).json({
