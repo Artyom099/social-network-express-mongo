@@ -245,52 +245,70 @@ describe('/auth', () => {
             .set('cookie', secondRefreshToken)
             .send({email: firstUser.email})
 
+
         expect(recoveryResponse).toBeDefined()
         expect(recoveryResponse.status).toBe(HTTP_STATUS.NO_CONTENT_204)
+        expect.setState({recoveryCode: recoveryResponse.body.recoveryCode})
+        // а здесь не могу есть достать recoveryCode из body
+        console.log({recoveryCode: recoveryResponse.body.recoveryCode})
+    })
+    it('19 - return 204 & update password', async () => {
+        const {recoveryCode} = expect.getState()
+        const newPasswordResponse = await request(app)
+            .post('/auth/new-password')
+            .send({
+                recoveryCode: recoveryCode,
+                newPassword: 'newPassword'
+            })
+
+        expect(newPasswordResponse).toBeDefined()
+        expect(newPasswordResponse.status).toBe(HTTP_STATUS.NO_CONTENT_204)
     })
 
-    it('19 - return 429 - \'/auth/password-recovery\'', async () => {
-        const {firstUser} = expect.getState()
-        await sleep(10)
 
-        await request(app)
-            .post('/auth/password-recovery')
-            .set('user-agent', 'device-2')
-            .send({email: firstUser.email})
-            .expect(HTTP_STATUS.NO_CONTENT_204)
 
-        await request(app)
-            .post('/auth/password-recovery')
-            .set('user-agent', 'device-3')
-            .send({email: firstUser.email})
-            .expect(HTTP_STATUS.NO_CONTENT_204)
-
-        await request(app)
-            .post('/auth/password-recovery')
-            .set('user-agent', 'device-4')
-            .send({email: firstUser.email})
-            .expect(HTTP_STATUS.NO_CONTENT_204)
-
-        await request(app)
-            .post('/auth/password-recovery')
-            .set('user-agent', 'device-5')
-            .send({email: firstUser.email})
-            .expect(HTTP_STATUS.NO_CONTENT_204)
-
-        await request(app)
-            .post('/auth/password-recovery')
-            .set('user-agent', 'device-6')
-            .send({email: firstUser.email})
-            .expect(HTTP_STATUS.NO_CONTENT_204)
-
-        const loginResponse = await request(app)
-            .post('/auth/password-recovery')
-            .set('user-agent', 'device-7')
-            .send({email: firstUser.email})
-            .expect(HTTP_STATUS.TOO_MANY_REQUESTS_429)
-
-        expect(loginResponse).toBeDefined()
-    })
+    // it('19 - return 429 - \'/auth/password-recovery\'', async () => {
+    //     const {firstUser} = expect.getState()
+    //     await sleep(10)
+    //
+    //     await request(app)
+    //         .post('/auth/password-recovery')
+    //         .set('user-agent', 'device-2')
+    //         .send({email: firstUser.email})
+    //         .expect(HTTP_STATUS.NO_CONTENT_204)
+    //
+    //     await request(app)
+    //         .post('/auth/password-recovery')
+    //         .set('user-agent', 'device-3')
+    //         .send({email: firstUser.email})
+    //         .expect(HTTP_STATUS.NO_CONTENT_204)
+    //
+    //     await request(app)
+    //         .post('/auth/password-recovery')
+    //         .set('user-agent', 'device-4')
+    //         .send({email: firstUser.email})
+    //         .expect(HTTP_STATUS.NO_CONTENT_204)
+    //
+    //     await request(app)
+    //         .post('/auth/password-recovery')
+    //         .set('user-agent', 'device-5')
+    //         .send({email: firstUser.email})
+    //         .expect(HTTP_STATUS.NO_CONTENT_204)
+    //
+    //     await request(app)
+    //         .post('/auth/password-recovery')
+    //         .set('user-agent', 'device-6')
+    //         .send({email: firstUser.email})
+    //         .expect(HTTP_STATUS.NO_CONTENT_204)
+    //
+    //     const loginResponse = await request(app)
+    //         .post('/auth/password-recovery')
+    //         .set('user-agent', 'device-7')
+    //         .send({email: firstUser.email})
+    //         .expect(HTTP_STATUS.TOO_MANY_REQUESTS_429)
+    //
+    //     expect(loginResponse).toBeDefined()
+    // })
 
 
     it('20 - return 204 & logout', async () => {

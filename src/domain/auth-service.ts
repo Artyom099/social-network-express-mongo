@@ -67,7 +67,7 @@ export const authService = {
         const recoveryCode = randomUUID()
         await usersRepository.setRecoveryCode(email, recoveryCode)
         try {
-            // убрал await, чтобы работал rateLimitMiddleware (10 секунд)
+            // оставил await, чтобы работали тесты, но rateLimitMiddleware в тестах будто не срабатывает
             await emailManager.sendEmailRecoveryCode(email, recoveryCode)
         } catch (error) {
             return null
