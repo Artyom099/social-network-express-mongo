@@ -27,13 +27,13 @@ This is my pet project which describes endpoints for user interaction with a soc
 3. ger comment by id
 
 ## Posts
-1.
-2.
-3.
-4.
-5.
-6.
-7.
+1. get comments for speciied post by postId
+2. create new comment for speciied post by postId
+3. get all posts
+4. create new post
+5. get post by id
+6. update existing post by id with input model
+7. delete post specified by id
 
 ## Security devices
 1. get all devices with active sessions for current user
