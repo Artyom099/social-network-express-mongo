@@ -159,14 +159,14 @@ describe('/auth', () => {
             })
     })
 
-    it('12 - return 401', async () => {
+    it('12 - /refresh-token - return 401 with no any token', async () => {
         await request(app)
             .post('/auth/refresh-token')
             .send('noToken')
             .expect(HTTP_STATUS.UNAUTHORIZED_401)
     })
 
-    it('13 - return 200 and login', async () => {
+    it('13 - /login - return 200 and login', async () => {
         const {firstUser, firstPassword} = expect.getState()
         const loginResponse = await request(app)
             .post('/auth/login')
@@ -187,7 +187,7 @@ describe('/auth', () => {
         expect.setState({accessToken, firstRefreshToken: refreshToken})
     })
 
-    it('14 - return 200, newRefreshToken & newAccessToken', async () => {
+    it('14 - /refresh-token - return 200, newRefreshToken & newAccessToken', async () => {
         const {accessToken, firstRefreshToken} = expect.getState()
         await sleep(1.1)
 
@@ -210,14 +210,14 @@ describe('/auth', () => {
         expect.setState({secondAccessToken: newAccessToken, secondRefreshToken: newRefreshToken})
     })
 
-    it('15 - return 401 with no any token', async () => {
+    it('15 - /refresh-token - return 401 with no any token', async () => {
         const goodRefreshTokenResponse = await request(app)
             .post('/auth/refresh-token')
 
         expect(goodRefreshTokenResponse).toBeDefined()
         expect(goodRefreshTokenResponse.status).toBe(HTTP_STATUS.UNAUTHORIZED_401)
     })
-    it('16 - return 401 because old token in black list', async () => {
+    it('16 - /refresh-token - return 401 with old token', async () => {
         const {firstRefreshToken} = expect.getState()
         await sleep(1.1)
 
@@ -274,91 +274,91 @@ describe('/auth', () => {
         expect(newPasswordResponse.status).toBe(HTTP_STATUS.NO_CONTENT_204)
     })
 
-    // it('21 - /password-recovery - return 429', async () => {
-    //     const {firstUser} = expect.getState()
-    //     await sleep(10)
-    //
-    //     await request(app)
-    //         .post('/auth/password-recovery')
-    //         .set('user-agent', 'device-2')
-    //         .send({email: firstUser.email})
-    //         .expect(HTTP_STATUS.OK_200)
-    //
-    //     await request(app)
-    //         .post('/auth/password-recovery')
-    //         .set('user-agent', 'device-3')
-    //         .send({email: firstUser.email})
-    //         .expect(HTTP_STATUS.OK_200)
-    //
-    //     await request(app)
-    //         .post('/auth/password-recovery')
-    //         .set('user-agent', 'device-4')
-    //         .send({email: firstUser.email})
-    //         .expect(HTTP_STATUS.OK_200)
-    //
-    //     await request(app)
-    //         .post('/auth/password-recovery')
-    //         .set('user-agent', 'device-5')
-    //         .send({email: firstUser.email})
-    //         .expect(HTTP_STATUS.OK_200)
-    //
-    //     await request(app)
-    //         .post('/auth/password-recovery')
-    //         .set('user-agent', 'device-6')
-    //         .send({email: firstUser.email})
-    //         .expect(HTTP_STATUS.OK_200)
-    //
-    //     const loginResponse = await request(app)
-    //         .post('/auth/password-recovery')
-    //         .set('user-agent', 'device-7')
-    //         .send({email: firstUser.email})
-    //         .expect(HTTP_STATUS.TOO_MANY_REQUESTS_429)
-    //
-    //     expect(loginResponse).toBeDefined()
-    // })
-    // it('22 - /new-password - return 429', async () => {
-    //     const {firstUser} = expect.getState()
-    //
-    //     await request(app)
-    //         .post('/auth/new-password')
-    //         .set('user-agent', 'device-2')
-    //         .send({email: firstUser.email})
-    //         .expect(HTTP_STATUS.BAD_REQUEST_400)
-    //
-    //     await request(app)
-    //         .post('/auth/new-password')
-    //         .set('user-agent', 'device-3')
-    //         .send({email: firstUser.email})
-    //         .expect(HTTP_STATUS.BAD_REQUEST_400)
-    //
-    //     await request(app)
-    //         .post('/auth/new-password')
-    //         .set('user-agent', 'device-4')
-    //         .send({email: firstUser.email})
-    //         .expect(HTTP_STATUS.BAD_REQUEST_400)
-    //
-    //     await request(app)
-    //         .post('/auth/new-password')
-    //         .set('user-agent', 'device-5')
-    //         .send({email: firstUser.email})
-    //         .expect(HTTP_STATUS.BAD_REQUEST_400)
-    //
-    //     await request(app)
-    //         .post('/auth/new-password')
-    //         .set('user-agent', 'device-6')
-    //         .send({email: firstUser.email})
-    //         .expect(HTTP_STATUS.BAD_REQUEST_400)
-    //
-    //     const loginResponse = await request(app)
-    //         .post('/auth/new-password')
-    //         .set('user-agent', 'device-7')
-    //         .send({email: firstUser.email})
-    //         .expect(HTTP_STATUS.TOO_MANY_REQUESTS_429)
-    //
-    //     expect(loginResponse).toBeDefined()
-    // })
-    //
-    //
+    it('21 - /password-recovery - return 429', async () => {
+        const {firstUser} = expect.getState()
+        await sleep(10)
+
+        await request(app)
+            .post('/auth/password-recovery')
+            .set('user-agent', 'device-2')
+            .send({email: firstUser.email})
+            .expect(HTTP_STATUS.OK_200)
+
+        await request(app)
+            .post('/auth/password-recovery')
+            .set('user-agent', 'device-3')
+            .send({email: firstUser.email})
+            .expect(HTTP_STATUS.OK_200)
+
+        await request(app)
+            .post('/auth/password-recovery')
+            .set('user-agent', 'device-4')
+            .send({email: firstUser.email})
+            .expect(HTTP_STATUS.OK_200)
+
+        await request(app)
+            .post('/auth/password-recovery')
+            .set('user-agent', 'device-5')
+            .send({email: firstUser.email})
+            .expect(HTTP_STATUS.OK_200)
+
+        await request(app)
+            .post('/auth/password-recovery')
+            .set('user-agent', 'device-6')
+            .send({email: firstUser.email})
+            .expect(HTTP_STATUS.OK_200)
+
+        const loginResponse = await request(app)
+            .post('/auth/password-recovery')
+            .set('user-agent', 'device-7')
+            .send({email: firstUser.email})
+            .expect(HTTP_STATUS.TOO_MANY_REQUESTS_429)
+
+        expect(loginResponse).toBeDefined()
+    })
+    it('22 - /new-password - return 429', async () => {
+        const {firstUser} = expect.getState()
+
+        await request(app)
+            .post('/auth/new-password')
+            .set('user-agent', 'device-2')
+            .send({email: firstUser.email})
+            .expect(HTTP_STATUS.BAD_REQUEST_400)
+
+        await request(app)
+            .post('/auth/new-password')
+            .set('user-agent', 'device-3')
+            .send({email: firstUser.email})
+            .expect(HTTP_STATUS.BAD_REQUEST_400)
+
+        await request(app)
+            .post('/auth/new-password')
+            .set('user-agent', 'device-4')
+            .send({email: firstUser.email})
+            .expect(HTTP_STATUS.BAD_REQUEST_400)
+
+        await request(app)
+            .post('/auth/new-password')
+            .set('user-agent', 'device-5')
+            .send({email: firstUser.email})
+            .expect(HTTP_STATUS.BAD_REQUEST_400)
+
+        await request(app)
+            .post('/auth/new-password')
+            .set('user-agent', 'device-6')
+            .send({email: firstUser.email})
+            .expect(HTTP_STATUS.BAD_REQUEST_400)
+
+        const loginResponse = await request(app)
+            .post('/auth/new-password')
+            .set('user-agent', 'device-7')
+            .send({email: firstUser.email})
+            .expect(HTTP_STATUS.TOO_MANY_REQUESTS_429)
+
+        expect(loginResponse).toBeDefined()
+    })
+
+
     // it('23 - return 204 & logout', async () => {
     //     const {secondRefreshToken} = expect.getState()
     //     const goodRefreshTokenResponse = await request(app)

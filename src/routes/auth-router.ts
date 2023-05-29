@@ -49,16 +49,15 @@ export const authRouter = () => {
     })
 
     router.post('/password-recovery', rateLimitMiddleware, validationEmail, inputValidationMiddleware, async (req: Request, res: Response) => {
-        // todo - сделать старый пароль и рефреш токен? невалидными
+        // todo - вместо 429 отправляет 204
         const recoveryCode = await authService.sendRecoveryCode(req.body.email)
-        // console.log(recoveryCode)
         // для моих тестов тут должно стоять OK_200
         res.status(HTTP_STATUS.NO_CONTENT_204).json({recoveryCode: recoveryCode})
     })
 
     router.post('/new-password', rateLimitMiddleware, validationPassAndCode, inputValidationMiddleware, async (req: ReqBodyType<PassCodeDTO>, res: Response) => {
         const verifyRecoveryCode = await authService.checkRecoveryCode(req.body.recoveryCode)
-        console.log({verifyRecoveryCode: verifyRecoveryCode})
+        // console.log({verifyRecoveryCode: verifyRecoveryCode})
         if (!verifyRecoveryCode) {
             res.status(HTTP_STATUS.BAD_REQUEST_400).json({
                 errorsMessages: [
@@ -141,7 +140,7 @@ export const authRouter = () => {
         // проверяем, существует ли пользователь, подтверждена ли почта, и потом отправляем код
         const existUser = await usersService.findUserByLoginOrEmail(req.body.email)
         if (!existUser || existUser.emailConfirmation.isConfirmed) {
-            return res.status(HTTP_STATUS.BAD_REQUEST_400).json({
+            res.status(HTTP_STATUS.BAD_REQUEST_400).json({
                 errorsMessages: [
                     {
                         message: 'email is already confirmed or doesn\'t exist',
