@@ -246,11 +246,10 @@ describe('/auth', () => {
             .send({email: firstUser.email})
 
         expect(recoveryResponse).toBeDefined()
-        expect(recoveryResponse.status).toBe(HTTP_STATUS.NO_CONTENT_204)
+        expect(recoveryResponse.status).toBe(HTTP_STATUS.OK_200)
         expect.setState({recoveryCode: recoveryResponse.body.recoveryCode})
         // а здесь не могу достать recoveryCode из body
         console.log({recoveryCode: recoveryResponse.body.recoveryCode})
-        console.log(recoveryResponse.body)
     })
     it('19 - return 204 & update password', async () => {
         const {recoveryCode} = expect.getState()
