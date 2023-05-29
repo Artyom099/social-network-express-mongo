@@ -49,13 +49,13 @@ export const authRouter = () => {
     })
 
     router.post('/password-recovery', rateLimitMiddleware, validationEmail, inputValidationMiddleware, async (req: Request, res: Response) => {
-        const foundUser = await usersService.findUserByLoginOrEmail(req.body.email) // todo - добавить тесты для этого ендпоинта
-        if (!foundUser) {
-            res.sendStatus(HTTP_STATUS.BAD_REQUEST_400)
-        } else {
-            await authService.sendRecoveryCode(foundUser.accountData.email)
-            res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
-        }
+        // const foundUser = await usersService.findUserByLoginOrEmail(req.body.email)
+        // if (!foundUser) {
+        //     res.sendStatus(HTTP_STATUS.BAD_REQUEST_400)
+        // } else {
+        // todo - сделать старый пароль и рефреш токен невалидными
+        await authService.sendRecoveryCode(req.body.email)
+        res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
     })
 
     router.post('/new-password', rateLimitMiddleware, validationPasswordAndCode, inputValidationMiddleware, async (req: Request, res: Response) => {

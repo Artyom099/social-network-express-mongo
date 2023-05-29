@@ -58,6 +58,6 @@ export const usersRepository = {
     },
 
     async updateSaltAndHash(recoveryCode: string, salt: string, hash: string) {
-        await userCollection.updateOne({ recoveryCode }, {$set:{'accountData.passwordSalt': salt, 'accountData.passwordHash': hash}})
+        await userCollection.updateOne({ recoveryCode }, {$set: {'accountData.passwordSalt': salt, 'accountData.passwordHash': hash}})
     }
 }

@@ -36,7 +36,7 @@ describe('/auth', () => {
             .send({
                 login: 'lg-111111',
                 password: firstPassword,
-                email: 'valid1-email@mail.ru'
+                email: 'artyomgolubev1@gmail.com'
             })
             .expect(HTTP_STATUS.CREATED_201)
 
@@ -75,18 +75,14 @@ describe('/auth', () => {
     it('5 – return 400 if email doesn\'t exist', async () => {
         await request(app)
             .post('/auth/registration-email-resending')
-            .send({
-                email: 'unknown-email@mail.com'
-            })
+            .send({email: 'unknown-email@mail.com'})
             .expect(HTTP_STATUS.BAD_REQUEST_400)
     })
     it('6 – return 400 if email already confirmed', async () => {
         const {firstUser} = expect.getState()
         await request(app)
             .post('/auth/registration-email-resending')
-            .send({
-                email: firstUser.email
-            })
+            .send({email: firstUser.email})
             .expect(HTTP_STATUS.BAD_REQUEST_400)
     })
 
@@ -134,7 +130,7 @@ describe('/auth', () => {
             .send({
                 login: 'valLog2',
                 password: firstPassword,
-                email: 'artyomgolubev1@gmail.com'
+                email: 'artgolubev@bk.ru'
             })
             .expect(HTTP_STATUS.NO_CONTENT_204)
     })
@@ -142,7 +138,7 @@ describe('/auth', () => {
         await request(app)
             .post('/auth/registration-email-resending')
             .send({
-                email: 'artyomgolubev1@gmail.com'
+                email: 'artgolubev@bk.ru'
             })
             .expect(HTTP_STATUS.NO_CONTENT_204)
     })
@@ -252,8 +248,53 @@ describe('/auth', () => {
         expect(recoveryResponse).toBeDefined()
         expect(recoveryResponse.status).toBe(HTTP_STATUS.NO_CONTENT_204)
     })
+    // Error: Message failed: 550 Message was not accepted -- invalid mailbox.
+    // Local mailbox valid1-email@mail.ru is unavailable: user not found
+    it('19 - return 429 - \'/auth/password-recovery\'', async () => {
+        const {firstUser} = expect.getState()
+        await sleep(10)
 
-    it('19 - return 204 & logout', async () => {
+        await request(app)
+            .post('/auth/password-recovery')
+            .set('user-agent', 'device-2')
+            .send({email: firstUser.email})
+            .expect(HTTP_STATUS.NO_CONTENT_204)
+
+        await request(app)
+            .post('/auth/password-recovery')
+            .set('user-agent', 'device-3')
+            .send({email: firstUser.email})
+            .expect(HTTP_STATUS.NO_CONTENT_204)
+
+        await request(app)
+            .post('/auth/password-recovery')
+            .set('user-agent', 'device-4')
+            .send({email: firstUser.email})
+            .expect(HTTP_STATUS.NO_CONTENT_204)
+
+        await request(app)
+            .post('/auth/password-recovery')
+            .set('user-agent', 'device-5')
+            .send({email: firstUser.email})
+            .expect(HTTP_STATUS.NO_CONTENT_204)
+
+        await request(app)
+            .post('/auth/password-recovery')
+            .set('user-agent', 'device-6')
+            .send({email: firstUser.email})
+            .expect(HTTP_STATUS.NO_CONTENT_204)
+
+        const loginResponse = await request(app)
+            .post('/auth/password-recovery')
+            .set('user-agent', 'device-7')
+            .send({email: firstUser.email})
+            .expect(HTTP_STATUS.TOO_MANY_REQUESTS_429)
+
+        expect(loginResponse).toBeDefined()
+    })
+
+
+    it('20 - return 204 & logout', async () => {
         const {secondRefreshToken} = expect.getState()
         const goodRefreshTokenResponse = await request(app)
             .post('/auth/logout')
