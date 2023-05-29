@@ -23,7 +23,7 @@ export const usersService = {
                 expirationDate: add(new Date, {minutes: 10}),
                 isConfirmed: true
             },
-            recoveryCode: ''
+            recoveryCode: null
         }
         return await usersRepository.createUser(newUser)
     },

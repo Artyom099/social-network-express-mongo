@@ -51,9 +51,9 @@ export const authRouter = () => {
     router.post('/password-recovery', rateLimitMiddleware, validationEmail, inputValidationMiddleware, async (req: Request, res: Response) => {
         // todo - сделать старый пароль и рефреш токен? невалидными
         const recoveryCode = await authService.sendRecoveryCode(req.body.email)
-        console.log(recoveryCode)
-        // для тестов тут должно стоять OK_200
-        res.sendStatus(HTTP_STATUS.NO_CONTENT_204)//.json({recoveryCode: recoveryCode})
+        // console.log(recoveryCode)
+        // для моих тестов тут должно стоять OK_200
+        res.status(HTTP_STATUS.NO_CONTENT_204).json({recoveryCode: recoveryCode})
     })
 
     router.post('/new-password', rateLimitMiddleware, validationPassAndCode, inputValidationMiddleware, async (req: ReqBodyType<PassCodeDTO>, res: Response) => {

@@ -54,7 +54,7 @@ export const usersRepository = {
 
     async findUserByRecoveryCode(recoveryCode: string): Promise<boolean | null> {
         const user = await userCollection.findOne({ recoveryCode })
-        return (recoveryCode === user!.recoveryCode)
+        return (recoveryCode === user?.recoveryCode)
     },
 
     async updateSaltAndHash(recoveryCode: string, salt: string, hash: string) {
