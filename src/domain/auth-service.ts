@@ -25,7 +25,7 @@ export const authService = {
                 expirationDate: add(new Date, {minutes: 10}),
                 isConfirmed: false
             },
-            recoveryCode: ''
+            recoveryCode: null
         }
         const createResult = await usersRepository.createUser(newUser)
         try {

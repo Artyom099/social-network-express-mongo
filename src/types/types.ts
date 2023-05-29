@@ -67,7 +67,7 @@ export type UserAccountDBType = {
         expirationDate: Date
         isConfirmed: boolean
     }
-    recoveryCode: string
+    recoveryCode: string | null
 }
 export type CommentBDType = {
     id: string
