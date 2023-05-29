@@ -245,12 +245,12 @@ describe('/auth', () => {
             .set('cookie', secondRefreshToken)
             .send({email: firstUser.email})
 
-
         expect(recoveryResponse).toBeDefined()
         expect(recoveryResponse.status).toBe(HTTP_STATUS.NO_CONTENT_204)
         expect.setState({recoveryCode: recoveryResponse.body.recoveryCode})
-        // а здесь не могу есть достать recoveryCode из body
+        // а здесь не могу достать recoveryCode из body
         console.log({recoveryCode: recoveryResponse.body.recoveryCode})
+        console.log(recoveryResponse.body)
     })
     it('19 - return 204 & update password', async () => {
         const {recoveryCode} = expect.getState()
