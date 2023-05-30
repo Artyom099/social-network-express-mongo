@@ -1,5 +1,5 @@
 import request from "supertest";
-import {app} from "../../src/app";
+import {app} from "../../src";
 import {HTTP_STATUS} from "../../src/types/constants";
 
 const sleep = (seconds: number) => new Promise((r) => setTimeout(r, seconds * 1000))
