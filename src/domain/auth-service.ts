@@ -67,7 +67,7 @@ export const authService = {
         const recoveryCode = randomUUID()
         await usersRepository.setRecoveryCode(email, recoveryCode)
         try {
-            await emailManager.sendEmailRecoveryCode(email, recoveryCode)
+            emailManager.sendEmailRecoveryCode(email, recoveryCode)
         } catch (error) {
             return null
         }
