@@ -2,7 +2,11 @@
 This is my pet project which describes endpoints for user interaction with a social network
 
 ## Libruaries & modules 
-Express-validator, mongodb, mongoose, jest supertest, cookie-parser, bcrypt, nodemailer, jsonwebtoken
+Express-validator – to validate input data received from frontend,
+Nodemailer – to sending email confirmation message and recovery password code, 
+Jsonwebtoken – to create acceess and refresh tokens with payload,
+mongodb, mongoose, jest supertest, cookie-parser, bcrypt, 
+
 
 ## Endpoint's functional
 ### Auth
