@@ -7,7 +7,7 @@ export const rateLimitMiddleware = async (req: Request, res: Response, next: Nex
     const ip = req.ip
     const url = req.originalUrl
     const dateNow = Date.now()
-    const timeLimit = new Date(dateNow - 10_000)
+    const timeLimit = new Date(dateNow - 11_000)
     const countFoundIP = await ipService.countIpAndUrl(ip!, url, timeLimit)
     console.log('countFoundIP', countFoundIP, 'url', url, 'dateNow', new Date(dateNow), 'timeLimit', timeLimit)
 
