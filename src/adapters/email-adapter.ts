@@ -1,7 +1,37 @@
 import nodemailer from "nodemailer"
+import {settings} from "../settings";
 
 
 export const emailAdapter = {
+    async sendEmail(to: string, subject: string, message: string) {
+        try {
+            const transporter = nodemailer.createTransport({
+                service: 'gmail',
+                host: 'smtp.gmail.com',
+                port: 587,
+                secure: false,
+                auth: {
+                    user: settings.MAIL_LOGIN,
+                    pass: settings.MAIL_PASSWORD,
+                },
+            });
+
+            const result = await transporter.sendMail({
+                from: `"Blog Platform" <${settings.MAIL_LOGIN}>`,
+                to: to,
+                subject: subject,
+                html: message
+            });
+
+            return result;
+        } catch (e) {
+            console.error('Mail sending failed');
+            console.error(e);
+        }
+    }
+}
+
+export const emailAdapter2 = {
     async sendEmail(email: string, subject: string, message: string) {
         let transporter  = await nodemailer.createTransport({
             host: 'smtp.mail.ru',

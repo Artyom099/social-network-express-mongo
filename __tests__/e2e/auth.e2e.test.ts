@@ -29,37 +29,41 @@ describe('/auth', () => {
     })
 
     it('3 – create user by admin with correct input data & confirmed email', async () => {
-        const firstPassword = 'qwerty1'
-        const createResponse1 = await request(app)
+        const firstUser = {
+            login: 'lg-111111',
+            password: 'qwerty1',
+            email: 'artyomgolubev1@gmail.com'
+        }
+        const firstCreateResponse = await request(app)
             .post('/users')
             .auth('admin', 'qwerty', {type: 'basic'})
             .send({
-                login: 'lg-111111',
-                password: firstPassword,
-                email: 'artyomgolubev1@gmail.com'
+                login: firstUser.login,
+                password: firstUser.password,
+                email: firstUser.email
             })
             .expect(HTTP_STATUS.CREATED_201)
 
-        const createdUser1 = createResponse1.body
-        expect(createdUser1).toEqual({
+        const firstCreatedUser = firstCreateResponse.body
+        expect(firstCreatedUser).toEqual({
             id: expect.any(String),
-            login: createdUser1.login,
-            email: createdUser1.email,
+            login: firstUser.login,
+            email: firstUser.email,
             createdAt: expect.any(String),
         })
 
         await request(app)
             .get('/users')
             .auth('admin', 'qwerty', {type: 'basic'})
-            .expect(HTTP_STATUS.OK_200, {pagesCount: 1, page: 1, pageSize: 10, totalCount: 1, items: [createdUser1]})
+            .expect(HTTP_STATUS.OK_200, {pagesCount: 1, page: 1, pageSize: 10, totalCount: 1, items: [firstCreatedUser]})
 
-        expect.setState({firstUser: createdUser1, firstResponse: createResponse1, firstPassword})
+        expect.setState({firstUser: firstUser, firstCreateResponse: firstCreateResponse})
     })
     it('4 - return created user', async () => {
-        const {firstUser, firstResponse} = expect.getState()
+        const {firstUser, firstCreateResponse} = expect.getState()
         //чтобы .split не ругался на возможный undefined
-        if (!firstResponse.headers.authorization) return new Error()
-        const accessToken = getRefreshTokenByResponse(firstResponse)
+        if (!firstCreateResponse.headers.authorization) return new Error()
+        const accessToken = getRefreshTokenByResponse(firstCreateResponse)
         await request(app)
             .get('/auth/me')
             .auth('accessToken', {type: 'bearer'})
@@ -87,12 +91,12 @@ describe('/auth', () => {
     })
 
     it('7 – return 400 if user\'s email already exist', async () => {
-        const {firstUser, firstPassword} = expect.getState()
+        const {firstUser} = expect.getState()
         await request(app)
             .post('/auth/registration')
             .send({
                 login: 'otherLogin',
-                password: firstPassword,
+                password: firstUser.password,
                 email: firstUser.email
             })
             .expect(HTTP_STATUS.BAD_REQUEST_400, {
@@ -110,7 +114,7 @@ describe('/auth', () => {
             .post('/auth/registration')
             .send({
                 login: firstUser.login,
-                password: firstPassword,
+                password: firstUser.password,
                 email: 'other-email@mail.com'
             })
             .expect(HTTP_STATUS.BAD_REQUEST_400, {
@@ -124,12 +128,12 @@ describe('/auth', () => {
     })
 
     it('9 – return 204, create user & send confirmation email with code', async () => {
-        const {firstPassword} = expect.getState()
+        const {firstUser} = expect.getState()
         await request(app)
             .post('/auth/registration')
             .send({
                 login: 'valLog2',
-                password: firstPassword,
+                password: firstUser.password,
                 email: 'artgolubev@bk.ru'
             })
             .expect(HTTP_STATUS.NO_CONTENT_204)
@@ -167,12 +171,12 @@ describe('/auth', () => {
     })
 
     it('13 - /login - return 200 and login', async () => {
-        const {firstUser, firstPassword} = expect.getState()
+        const {firstUser} = expect.getState()
         const loginResponse = await request(app)
             .post('/auth/login')
             .send({
                 loginOrEmail: firstUser.login,
-                password: firstPassword
+                password: firstUser.password
             })
 
         expect(loginResponse).toBeDefined()
