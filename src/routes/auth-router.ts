@@ -52,7 +52,7 @@ export const authRouter = () => {
         // todo - вместо 429 отправляет 204
         const recoveryCode = await authService.sendRecoveryCode(req.body.email)
         // для моих тестов тут должно стоять OK_200
-        res.status(HTTP_STATUS.NO_CONTENT_204).json({recoveryCode: recoveryCode})
+        res.status(HTTP_STATUS.OK_200).json({recoveryCode: recoveryCode})
     })
 
     router.post('/new-password', rateLimitMiddleware, validationPassAndCode, inputValidationMiddleware, async (req: ReqBodyType<PassCodeDTO>, res: Response) => {
