@@ -50,7 +50,7 @@ export const authRouter = () => {
 
     router.post('/password-recovery', rateLimitMiddleware, validationEmail, inputValidationMiddleware, async (req: Request, res: Response) => {
         await authService.sendRecoveryCode(req.body.email)
-        res.status(HTTP_STATUS.NO_CONTENT_204)
+        res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
     })
 
     router.post('/new-password', rateLimitMiddleware, validationPassAndCode, inputValidationMiddleware, async (req: ReqBodyType<PassCodeDTO>, res: Response) => {
