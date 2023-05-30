@@ -7,9 +7,9 @@ export const emailAdapter = {
         try {
             const transporter = nodemailer.createTransport({
                 service: 'gmail',
-                host: 'smtp.gmail.com',
-                port: 587,
-                secure: false,
+                // host: 'smtp.gmail.com',
+                // port: 587,
+                secure: true,
                 auth: {
                     user: settings.MAIL_LOGIN,
                     pass: settings.MAIL_PASSWORD,
