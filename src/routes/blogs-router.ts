@@ -6,7 +6,7 @@ import {
     ReqParamsBodyType,
     ReqParamsQueryType,
     ReqQueryType,
-    TBlog
+    BlogViewModel
 } from "../types/types";
 import {HTTP_STATUS} from "../utils/constants";
 import {BlogsService} from "../domain/blogs-service";
@@ -73,7 +73,7 @@ export class BlogsController {
             res.status(HTTP_STATUS.CREATED_201).json(createdPostThisBlog)
         }
     }
-    async getBlog(req: Request, res: Response<TBlog>) {
+    async getBlog(req: Request, res: Response<BlogViewModel>) {
         const findBlog = await this.blogsService.findBlogById(req.params.id)
         if (!findBlog) {    // если не нашли блог по id, то выдаем ошибку и выходим из эндпоинта
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)

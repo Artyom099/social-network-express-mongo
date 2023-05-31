@@ -1,6 +1,6 @@
 import {body} from "express-validator";
 import express, {Request, Response} from "express";
-import { ReqBodyType, ReqParamsBodyType, ReqParamsType, TVideo, IdDTO, VideoPostDTO, VideoPutDTO} from "../types/types";
+import { ReqBodyType, ReqParamsBodyType, ReqParamsType, VideoViewModel, IdDTO, VideoPostDTO, VideoPutDTO} from "../types/types";
 import {convertResultErrorCodeToHttp} from "../utils/utils";
 import {videosService} from "../domain/videos-service";
 import {inputValidationMiddleware} from "../middleware/input-validation-middleware";
@@ -64,7 +64,7 @@ export const videosRouter = () => {
         // }
     })
 
-    router.get('/:id', async (req: ReqParamsType<IdDTO>, res: Response<TVideo>) => {
+    router.get('/:id', async (req: ReqParamsType<IdDTO>, res: Response<VideoViewModel>) => {
         const foundVideo = await videosService.findVideoById(req.params.id)
         if (!foundVideo) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
         res.status(HTTP_STATUS.OK_200).json(foundVideo)

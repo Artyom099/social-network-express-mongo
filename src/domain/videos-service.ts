@@ -1,15 +1,15 @@
-import {Result, TVideo} from "../types/types";
+import {Result, VideoViewModel} from "../types/types";
 import {videosRepository} from "../repositories/videos-repository";
 
 
 export const videosService = {
-    async findVideos(): Promise<TVideo[]> {
+    async findVideos(): Promise<VideoViewModel[]> {
         return await videosRepository.findExistVideos()
     },
 
-    async createVideo(title: string, author: string, availableResolutions: string[]): Promise<TVideo> {
+    async createVideo(title: string, author: string, availableResolutions: string[]): Promise<VideoViewModel> {
         const dateNow = new Date()
-        const createdVideo: TVideo = {
+        const createdVideo: VideoViewModel = {
             id: (+dateNow).toString(),
             title,
             author,
@@ -22,7 +22,7 @@ export const videosService = {
         return await videosRepository.createVideo(createdVideo)
     },
 
-    async findVideoById(videoId: string): Promise<TVideo | null> {
+    async findVideoById(videoId: string): Promise<VideoViewModel | null> {
         return await videosRepository.findVideoById(videoId)
     },
 

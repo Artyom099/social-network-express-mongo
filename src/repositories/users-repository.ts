@@ -1,9 +1,9 @@
-import {TUser, UserAccountDBType} from "../types/types";
+import {UserViewModel, UserAccountDBType} from "../types/types";
 import {userCollection} from "../db/db";
 
 
 export const usersRepository = {
-    async createUser(newUser: UserAccountDBType): Promise<TUser> {
+    async createUser(newUser: UserAccountDBType): Promise<UserViewModel> {
         await userCollection.insertOne(newUser)
         return {
             id: newUser.id,
@@ -19,7 +19,7 @@ export const usersRepository = {
         else return null
     },
 
-    async findUserById(id: string): Promise<TUser | null> {
+    async findUserById(id: string): Promise<UserViewModel | null> {
         const user = await userCollection.findOne({ id }, {projection: {_id: 0}})
         if (user) return {
             id: user.id,

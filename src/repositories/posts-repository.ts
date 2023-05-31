@@ -1,10 +1,10 @@
 import {postCollection} from "../db/db";
-import {Result, TPost} from "../types/types";
+import {Result, PostViewModel} from "../types/types";
 import {ResultCode} from "../utils/constants";
 
 
 export const postsRepository = {
-    async createPost(createdPost: TPost): Promise<TPost> {    // post
+    async createPost(createdPost: PostViewModel): Promise<PostViewModel> {    // post
         await postCollection.insertOne(createdPost)
         return {
             id: createdPost.id,
@@ -17,7 +17,7 @@ export const postsRepository = {
         }
     },
 
-    async findPostById(postId: string): Promise<TPost | null> {   // get, put, delete
+    async findPostById(postId: string): Promise<PostViewModel | null> {   // get, put, delete
         const post = await postCollection.findOne({id: postId}, {projection: {_id: false}})
         if (post) return post
         else return null

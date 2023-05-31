@@ -2,9 +2,9 @@ import {
     CommentBDType, DeviceDBType,
     ExpiredTokenDBType,
     IPDBType,
-    TBlog,
-    TPost,
-    TVideo,
+    BlogViewModel,
+    PostViewModel,
+    VideoViewModel,
     UserAccountDBType
 } from "../types/types"
 import {MongoClient} from 'mongodb'
@@ -22,16 +22,16 @@ const dbName = 'home_works'
 export const mongoURI2 = process.env.MONGO_URL || `mongodb://0.0.0.0:27017/${dbName}`
 
 const database = client.db();
-export const videoCollection = database.collection<TVideo>('videos')
-export const blogCollection = database.collection<TBlog>('blogs')
-export const postCollection = database.collection<TPost>('posts')
+export const videoCollection = database.collection<VideoViewModel>('videos')
+export const blogCollection = database.collection<BlogViewModel>('blogs')
+export const postCollection = database.collection<PostViewModel>('posts')
 export const userCollection = database.collection<UserAccountDBType>('users')
 export const commentCollection = database.collection<CommentBDType>('comments')
 export const expiredTokenCollection = database.collection<ExpiredTokenDBType>('expiredTokens')
 export const apiRequestCollection = database.collection<IPDBType>('ip')
 export const devicesCollection = database.collection<DeviceDBType>('devices')
 
-export const BlogModel = mongoose.model<TBlog>('blogs', BlogSchema)
+export const BlogModel = mongoose.model<BlogViewModel>('blogs', BlogSchema)
 
 export async function runDb() {
     try {

@@ -1,5 +1,5 @@
 import {BlogsRepository} from "../repositories/blogs-repository";
-import {TBlog} from "../types/types";
+import {BlogViewModel} from "../types/types";
 import {randomUUID} from "crypto";
 
 
@@ -8,8 +8,8 @@ export class BlogsService {
     constructor() {
         this.blogsRepository = new BlogsRepository()
     }
-    async createBlog(name: string, description: string, websiteUrl: string): Promise<TBlog> {
-        const createdBlog: TBlog = {
+    async createBlog(name: string, description: string, websiteUrl: string): Promise<BlogViewModel> {
+        const createdBlog: BlogViewModel = {
             id: randomUUID(),
             name,
             description,
@@ -19,7 +19,7 @@ export class BlogsService {
         }
         return await this.blogsRepository.createBlog(createdBlog)
     }
-    async findBlogById(blogId: string): Promise<TBlog | null> {
+    async findBlogById(blogId: string): Promise<BlogViewModel | null> {
         return await this.blogsRepository.findBlogById(blogId)
     }
     async updateBlogById(blogId: string, name: string, description: string, websiteUrl: string): Promise<boolean> {

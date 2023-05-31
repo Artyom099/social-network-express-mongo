@@ -1,13 +1,13 @@
 import {videoCollection} from "../db/db";
-import {Result, TVideo} from "../types/types";
+import {Result, VideoViewModel} from "../types/types";
 import {ResultCode} from "../utils/constants";
 
 
 export const videosRepository = {
-    async findExistVideos(): Promise<TVideo[]> {
+    async findExistVideos(): Promise<VideoViewModel[]> {
         return await videoCollection.find({}, {projection: {_id: false}}).toArray()
     },
-    async createVideo(createdVideo: TVideo): Promise<TVideo> {
+    async createVideo(createdVideo: VideoViewModel): Promise<VideoViewModel> {
         await videoCollection.insertOne(createdVideo)
         return {
             id: createdVideo.id,
@@ -20,7 +20,7 @@ export const videosRepository = {
             availableResolutions: createdVideo.availableResolutions
         }
     },
-    async findVideoById(videoId: string): Promise<TVideo | null> {
+    async findVideoById(videoId: string): Promise<VideoViewModel | null> {
         const video = await videoCollection.findOne({id: videoId}, {projection: {_id: false}})
         if (video) return video
         else return null

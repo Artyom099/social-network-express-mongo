@@ -1,6 +1,6 @@
 import {body} from "express-validator";
 import express, {Request, Response} from "express";
-import {ReqParamsQueryType, IdDTO, PagingDTO, ReqQueryType, TPost, PostDTO, ReqBodyType} from "../types/types";
+import {ReqParamsQueryType, IdDTO, PagingDTO, ReqQueryType, PostViewModel, PostDTO, ReqBodyType} from "../types/types";
 import {HTTP_STATUS} from "../utils/constants";
 import {convertResultErrorCodeToHttp} from "../utils/utils";
 import {postsService} from "../domain/posts-service";
@@ -71,7 +71,7 @@ export const postsRouter = () => {
         res.status(HTTP_STATUS.CREATED_201).json(createdPost)
     })
 
-    router.get('/:id', async (req: Request, res: Response<TPost>) => {
+    router.get('/:id', async (req: Request, res: Response<PostViewModel>) => {
         const foundPost = await postsService.findPostById(req.params.id)
         if (!foundPost) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
         res.status(HTTP_STATUS.OK_200).json(foundPost)

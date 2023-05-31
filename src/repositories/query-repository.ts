@@ -1,15 +1,15 @@
-import {OutputModel, TBlog, TComment, TPost, UserAccountDBType} from "../types/types"
+import {OutputModel, BlogViewModel, CommentViewModel, PostViewModel, UserAccountDBType} from "../types/types"
 import {BlogModel, commentCollection, postCollection, userCollection} from "../db/db";
 import {Filter} from "mongodb"
 
 
 export const queryRepository = {
     async findBlogsAndSort(searchNameTerm: string | null, pageNumber: number, pageSize: number, sortBy: string,
-                           sortDirection: 'asc' | 'desc'): Promise<OutputModel<TBlog[]>> {
+                           sortDirection: 'asc' | 'desc'): Promise<OutputModel<BlogViewModel[]>> {
         const filter = searchNameTerm ? {name: {$regex: searchNameTerm, $options: 'i'}} : {}
 
         const totalCount: number = await BlogModel.countDocuments(filter)
-        const sortedBlogs: TBlog[] = await BlogModel.find(filter,{ _id: 0, __v: 0 })
+        const sortedBlogs: BlogViewModel[] = await BlogModel.find(filter,{ _id: 0, __v: 0 })
             .sort({[sortBy]: sortDirection}).skip((pageNumber - 1) * pageSize).limit(pageSize)
         return {
             pagesCount: Math.ceil(totalCount / pageSize),    // общее количество страниц
@@ -21,11 +21,11 @@ export const queryRepository = {
     },
 
     async findPostsThisBlogById(blogId: string, pageNumber: number, pageSize: number, sortBy: string,
-                                sortDirection: 'asc' | 'desc'): Promise<OutputModel<TPost[]>> {   // get
+                                sortDirection: 'asc' | 'desc'): Promise<OutputModel<PostViewModel[]>> {   // get
         const filter: {blogId: string} = {blogId: blogId}
 
         const totalCount: number = await postCollection.countDocuments(filter)
-        const sortedPosts: TPost[] = await postCollection.find(filter, {projection: {_id: 0}})
+        const sortedPosts: PostViewModel[] = await postCollection.find(filter, {projection: {_id: 0}})
             .sort({[sortBy]: sortDirection}).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
         return {
             pagesCount: Math.ceil(totalCount / pageSize),    // общее количество страниц
@@ -37,9 +37,9 @@ export const queryRepository = {
     },
 
     async findPostsAndSort(pageNumber: number, pageSize: number, sortBy: string,
-                           sortDirection: 'asc' | 'desc'): Promise<OutputModel<TPost[]>> {
+                           sortDirection: 'asc' | 'desc'): Promise<OutputModel<PostViewModel[]>> {
         const totalCount: number = await postCollection.countDocuments()
-        const sortedPosts: TPost[] = await postCollection.find({}, {projection: {_id: 0}})
+        const sortedPosts: PostViewModel[] = await postCollection.find({}, {projection: {_id: 0}})
             .sort({[sortBy]: sortDirection}).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
         return {
             pagesCount: Math.ceil(totalCount / pageSize),    // общее количество страниц
@@ -70,10 +70,10 @@ export const queryRepository = {
     },
 
     async findCommentsThisPostAndSort(postId: string, pageNumber: number, pageSize: number, sortBy: string,
-                                      sortDirection: 'asc' | 'desc'): Promise<OutputModel<TComment[]>> {
+                                      sortDirection: 'asc' | 'desc'): Promise<OutputModel<CommentViewModel[]>> {
         const filter: {postId: string} = {postId: postId}
         const totalCount: number = await commentCollection.countDocuments(filter)
-        const sortedComments: TComment[] = await commentCollection.find(filter, {projection: {_id: 0, postId: 0}})
+        const sortedComments: CommentViewModel[] = await commentCollection.find(filter, {projection: {_id: 0, postId: 0}})
             .sort({[sortBy]: sortDirection}).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
         return {
             pagesCount: Math.ceil(totalCount / pageSize),    // общее количество страниц
