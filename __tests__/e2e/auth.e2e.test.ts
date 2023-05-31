@@ -1,12 +1,9 @@
 import request from "supertest";
 import {HTTP_STATUS} from "../../src/utils/constants";
 import {app} from "../../src";
+import {getRefreshTokenByResponse} from "../../src/utils/utils";
 
 const sleep = (seconds: number) => new Promise((r) => setTimeout(r, seconds * 1000))
-
-const getRefreshTokenByResponse = (response: { headers: { [x: string]: string[]; }; }) => {
-    return response.headers['set-cookie'][0].split(';')[0]
-}
 
 describe('/auth', () => {
     beforeAll(async () => {

@@ -1,6 +1,10 @@
 import {HTTP_STATUS, ResultCode} from "./constants";
 
 
+export const getRefreshTokenByResponse = (response: { headers: { [x: string]: string[]; }; }) => {
+    return response.headers['set-cookie'][0].split(';')[0]
+}
+
 export const convertResultErrorCodeToHttp = (resultCode: ResultCode): number=> {
     switch (resultCode) {
         case ResultCode.NotFound:

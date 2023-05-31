@@ -11,3 +11,4 @@ export const BlogSchema = new mongoose.Schema<WithId<BlogViewModel>>({
     createdAt: { type: String },
     isMembership: { type: Boolean }
 })
+export const BlogModel = mongoose.model<BlogViewModel>('blogs', BlogSchema)

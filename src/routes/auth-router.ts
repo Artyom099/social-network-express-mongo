@@ -9,7 +9,7 @@ import {authMiddlewareBearer} from "../middleware/auth-middleware";
 import {authService} from "../domain/auth-service";
 import {cookieMiddleware} from "../middleware/cookie-middleware";
 import {rateLimitMiddleware} from "../middleware/rate-limit-middleware";
-import {securityService} from "../application/security-service";
+import {securityService} from "../domain/security-service";
 
 const validationAuth = [
     body('loginOrEmail').isString().trim().notEmpty(),

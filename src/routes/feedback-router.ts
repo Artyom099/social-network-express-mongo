@@ -8,7 +8,6 @@ import {IdDTO, ReqParamsBodyType, ReqParamsType} from "../types/types";
 import {body} from "express-validator";
 
 const validationLikes = body('likeStatus').isString().trim().notEmpty()
-// String({'None' : 'Like' , 'Dislike'})
 
 export const feedbackRouter = () => {
     const router = express.Router()

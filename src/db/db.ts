@@ -10,7 +10,6 @@ import {
 import {MongoClient} from 'mongodb'
 import dotenv from 'dotenv'
 import * as mongoose from "mongoose";
-import {BlogSchema} from "../shemas/blogs-schemas";
 
 
 dotenv.config()
@@ -31,7 +30,6 @@ export const expiredTokenCollection = database.collection<ExpiredTokenDBType>('e
 export const apiRequestCollection = database.collection<IPDBType>('ip')
 export const devicesCollection = database.collection<DeviceDBType>('devices')
 
-export const BlogModel = mongoose.model<BlogViewModel>('blogs', BlogSchema)
 
 export async function runDb() {
     try {

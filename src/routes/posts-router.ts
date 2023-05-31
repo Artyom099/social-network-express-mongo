@@ -2,7 +2,6 @@ import {body} from "express-validator";
 import express, {Request, Response} from "express";
 import {ReqParamsQueryType, IdDTO, PagingDTO, ReqQueryType, PostViewModel, PostDTO, ReqBodyType} from "../types/types";
 import {HTTP_STATUS} from "../utils/constants";
-import {convertResultErrorCodeToHttp} from "../utils/utils";
 import {postsService} from "../domain/posts-service";
 import {BlogsService} from "../domain/blogs-service";
 import {inputValidationMiddleware} from "../middleware/input-validation-middleware";
@@ -80,8 +79,8 @@ export const postsRouter = () => {
     router.put('/:id', validationPost, authMiddlewareBasic, inputValidationMiddleware, async (req: Request, res: Response) => {
         const {title, shortDescription, content} = req.body
         const result = await postsService.updatePostById(req.params.id, title, shortDescription, content)
-        if (!result.data) {
-            res.sendStatus(convertResultErrorCodeToHttp(result.code))
+        if (!result) {
+            res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
         } else {
             const updatedPost = await postsService.findPostById(req.params.id)
             res.status(HTTP_STATUS.NO_CONTENT_204).json(updatedPost)
@@ -89,8 +88,8 @@ export const postsRouter = () => {
     })
 
     router.delete('/:id', authMiddlewareBasic, async (req: Request, res: Response) => {
-        const postForDelete = await postsService.findPostById(req.params.id)
-        if (!postForDelete) {
+        const foundPost = await postsService.findPostById(req.params.id)
+        if (!foundPost) {
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
         } else {
             await postsService.deletePostById(req.params.id)
