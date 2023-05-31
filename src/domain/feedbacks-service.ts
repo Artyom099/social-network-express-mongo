@@ -27,11 +27,15 @@ export const feedbackService = {
         return await feedbackRepository.createComment(createdComment)
     },
 
-    async updateCommentById(commentId: string, content: string) {
+    async updateCommentById(commentId: string, content: string): Promise<boolean> {
         return await feedbackRepository.updateCommentById(commentId, content)
     },
 
     async deleteCommentById(commentId: string) {
         await feedbackRepository.deleteCommentById(commentId)
+    },
+
+    async updateCommentLikes(commentId: string,likeStatus: string): Promise<boolean | undefined> {
+        return await feedbackRepository.updateCommentLikes(commentId, likeStatus)
     }
 }

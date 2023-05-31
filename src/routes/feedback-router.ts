@@ -1,14 +1,27 @@
-import express, {Response} from "express"
+import express, {Request, Response} from "express"
 import {HTTP_STATUS} from "../utils/constants";
 import {feedbackService} from "../domain/feedbacks-service"
 import {authMiddlewareBearer} from "../middleware/auth-middleware";
 import {validationComment} from "./posts-router";
 import {inputValidationMiddleware} from "../middleware/input-validation-middleware";
 import {IdDTO, ReqParamsBodyType, ReqParamsType} from "../types/types";
+import {body} from "express-validator";
 
+const validationLikes = body('likeStatus').isString().trim().notEmpty()
+// String({'None' : 'Like' , 'Dislike'})
 
 export const feedbackRouter = () => {
     const router = express.Router()
+
+    router.put('/:commentId/likes-status', validationLikes, authMiddlewareBearer, inputValidationMiddleware,
+        async (req: Request, res: Response) => {
+        const likedComment = await feedbackService.updateCommentLikes(req.params.commentId, req.body.likeStatus)
+        if (!likedComment) {
+            res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
+        } else {
+            res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
+        }
+    })
 
     router.put('/:commentId', validationComment, authMiddlewareBearer, inputValidationMiddleware,
         async (req: ReqParamsBodyType<{commentId: string}, {content: string}>, res: Response) => {

@@ -31,8 +31,7 @@ export const usersRouter = () => {
         res.status(HTTP_STATUS.OK_200).json(foundSortedUsers)
     })
 
-    router.post('/', validationUser, authMiddlewareBasic, inputValidationMiddleware,
-        async (req: Request, res: Response) => {
+    router.post('/', validationUser, authMiddlewareBasic, inputValidationMiddleware, async (req: Request, res: Response) => {
         const {login, password, email} = req.body
         const createdUser = await usersService.createUser(login, password, email)
         res.status(HTTP_STATUS.CREATED_201).json(createdUser)
@@ -40,9 +39,12 @@ export const usersRouter = () => {
 
     router.delete('/:id', authMiddlewareBasic, async (req: Request, res: Response) => {
         const userForDelete = await usersService.findUserById(req.params.id)
-        if (!userForDelete) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
-        await usersService.deleteUserById(req.params.id)
-        res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
+        if (!userForDelete) {
+            res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
+        } else {
+            await usersService.deleteUserById(req.params.id)
+            res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
+        }
     })
 
     return router

@@ -47,7 +47,7 @@ export type CommentViewModel = {
     likesInfo: {
         likesCount: number
         dislikesCount: number
-        myStatus: string
+        myStatus: 'None' | 'Like' | 'Dislike'
     }
 }
 export type DeviceViewModel = {
@@ -86,7 +86,7 @@ export type CommentBDType = {
     likesInfo: {
         likesCount: number
         dislikesCount: number
-        myStatus: string
+        myStatus: 'None' | 'Like' | 'Dislike'
     }
 }
 export type ExpiredTokenDBType = {
