@@ -15,15 +15,12 @@ export const emailAdapter = {
                     pass: settings.MAIL_PASSWORD,
                 },
             });
-
-            const result = await transporter.sendMail({
+            return await transporter.sendMail({
                 from: `"Blog Platform" <${settings.MAIL_LOGIN}>`,
                 to: to,
                 subject: subject,
                 html: message
             });
-
-            return result;
         } catch (e) {
             console.error('Mail sending failed');
             console.error(e);

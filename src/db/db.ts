@@ -40,7 +40,7 @@ export async function runDb() {
         console.log('Connected successfully to mongo server')
 
         await mongoose.connect(mongoURI2)
-        console.log('it is ok')
+        console.log('Mongoose is connected')
 
     } catch(e) {
         console.log('Can\'t connect to mongo server')

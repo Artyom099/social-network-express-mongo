@@ -1,6 +1,6 @@
 import {postCollection} from "../db/db";
 import {Result, TPost} from "../types/types";
-import {ResultCode} from "../types/constants";
+import {ResultCode} from "../utils/constants";
 
 
 export const postsRepository = {

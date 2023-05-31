@@ -1,5 +1,5 @@
 import {NextFunction, Request, Response} from "express";
-import {HTTP_STATUS} from "../types/constants";
+import {HTTP_STATUS} from "../utils/constants";
 import {jwtService} from "../application/jwt-service";
 import {usersService} from "../domain/users-service";
 

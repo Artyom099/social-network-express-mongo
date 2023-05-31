@@ -1,5 +1,5 @@
 import {Request} from 'express'
-import {ResultCode} from "./constants";
+import {ResultCode} from "../utils/constants";
 
 
 // ViewModels

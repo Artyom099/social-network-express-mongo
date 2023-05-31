@@ -7,14 +7,14 @@ export const jwtService = {
     async createJWT(userId: string) {
         const deviceId = randomUUID()
         return {
-            accessToken: jwt.sign({userId: userId, deviceId: deviceId}, settings.JWT_SECRET, {expiresIn: '10s'}),
+            accessToken: jwt.sign({userId: userId, deviceId: deviceId}, settings.JWT_SECRET, {expiresIn: '5m'}),
             refreshToken: jwt.sign({userId: userId, deviceId: deviceId}, settings.JWT_SECRET, {expiresIn: '20s'})
         }
     },
 
     async updateJWT(userId: string, deviceId: string) {
         return {
-            accessToken: jwt.sign({userId: userId, deviceId: deviceId}, settings.JWT_SECRET, {expiresIn: '10s'}),
+            accessToken: jwt.sign({userId: userId, deviceId: deviceId}, settings.JWT_SECRET, {expiresIn: '5m'}),
             refreshToken: jwt.sign({userId: userId, deviceId: deviceId}, settings.JWT_SECRET, {expiresIn: '20s'})
         }
     },

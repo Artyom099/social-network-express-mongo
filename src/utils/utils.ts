@@ -1,4 +1,4 @@
-import {HTTP_STATUS, ResultCode} from "./types/constants";
+import {HTTP_STATUS, ResultCode} from "./constants";
 
 
 export const convertResultErrorCodeToHttp = (resultCode: ResultCode): number=> {
