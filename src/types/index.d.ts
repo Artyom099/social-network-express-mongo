@@ -1,10 +1,10 @@
-import {TUser} from "./types";
+import {UserViewModel} from "./types";
 
 declare global {
     declare namespace Express {
         export interface Request {
             userId: string | null
-            user: TUser | null
+            user: UserViewModel | null
         }
     }
 }

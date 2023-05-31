@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt'
-import {TUser, UserAccountDBType} from "../types/types";
+import {UserViewModel, UserAccountDBType} from "../types/types";
 import {usersRepository} from "../repositories/users-repository";
 import add from "date-fns/add";
 import {randomUUID} from "crypto";
@@ -40,7 +40,7 @@ export const usersService = {
         return await bcrypt.hash(password, salt)
     },
 
-    async findUserById(userId: string): Promise<TUser | null> {    // get, put, delete
+    async findUserById(userId: string): Promise<UserViewModel | null> {    // get, put, delete
         return await usersRepository.findUserById(userId)
     },
 

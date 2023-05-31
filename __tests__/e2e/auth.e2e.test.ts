@@ -1,5 +1,5 @@
 import request from "supertest";
-import {HTTP_STATUS} from "../../src/types/constants";
+import {HTTP_STATUS} from "../../src/utils/constants";
 import {app} from "../../src";
 
 const sleep = (seconds: number) => new Promise((r) => setTimeout(r, seconds * 1000))
@@ -13,12 +13,12 @@ describe('/auth', () => {
         await request(app).delete('/testing/all-data')
     })
 
-    it('1 – return 401', async () => {
+    it('1 – /me – return 401', async () => {
         await request(app)
             .get('/auth/me')
             .expect(HTTP_STATUS.UNAUTHORIZED_401)
     })
-    it('2 – return 401', async () => {
+    it('2 – /login – return 401', async () => {
         await request(app)
             .post('/auth/login')
             .send({
@@ -28,7 +28,7 @@ describe('/auth', () => {
             .expect(HTTP_STATUS.UNAUTHORIZED_401)
     })
 
-    it('3 – create user by admin with correct input data & confirmed email', async () => {
+    it('3 – /users – create user by admin with correct input data & confirmed email', async () => {
         const firstUser = {
             login: 'lg-111111',
             password: 'qwerty1',
@@ -59,7 +59,7 @@ describe('/auth', () => {
 
         expect.setState({firstUser: firstUser, firstCreateResponse: firstCreateResponse})
     })
-    it('4 - return created user', async () => {
+    it('4 – /me – return created user', async () => {
         const {firstUser, firstCreateResponse} = expect.getState()
         //чтобы .split не ругался на возможный undefined
         if (!firstCreateResponse.headers.authorization) return new Error()
@@ -109,7 +109,7 @@ describe('/auth', () => {
             })
     })
     it('8 – return 400 if user\'s login already exist', async () => {
-        const {firstUser, firstPassword} = expect.getState()
+        const {firstUser} = expect.getState()
         await request(app)
             .post('/auth/registration')
             .send({
@@ -163,14 +163,14 @@ describe('/auth', () => {
             })
     })
 
-    it('12 - /refresh-token - return 401 with no any token', async () => {
+    it('12 – /refresh-token - return 401 with no any token', async () => {
         await request(app)
             .post('/auth/refresh-token')
             .send('noToken')
             .expect(HTTP_STATUS.UNAUTHORIZED_401)
     })
 
-    it('13 - /login - return 200 and login', async () => {
+    it('13 – /login - return 200 and login', async () => {
         const {firstUser} = expect.getState()
         const loginResponse = await request(app)
             .post('/auth/login')
@@ -191,7 +191,7 @@ describe('/auth', () => {
         expect.setState({accessToken, firstRefreshToken: refreshToken})
     })
 
-    it('14 - /refresh-token - return 200, newRefreshToken & newAccessToken', async () => {
+    it('14 – /refresh-token - return 200, newRefreshToken & newAccessToken', async () => {
         const {accessToken, firstRefreshToken} = expect.getState()
         await sleep(1.1)
 
@@ -214,14 +214,14 @@ describe('/auth', () => {
         expect.setState({secondAccessToken: newAccessToken, secondRefreshToken: newRefreshToken})
     })
 
-    it('15 - /refresh-token - return 401 with no any token', async () => {
+    it('15 – /refresh-token - return 401 with no any token', async () => {
         const goodRefreshTokenResponse = await request(app)
             .post('/auth/refresh-token')
 
         expect(goodRefreshTokenResponse).toBeDefined()
         expect(goodRefreshTokenResponse.status).toBe(HTTP_STATUS.UNAUTHORIZED_401)
     })
-    it('16 - /refresh-token - return 401 with old token', async () => {
+    it('16 – /refresh-token - return 401 with old token', async () => {
         const {firstRefreshToken} = expect.getState()
         await sleep(1.1)
 
@@ -233,7 +233,7 @@ describe('/auth', () => {
         expect(goodRefreshTokenResponse.status).toBe(HTTP_STATUS.UNAUTHORIZED_401)
     })
 
-    it('17 - /password-recovery - return 400 with no email in body', async () => {
+    it('17 – /password-recovery - return 400 with no email in body', async () => {
         const {secondRefreshToken} = expect.getState()
         const recoveryResponse = await request(app)
             .post('/auth/password-recovery')
@@ -242,7 +242,7 @@ describe('/auth', () => {
         expect(recoveryResponse).toBeDefined()
         expect(recoveryResponse.status).toBe(HTTP_STATUS.BAD_REQUEST_400)
     })
-    it('18 - /password-recovery - return 204 & send recovery code to email', async () => {
+    it('18 – /password-recovery - return 204 & send recovery code to email', async () => {
         const {firstUser, secondRefreshToken} = expect.getState()
         const recoveryResponse = await request(app)
             .post('/auth/password-recovery')
@@ -254,7 +254,7 @@ describe('/auth', () => {
         expect.setState({recoveryCode: recoveryResponse.body.recoveryCode})
         // console.log({recoveryCode: recoveryResponse.body.recoveryCode})
     })
-    it('19 - /new-password - return 400 with incorrect recoveryCode', async () => {
+    it('19 – /new-password - return 400 with incorrect recoveryCode', async () => {
         const newPasswordResponse = await request(app)
             .post('/auth/new-password')
             .send({
@@ -265,7 +265,7 @@ describe('/auth', () => {
         expect(newPasswordResponse).toBeDefined()
         expect(newPasswordResponse.status).toBe(HTTP_STATUS.BAD_REQUEST_400)
     })
-    it('20 - /new-password - return 204 & update password', async () => {
+    it('20 – /new-password - return 204 & update password', async () => {
         const {recoveryCode} = expect.getState()
         const newPasswordResponse = await request(app)
             .post('/auth/new-password')
@@ -278,7 +278,7 @@ describe('/auth', () => {
         expect(newPasswordResponse.status).toBe(HTTP_STATUS.NO_CONTENT_204)
     })
 
-    it('21 - /password-recovery - return 429', async () => {
+    it('21 – /password-recovery - return 429', async () => {
         const {firstUser} = expect.getState()
         await sleep(10)
 
@@ -320,7 +320,7 @@ describe('/auth', () => {
 
         expect(loginResponse).toBeDefined()
     })
-    it('22 - /new-password - return 429', async () => {
+    it('22 – /new-password - return 429', async () => {
         const {firstUser} = expect.getState()
 
         await request(app)
@@ -363,7 +363,7 @@ describe('/auth', () => {
     })
 
 
-    // it('23 - return 204 & logout', async () => {
+    // it('23 – return 204 & logout', async () => {
     //     const {secondRefreshToken} = expect.getState()
     //     const goodRefreshTokenResponse = await request(app)
     //         .post('/auth/logout')

@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import {TUser, UserAccountDBType} from "../types/types";
+import {UserViewModel, UserAccountDBType} from "../types/types";
 import {usersRepository} from "../repositories/users-repository";
 import {usersService} from "./users-service";
 import {emailManager} from "../managers/email-manager";
@@ -8,7 +8,7 @@ import {randomUUID} from "crypto";
 
 
 export const authService = {
-    async createUser(login: string, password: string, email: string): Promise<TUser | null> {
+    async createUser(login: string, password: string, email: string): Promise<UserViewModel | null> {
         const passwordSalt = await bcrypt.genSalt(10)
         const passwordHash = await usersService._generateHash(password, passwordSalt)
         const newUser: UserAccountDBType = {

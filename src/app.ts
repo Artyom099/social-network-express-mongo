@@ -20,7 +20,7 @@ export const applyAppSettings = (app: Express) => {
 
     app.use('/testing', testsRouter())
     app.use('/videos', videosRouter())
-    app.use('/blogs', blogsRouter())
+    app.use('/blogs', blogsRouter)
     app.use('/posts', postsRouter())
     app.use('/users', usersRouter())
     app.use('/auth', authRouter())

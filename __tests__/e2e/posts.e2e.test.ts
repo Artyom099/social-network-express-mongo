@@ -1,6 +1,7 @@
 import request from "supertest";
-import {app} from "../../src/app";
-import {HTTP_STATUS} from "../../src/utils";
+import {app} from "../../src";
+import {HTTP_STATUS} from "../../src/utils/constants";
+
 
 
 describe('/posts', () => {

@@ -1,20 +1,20 @@
 import {body} from "express-validator";
-import express, {Request, Response} from "express";
+import {Request, Response, Router} from "express";
 import {
     BlogPostDTO, BlogPutDTO,
     IdDTO, PagingDTO, PagingWithSearchDTO,
     ReqParamsBodyType,
     ReqParamsQueryType,
     ReqQueryType,
-    TBlog
+    BlogViewModel
 } from "../types/types";
-import {HTTP_STATUS} from "../types/constants";
-import {blogsService} from "../domain/blogs-service";
+import {HTTP_STATUS} from "../utils/constants";
+import {BlogsService} from "../domain/blogs-service";
 import {postsService} from "../domain/posts-service";
 import {inputValidationMiddleware} from "../middleware/input-validation-middleware";
 import {queryRepository} from "../repositories/query-repository";
 import {authMiddlewareBasic} from "../middleware/auth-middleware"
-import {DEFAULT_SORT_BY, DEFAULT_SORT_DIRECTION} from "../types/constants";
+import {DEFAULT_SORT_BY, DEFAULT_SORT_DIRECTION} from "../utils/constants";
 
 
 const validationBlog = [
@@ -28,10 +28,14 @@ const validationPost = [
     body('content').isString().isLength({min: 3, max: 1000}).trim().notEmpty()
 ]
 
-export const blogsRouter = () => {
-    const router = express.Router()
+export const blogsRouter = Router({})
 
-    router.get('/', async (req: ReqQueryType<PagingWithSearchDTO>, res: Response) => {
+export class BlogsController {
+    private blogsService: BlogsService
+    constructor() {
+        this.blogsService = new BlogsService()
+    }
+    async getBlogs(req: ReqQueryType<PagingWithSearchDTO>, res: Response) {
         const searchNameTerm = req.query.searchNameTerm ?? null
         const pageNumber = req.query.pageNumber ?? 1
         const pageSize = req.query.pageSize ?? 10
@@ -40,16 +44,14 @@ export const blogsRouter = () => {
 
         const foundSortedBlogs = await queryRepository.findBlogsAndSort(searchNameTerm, Number(pageNumber), Number(pageSize), sortBy, sortDirection)
         res.status(HTTP_STATUS.OK_200).json(foundSortedBlogs)
-    })
-
-    router.post('/', validationBlog, authMiddlewareBasic, inputValidationMiddleware, async (req: Request, res: Response) => {
+    }
+    async createBlog(req: Request, res: Response) {
         const {name, description, websiteUrl} = req.body
-        const createdBlog = await blogsService.createBlog(name, description, websiteUrl)
+        const createdBlog = await this.blogsService.createBlog(name, description, websiteUrl)
         res.status(HTTP_STATUS.CREATED_201).json(createdBlog)
-    })
-
-    router.get('/:id/posts', async (req: ReqParamsQueryType<IdDTO, PagingDTO>, res: Response) => {
-        const findBlog = await blogsService.findBlogById(req.params.id)
+    }
+    async getPostCurrentBlog(req: ReqParamsQueryType<IdDTO, PagingDTO>, res: Response) {
+        const findBlog = await this.blogsService.findBlogById(req.params.id)
         if (!findBlog) {
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
         } else {
@@ -60,10 +62,9 @@ export const blogsRouter = () => {
             const postsThisBlog = await queryRepository.findPostsThisBlogById(findBlog.id, Number(pageNumber), Number(pageSize), sortBy, sortDirection)
             res.status(HTTP_STATUS.OK_200).json(postsThisBlog)
         }
-    })
-
-    router.post('/:id/posts', validationPost, authMiddlewareBasic, inputValidationMiddleware, async (req: ReqParamsBodyType<IdDTO, BlogPostDTO>, res: Response) => {
-        const findBlog = await blogsService.findBlogById(req.params.id)
+    }
+    async createPostCurrentBlog(req: ReqParamsBodyType<IdDTO, BlogPostDTO>, res: Response) {
+        const findBlog = await this.blogsService.findBlogById(req.params.id)
         if (!findBlog) {
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
         } else {
@@ -71,37 +72,56 @@ export const blogsRouter = () => {
             const createdPostThisBlog = await postsService.createPost(title, shortDescription, content, findBlog)
             res.status(HTTP_STATUS.CREATED_201).json(createdPostThisBlog)
         }
-    })
-
-    router.get('/:id', async (req: Request, res: Response<TBlog>) => {
-        const findBlog = await blogsService.findBlogById(req.params.id)
+    }
+    async getBlog(req: Request, res: Response<BlogViewModel>) {
+        const findBlog = await this.blogsService.findBlogById(req.params.id)
         if (!findBlog) {    // если не нашли блог по id, то выдаем ошибку и выходим из эндпоинта
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
         }  else {
             res.status(HTTP_STATUS.OK_200).json(findBlog)
         }
-    })
-
-    router.put('/:id', validationBlog, authMiddlewareBasic, inputValidationMiddleware, async (req: ReqParamsBodyType<IdDTO, BlogPutDTO>, res: Response) => {
+    }
+    async updateBlog(req: ReqParamsBodyType<IdDTO, BlogPutDTO>, res: Response) {
         const {name, description, websiteUrl} = req.body
-        const result = await blogsService.updateBlogById(req.params.id, name, description, websiteUrl)
+        const result = await this.blogsService.updateBlogById(req.params.id, name, description, websiteUrl)
         if (!result) {
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
         } else {
-            const updatedBlog = await blogsService.findBlogById(req.params.id)
+            const updatedBlog = await this.blogsService.findBlogById(req.params.id)
             res.status(HTTP_STATUS.NO_CONTENT_204).json(updatedBlog)
         }
-    })
-
-    router.delete('/:id', authMiddlewareBasic, async (req: Request, res: Response) => {
-        const blogForDelete = await blogsService.findBlogById(req.params.id)// если не нашли блог по id, то выдаем ошибку и выходим из эндпоинта
+    }
+    async deleteBlog(req: Request, res: Response) {
+        const blogForDelete = await this.blogsService.findBlogById(req.params.id)
         if (!blogForDelete) {
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
         } else {
-            await blogsService.deleteBlogById(req.params.id)
+            await this.blogsService.deleteBlogById(req.params.id)
             res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
         }
-    })
-
-    return router
+    }
 }
+const blogsControllerInstance = new BlogsController()
+
+
+blogsRouter.get('/', blogsControllerInstance.getBlogs.bind(blogsControllerInstance))
+blogsRouter.post('/',
+    validationBlog,
+    authMiddlewareBasic,
+    inputValidationMiddleware,
+    blogsControllerInstance.createBlog.bind(blogsControllerInstance))
+
+blogsRouter.get('/:id/posts', blogsControllerInstance.getPostCurrentBlog.bind(blogsControllerInstance))
+blogsRouter.post('/:id/posts',
+    validationPost,
+    authMiddlewareBasic,
+    inputValidationMiddleware,
+    blogsControllerInstance.createPostCurrentBlog.bind(blogsControllerInstance))
+
+blogsRouter.get('/:id', blogsControllerInstance.getBlog.bind(blogsControllerInstance))
+blogsRouter.put('/:id',
+    validationBlog,
+    authMiddlewareBasic,
+    inputValidationMiddleware,
+    blogsControllerInstance.updateBlog.bind(blogsControllerInstance))
+blogsRouter.delete('/:id', authMiddlewareBasic, blogsControllerInstance.deleteBlog.bind(blogsControllerInstance))

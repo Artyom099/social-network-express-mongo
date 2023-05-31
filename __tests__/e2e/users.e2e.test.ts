@@ -1,6 +1,6 @@
 import request from "supertest";
-import {app} from "../../src/app";
-import {HTTP_STATUS} from "../../src/types/constants";
+import {HTTP_STATUS} from "../../src/utils/constants";
+import {app} from "../../src";
 
 
 describe('/users', () => {

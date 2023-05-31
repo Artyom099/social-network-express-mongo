@@ -1,9 +1,9 @@
 import {Request} from 'express'
-import {ResultCode} from "./constants";
+import {ResultCode} from "../utils/constants";
 
 
 // ViewModels
-export type TVideo = {
+export type VideoViewModel = {
     id: string
     title: string
     author: string
@@ -13,7 +13,7 @@ export type TVideo = {
     publicationDate: string
     availableResolutions: string[]
 }
-export type TBlog = {
+export type BlogViewModel = {
     id: string
     name: string
     description: string
@@ -21,7 +21,7 @@ export type TBlog = {
     createdAt: string
     isMembership: boolean
 }
-export type TPost = {
+export type PostViewModel = {
     id: string
     title: string
     shortDescription: string
@@ -30,13 +30,13 @@ export type TPost = {
     blogName: string
     createdAt: string
 }
-export type TUser = {
+export type UserViewModel = {
     id: string
     login: string
     email: string
     createdAt: string
 }
-export type TComment = {
+export type CommentViewModel = {
     id: string
     content: string
     commentatorInfo: {
@@ -44,6 +44,11 @@ export type TComment = {
         userLogin: string
     }
     createdAt: string
+    likesInfo: {
+        likesCount: number
+        dislikesCount: number
+        myStatus: 'None' | 'Like' | 'Dislike'
+    }
 }
 export type DeviceViewModel = {
     ip: string
@@ -78,6 +83,11 @@ export type CommentBDType = {
         userLogin: string
     }
     createdAt: string
+    likesInfo: {
+        likesCount: number
+        dislikesCount: number
+        myStatus: 'None' | 'Like' | 'Dislike'
+    }
 }
 export type ExpiredTokenDBType = {
     token: string
