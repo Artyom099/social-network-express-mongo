@@ -1,7 +1,7 @@
 import express, {Request, Response} from "express";
 import {cookieMiddleware} from "../middleware/cookie-middleware";
 import {HTTP_STATUS} from "../utils/constants";
-import {securityService} from "../application/security-service";
+import {securityService} from "../domain/security-service";
 import {ReqParamsType} from "../types/types";
 import {jwtService} from "../application/jwt-service";
 

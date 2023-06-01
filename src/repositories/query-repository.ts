@@ -1,6 +1,7 @@
 import {OutputModel, BlogViewModel, CommentViewModel, PostViewModel, UserAccountDBType} from "../types/types"
-import {BlogModel, commentCollection, postCollection, userCollection} from "../db/db";
+import {commentCollection, postCollection, userCollection} from "../db/db";
 import {Filter} from "mongodb"
+import {BlogModel} from "../shemas/blogs-schemas";
 
 
 export const queryRepository = {

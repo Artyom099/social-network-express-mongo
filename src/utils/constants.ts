@@ -9,6 +9,11 @@ export const HTTP_STATUS = {
     TOO_MANY_REQUESTS_429: 429,
     INTERNAL_SERVER_ERROR: 500
 }
+export enum LikeStatus {
+    Like = 'like',
+    Dislike = 'dislike',
+    None = 'none'
+}
 export enum ResultCode {
     Success = 0,
     NotFound = 1,

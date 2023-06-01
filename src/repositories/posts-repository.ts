@@ -1,10 +1,9 @@
 import {postCollection} from "../db/db";
-import {Result, PostViewModel} from "../types/types";
-import {ResultCode} from "../utils/constants";
+import {PostViewModel} from "../types/types";
 
 
 export const postsRepository = {
-    async createPost(createdPost: PostViewModel): Promise<PostViewModel> {    // post
+    async createPost(createdPost: PostViewModel): Promise<PostViewModel> {
         await postCollection.insertOne(createdPost)
         return {
             id: createdPost.id,
@@ -17,30 +16,19 @@ export const postsRepository = {
         }
     },
 
-    async findPostById(postId: string): Promise<PostViewModel | null> {   // get, put, delete
-        const post = await postCollection.findOne({id: postId}, {projection: {_id: false}})
+    async findPostById(id: string): Promise<PostViewModel | null> {
+        const post = await postCollection.findOne({ id }, {projection: {_id: 0}})
         if (post) return post
         else return null
     },
 
-    async updatePostById(postId: string, title: string, shortDescription: string,
-               content: string): Promise<Result<boolean>> {      // put
-        const updatedResult = await postCollection.updateOne({id: postId},
-        {$set: {title: title, shortDescription: shortDescription, content: content}})
-        if(updatedResult.matchedCount < 1) {
-            return {
-                data: false,
-                code: ResultCode.NotFound
-            }
-        } else {
-            return {
-                data: true,
-                code: ResultCode.Success
-            }
-        }
+    async updatePostById(id: string, title: string, shortDescription: string, content: string): Promise<boolean> {
+        const updatedResult = await postCollection.updateOne({ id },
+            {$set: {title: title, shortDescription: shortDescription, content: content}})
+        return updatedResult.matchedCount === 1
     },
 
-    async deletePostById(postId: string) {    // delete
-        return await postCollection.deleteOne({id: postId})
+    async deletePostById(id: string) {
+        return await postCollection.deleteOne({ id })
     }
 }
