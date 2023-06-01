@@ -30,17 +30,6 @@ export const feedbackRepository = {
     async updateCommentById(id: string, content: string): Promise<boolean> {
         const result = await commentCollection.updateOne({ id }, {$set: {content: content}})
         return result.matchedCount === 1
-        // if(updatedResult.matchedCount < 1) {
-        //     return {
-        //         data: false,
-        //         code: ResultCode.NotFound
-        //     }
-        // } else {
-        //     return {
-        //         data: true,
-        //         code: ResultCode.Success
-        //     }
-        // }
     },
 
     async deleteCommentById(id: string) {
@@ -49,6 +38,7 @@ export const feedbackRepository = {
 
     async updateCommentLikes(id: string, likeStatus: string): Promise<boolean | undefined> {
         const comment = await commentCollection.findOne({ id })
+        console.log(comment)
         if (comment?.likesInfo.myStatus === likeStatus) {
             return true
         }
@@ -58,6 +48,7 @@ export const feedbackRepository = {
                     $set: {'likesInfo.myStatus': likeStatus},
                     $inc: {'likesInfo.likesCount': 1}
                 })
+                console.log(result)
                 return result.matchedCount === 1
             } else {
                 const result = await commentCollection.updateOne({ id }, {

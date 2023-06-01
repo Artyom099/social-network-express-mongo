@@ -53,8 +53,8 @@ describe('/feedback', () => {
         expect(loginResponse.status).toBe(HTTP_STATUS.OK_200)
         expect(loginResponse.body).toEqual({accessToken: expect.any(String)})
         const {accessToken} = loginResponse.body
-
-        const refreshToken = getRefreshTokenByResponse(loginResponse)
+        //todo доработать ф-ю getRefreshTokenByResponse
+        const refreshToken = getRefreshTokenByResponse(loginResponse).split('=')[1]
         expect(refreshToken).toBeDefined()
         expect(refreshToken).toEqual(expect.any(String))
 
@@ -88,14 +88,63 @@ describe('/feedback', () => {
         expect(createPostResponse.status).toEqual(HTTP_STATUS.CREATED_201)
         expect.setState({postId: createPostResponse.body.id})
     });
-    it('5 – /posts/:postId/comments – return 201 & create post', async () => {
-        const {postId, firstRefreshToken} = expect.getState()
-        const createBlogResponse = await request(app)
+    it('5 – /posts/:postId/comments – return 201 & create comment', async () => {
+        const {postId, firstRefreshToken, firstUser} = expect.getState()
+        const createCommentResponse = await request(app)
             .post(`/posts/${postId}/comments`)
-            .set('cookie', firstRefreshToken)
+            .auth(firstRefreshToken, {type: 'bearer'})
             .send({content: 'valid-super-long-content'})
-        expect(createBlogResponse).toBeDefined()
-        expect(createBlogResponse.status).toEqual(HTTP_STATUS.CREATED_201)
+
+        expect(createCommentResponse).toBeDefined()
+        expect(createCommentResponse.status).toEqual(HTTP_STATUS.CREATED_201)
+        expect(createCommentResponse.body).toEqual({
+            id: expect.any(String),
+            content: 'valid-super-long-content',
+            commentatorInfo: {
+                userId: expect.any(String),
+                userLogin: firstUser.login
+            },
+            createdAt: expect.any(String),
+            likesInfo: {
+                likesCount: 0,
+                dislikesCount: 0,
+                myStatus: 'None'
+            }
+        })
+        console.log(createCommentResponse.body.id)
+        expect.setState({commentId: createCommentResponse.body.id})
+    });
+
+    it('6 – /:commentId/likes-status – return 404 – non exist comment', async () => {
+        const {firstRefreshToken} = expect.getState()
+        const setLike = await request(app)
+            .put(`/${123}/likes-status`)
+            .auth(firstRefreshToken, {type: 'bearer'})
+            .send({likeStatus: 'Like'})
+
+        expect(setLike).toBeDefined()
+        expect(setLike.status).toEqual(HTTP_STATUS.NOT_FOUND_404)
+    });
+    it('7 – /:commentId/likes-status – return 204 & set like', async () => {
+        const {commentId, firstRefreshToken} = expect.getState()
+        const setLike = await request(app)
+            .put(`/${commentId}/likes-status`)
+            .auth(firstRefreshToken, {type: 'bearer'})
+            .send({likeStatus: 'Like'})
+
+        console.log(commentId)
+        expect(setLike).toBeDefined()
+        expect(setLike.status).toEqual(HTTP_STATUS.NO_CONTENT_204)
+    });
+    it('8 – /:id – return 200 & found comment', async () => {
+        const {commentId, firstRefreshToken} = expect.getState()
+        const getComment = await request(app)
+            .get(`/${commentId}`)
+            .auth(firstRefreshToken, {type: 'bearer'})
+
+        console.log(commentId)
+        expect(getComment).toBeDefined()
+        expect(getComment.status).toEqual(HTTP_STATUS.OK_200)
     });
 
 })

@@ -19,8 +19,9 @@ const validationPost = [
         const blog = await new BlogsService().findBlogById(value)
         if (!blog) {
             throw new Error('blog not found')
+        } else {
+            return true
         }
-        return true
     })]
 export const validationComment = [
     body('content').isString().isLength({min: 20, max: 300}).trim().not().isEmpty()
