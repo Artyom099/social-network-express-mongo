@@ -4,10 +4,7 @@ import {randomUUID} from "crypto";
 
 
 export class BlogsService {
-    blogsRepository: BlogsRepository
-    constructor() {
-        this.blogsRepository = new BlogsRepository()
-    }
+    constructor(protected blogsRepository: BlogsRepository) {}
     async createBlog(name: string, description: string, websiteUrl: string): Promise<BlogViewModel> {
         const createdBlog: BlogViewModel = {
             id: randomUUID(),
