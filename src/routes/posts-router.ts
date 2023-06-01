@@ -9,6 +9,8 @@ import {queryRepository} from "../repositories/query-repository";
 import {authMiddlewareBasic, authMiddlewareBearer} from "../middleware/auth-middleware";
 import {DEFAULT_SORT_BY, DEFAULT_SORT_DIRECTION} from "../utils/constants";
 import {FeedbackService} from "../domain/feedbacks-service";
+import {FeedbackRepository} from "../repositories/feedback-repository";
+import {BlogsRepository} from "../repositories/blogs-repository";
 
 
 const validationPost = [
@@ -16,7 +18,9 @@ const validationPost = [
     body('shortDescription').isString().isLength({min: 3, max: 100}).trim().notEmpty(),
     body('content').isString().isLength({min: 3, max: 1000}).trim().notEmpty(),
     body('blogId').isString().custom(async (value) => {
-        const blog = await new BlogsService.findBlogById(value)
+        // const blog = await new BlogsService.findBlogById(value)
+        const blog = new BlogsService(value)
+        await blog.findBlogById(value)
         if (!blog) {
             throw new Error('blog not found')
         } else {
@@ -49,7 +53,9 @@ export const postsRouter = () => {
         if (!currentPost) {
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
         } else {
-            const createdComment = await new FeedbackService.createComment(req.params.postId, req.body.content, req.user!.id, req.user!.login)
+            // const createdComment = await new FeedbackService.createComment(req.params.postId, req.body.content, req.user!.id, req.user!.login)
+            const createdComment = new FeedbackService(new FeedbackRepository())
+            await createdComment.createComment(req.params.postId, req.body.content, req.user!.id, req.user!.login)
             res.status(HTTP_STATUS.CREATED_201).json(createdComment)
         }
     })
@@ -66,8 +72,10 @@ export const postsRouter = () => {
 
     router.post('/', validationPost, authMiddlewareBasic, inputValidationMiddleware, async (req: ReqBodyType<PostDTO>, res: Response) => {
         const {title, shortDescription, content, blogId} = req.body
-        const blog = await new BlogsService.findBlogById(blogId)
-        const createdPost = await postsService.createPost(title, shortDescription, content, blog)
+        // const blog = await new BlogsService.findBlogById(blogId)
+        const blog = new BlogsService(new BlogsRepository())
+        const foundBLog = await blog.findBlogById(blogId)
+        const createdPost = await postsService.createPost(title, shortDescription, content, foundBLog)
         res.status(HTTP_STATUS.CREATED_201).json(createdPost)
     })
 

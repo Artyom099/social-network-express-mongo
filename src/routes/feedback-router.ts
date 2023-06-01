@@ -19,11 +19,7 @@ const validationLikes = body('likeStatus').isString().trim().notEmpty().toLowerC
 
 export const feedbackRouter = Router({})
 
-feedbackRouter.put('/:commentId/likes-status',
-    validationLikes,
-    authMiddlewareBearer,
-    inputValidationMiddleware,
-    feedbackController.updateLikeStatus.bind(feedbackController))
+feedbackRouter.get('/:id', feedbackController.getComment.bind(feedbackController))
 
 feedbackRouter.put('/:commentId',
     validationComment,
@@ -35,4 +31,8 @@ feedbackRouter.delete('/:commentId',
     authMiddlewareBearer,
     feedbackController.deleteComment.bind(feedbackController))
 
-feedbackRouter.get('/:id', feedbackController.getComment.bind(feedbackController))
+feedbackRouter.put('/:commentId/likes-status',
+    validationLikes,
+    authMiddlewareBearer,
+    inputValidationMiddleware,
+    feedbackController.updateLikeStatus.bind(feedbackController))
