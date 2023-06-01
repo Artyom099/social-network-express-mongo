@@ -2,13 +2,12 @@ import {commentCollection} from "../db/db";
 import {CommentBDType, CommentViewModel} from "../types/types";
 
 
-export const feedbackRepository = {
+export class FeedbackRepository {
     async findCommentByID(id: string) {
         const comment = await commentCollection.findOne({ id }, {projection: {_id: 0, postId: 0}})
         if (comment) return comment
         else return null
-    },
-
+    }
     async createComment(createdComment: CommentBDType): Promise<CommentViewModel> {
         await commentCollection.insertOne(createdComment)
         return  {
@@ -25,17 +24,14 @@ export const feedbackRepository = {
                 myStatus: 'None'
             }
         }
-    },
-
+    }
     async updateCommentById(id: string, content: string): Promise<boolean> {
         const result = await commentCollection.updateOne({ id }, {$set: {content: content}})
         return result.matchedCount === 1
-    },
-
+    }
     async deleteCommentById(id: string) {
         await commentCollection.deleteOne({ id })
-    },
-
+    }
     async updateCommentLikes(id: string, likeStatus: string): Promise<boolean | undefined> {
         const comment = await commentCollection.findOne({ id })
         console.log(comment)

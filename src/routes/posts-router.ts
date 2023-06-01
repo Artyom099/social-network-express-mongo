@@ -6,9 +6,9 @@ import {postsService} from "../domain/posts-service";
 import {BlogsService} from "../domain/blogs-service";
 import {inputValidationMiddleware} from "../middleware/input-validation-middleware";
 import {queryRepository} from "../repositories/query-repository";
-import {feedbackService} from "../domain/feedbacks-service";
 import {authMiddlewareBasic, authMiddlewareBearer} from "../middleware/auth-middleware";
 import {DEFAULT_SORT_BY, DEFAULT_SORT_DIRECTION} from "../utils/constants";
+import {FeedbackService} from "../domain/feedbacks-service";
 
 
 const validationPost = [
@@ -16,7 +16,7 @@ const validationPost = [
     body('shortDescription').isString().isLength({min: 3, max: 100}).trim().notEmpty(),
     body('content').isString().isLength({min: 3, max: 1000}).trim().notEmpty(),
     body('blogId').isString().custom(async (value) => {
-        const blog = await new BlogsService().findBlogById(value)
+        const blog = await new BlogsService.findBlogById(value)
         if (!blog) {
             throw new Error('blog not found')
         } else {
@@ -49,7 +49,7 @@ export const postsRouter = () => {
         if (!currentPost) {
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
         } else {
-            const createdComment = await feedbackService.createComment(req.params.postId, req.body.content, req.user!.id, req.user!.login)
+            const createdComment = await new FeedbackService.createComment(req.params.postId, req.body.content, req.user!.id, req.user!.login)
             res.status(HTTP_STATUS.CREATED_201).json(createdComment)
         }
     })
@@ -66,7 +66,7 @@ export const postsRouter = () => {
 
     router.post('/', validationPost, authMiddlewareBasic, inputValidationMiddleware, async (req: ReqBodyType<PostDTO>, res: Response) => {
         const {title, shortDescription, content, blogId} = req.body
-        const blog = await new BlogsService().findBlogById(blogId)
+        const blog = await new BlogsService.findBlogById(blogId)
         const createdPost = await postsService.createPost(title, shortDescription, content, blog)
         res.status(HTTP_STATUS.CREATED_201).json(createdPost)
     })
