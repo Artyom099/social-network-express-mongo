@@ -2,10 +2,13 @@ import request from "supertest";
 import {app} from "../../src";
 import {HTTP_STATUS} from "../../src/utils/constants";
 import {getRefreshTokenByResponse} from "../../src/utils/utils";
+import mongoose from "mongoose";
+import {mongoURI2} from "../../src/db/db";
 
 
 describe('/feedback', () => {
     beforeAll(async () => {
+        await mongoose.connect(mongoURI2)
         await request(app).delete ('/testing/all-data')
     })
 
@@ -147,4 +150,8 @@ describe('/feedback', () => {
         expect(getComment.status).toEqual(HTTP_STATUS.OK_200)
     });
 
+
+    afterAll(async () => {
+        await mongoose.connection.close()
+    })
 })

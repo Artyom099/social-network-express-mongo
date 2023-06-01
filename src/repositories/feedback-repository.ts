@@ -1,15 +1,13 @@
-import {commentCollection} from "../db/db";
 import {CommentBDType, CommentViewModel} from "../types/types";
+import {CommentModel} from "../shemas/feedback-schema";
 
 
 export class FeedbackRepository {
     async findCommentByID(id: string) {
-        const comment = await commentCollection.findOne({ id }, {projection: {_id: 0, postId: 0}})
-        if (comment) return comment
-        else return null
+        return CommentModel.findOne({ id },{ _id: 0, __v: 0 })
     }
     async createComment(createdComment: CommentBDType): Promise<CommentViewModel> {
-        await commentCollection.insertOne(createdComment)
+        await CommentModel.insertMany(createdComment)
         return  {
             id: createdComment.id,
             content: createdComment.content,
@@ -26,28 +24,29 @@ export class FeedbackRepository {
         }
     }
     async updateCommentById(id: string, content: string): Promise<boolean> {
-        const result = await commentCollection.updateOne({ id }, {$set: {content: content}})
+        const result = await CommentModel.updateOne({ id }, { content })
         return result.matchedCount === 1
     }
     async deleteCommentById(id: string) {
-        await commentCollection.deleteOne({ id })
+        const result = await CommentModel.deleteOne({ id })
+        return result.deletedCount === 1
     }
     async updateCommentLikes(id: string, likeStatus: string): Promise<boolean | undefined> {
-        const comment = await commentCollection.findOne({ id })
+        const comment = await CommentModel.findOne({ id })
         console.log(comment)
         if (comment?.likesInfo.myStatus === likeStatus) {
             return true
         }
         if (likeStatus === 'Like') {
             if (comment?.likesInfo.myStatus === "None") {
-                const result = await commentCollection.updateOne({ id }, {
+                const result = await CommentModel.updateOne({ id }, {
                     $set: {'likesInfo.myStatus': likeStatus},
                     $inc: {'likesInfo.likesCount': 1}
                 })
                 console.log(result)
                 return result.matchedCount === 1
             } else {
-                const result = await commentCollection.updateOne({ id }, {
+                const result = await CommentModel.updateOne({ id }, {
                     $set: {'likesInfo.myStatus': likeStatus},
                     $inc: {'likesInfo.likesCount': 1, 'likesInfo.dislikesCount': -1}
                 })
@@ -56,13 +55,13 @@ export class FeedbackRepository {
         }
         if (likeStatus === 'Dislike') {
             if (comment?.likesInfo.myStatus === "None") {
-                const result = await commentCollection.updateOne({ id }, {
+                const result = await CommentModel.updateOne({ id }, {
                     $set: {'likesInfo.myStatus': likeStatus},
                     $inc: {'likesInfo.dislikesCount': 1}
                 })
                 return result.matchedCount === 1
             } else {
-                const result = await commentCollection.updateOne({ id }, {
+                const result = await CommentModel.updateOne({ id }, {
                     $set: {'likesInfo.myStatus': likeStatus},
                     $inc: {'likesInfo.likesCount': -1, 'likesInfo.dislikesCount': 1}
                 })
