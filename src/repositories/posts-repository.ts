@@ -17,7 +17,7 @@ export const postsRepository = {
     },
 
     async findPostById(id: string): Promise<PostViewModel | null> {
-        return PostModel.findOne({ id }, {projection: {_id: 0}});
+        return PostModel.findOne({ id }, {_id: 0});
     },
 
     async updatePostById(id: string, title: string, shortDescription: string, content: string): Promise<boolean> {
