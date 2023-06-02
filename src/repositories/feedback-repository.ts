@@ -4,7 +4,7 @@ import {CommentModel} from "../shemas/feedback-schema";
 
 export class FeedbackRepository {
     async findCommentByID(id: string) {
-        return CommentModel.findOne({ id },{ _id: 0, __v: 0 })
+        return CommentModel.findOne({ id },{ _id: 0, __v: 0, postId: 0 })
     }
     async createComment(createdComment: CommentBDType): Promise<CommentViewModel> {
         await CommentModel.insertMany(createdComment)
