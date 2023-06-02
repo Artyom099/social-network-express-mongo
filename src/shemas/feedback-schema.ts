@@ -13,8 +13,8 @@ export const CommentSchema = new mongoose.Schema<WithId<CommentBDType>>({
     },
     createdAt: { type: String, require: true, default: new Date().toISOString},
     likesInfo: {
-        likesCount: { type: Number, require: true },
-        dislikesCount: { type: Number, require: true },
+        likesCount: { type: Number, require: true, min: 0 },
+        dislikesCount: { type: Number, require: true, min: 0 },
         myStatus: { type: String, require: true, default: 'None' }
     }
 })

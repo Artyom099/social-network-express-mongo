@@ -33,38 +33,44 @@ export class FeedbackRepository {
     }
     async updateCommentLikes(id: string, likeStatus: string): Promise<boolean | undefined> {
         const comment = await CommentModel.findOne({ id })
-        console.log(comment)
-        if (comment?.likesInfo.myStatus === likeStatus) {
-            return true
-        }
+        console.log({comment1: comment})
+
+       if (comment && comment.likesInfo.myStatus === likeStatus) {
+           return true
+       }
+
         if (likeStatus === 'Like') {
             if (comment?.likesInfo.myStatus === "None") {
                 const result = await CommentModel.updateOne({ id }, {
-                    $set: {'likesInfo.myStatus': likeStatus},
-                    $inc: {'likesInfo.likesCount': 1}
+                    'likesInfo.myStatus': likeStatus,   //$set: {}
+                    'likesInfo.likesCount': 1           //$inc: {}
                 })
-                console.log(result)
+                console.log({result1: result})
                 return result.matchedCount === 1
             } else {
                 const result = await CommentModel.updateOne({ id }, {
                     $set: {'likesInfo.myStatus': likeStatus},
                     $inc: {'likesInfo.likesCount': 1, 'likesInfo.dislikesCount': -1}
                 })
+                console.log({result2: result})
                 return result.matchedCount === 1
             }
         }
+
         if (likeStatus === 'Dislike') {
             if (comment?.likesInfo.myStatus === "None") {
                 const result = await CommentModel.updateOne({ id }, {
                     $set: {'likesInfo.myStatus': likeStatus},
                     $inc: {'likesInfo.dislikesCount': 1}
                 })
+                console.log({result3: result})
                 return result.matchedCount === 1
             } else {
                 const result = await CommentModel.updateOne({ id }, {
                     $set: {'likesInfo.myStatus': likeStatus},
                     $inc: {'likesInfo.likesCount': -1, 'likesInfo.dislikesCount': 1}
                 })
+                console.log({result4: result})
                 return result.matchedCount === 1
             }
         }

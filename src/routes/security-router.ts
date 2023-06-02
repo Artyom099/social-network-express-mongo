@@ -11,10 +11,8 @@ export const securityRouter = () => {
 
     router.get('/devices', cookieMiddleware, async (req: Request, res: Response) => {
         // Returns all devices with active sessions for current user
-        const refreshToken = req.cookies.refreshToken
-        const tokenPayload = await jwtService.getPayloadByToken(refreshToken)
+        const tokenPayload = await jwtService.getPayloadByToken(req.cookies.refreshToken)
         const activeSessions = await securityService.finaAllActiveSessionsByUserId(tokenPayload.userId)
-
         res.status(HTTP_STATUS.OK_200).json(activeSessions)
     })
 
@@ -27,11 +25,10 @@ export const securityRouter = () => {
 
     router.delete('/devices/:deviceId', cookieMiddleware, async (req: ReqParamsType<{ deviceId: string }>, res: Response) => {
         // Terminate specified device session
-        const tokenPayload = await jwtService.getPayloadByToken(req.cookies.refreshToken)
-
         const currentSession = await securityService.findActiveSessionByDeviceId(req.params.deviceId)
         if (!currentSession) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
 
+        const tokenPayload = await jwtService.getPayloadByToken(req.cookies.refreshToken)
         const activeSessions = await securityService.finaAllActiveSessionsByUserId(tokenPayload.userId)
         if (!activeSessions.find(session => session.deviceId === currentSession.deviceId)) {
             res.sendStatus(HTTP_STATUS.FORBIDDEN_403)
