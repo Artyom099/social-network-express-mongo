@@ -24,7 +24,7 @@ export const applyAppSettings = (app: Express) => {
     app.use('/posts', postsRouter())
     app.use('/users', usersRouter())
     app.use('/auth', authRouter())
-    app.use('/comments', feedbackRouter())
+    app.use('/comments', feedbackRouter)
     app.use('/email', emailRouter())
     app.use('/security', securityRouter())
 }

@@ -31,6 +31,7 @@ export class BlogsController {
         const createdBlog = await this.blogsService.createBlog(name, description, websiteUrl)
         res.status(HTTP_STATUS.CREATED_201).json(createdBlog)
     }
+
     async getPostCurrentBlog(req: ReqParamsQueryType<IdDTO, PagingDTO>, res: Response) {
         const findBlog = await this.blogsService.findBlogById(req.params.id)
         if (!findBlog) {
@@ -54,6 +55,7 @@ export class BlogsController {
             res.status(HTTP_STATUS.CREATED_201).json(createdPostThisBlog)
         }
     }
+
     async getBlog(req: Request, res: Response<BlogViewModel>) {
         const findBlog = await this.blogsService.findBlogById(req.params.id)
         if (!findBlog) {    // если не нашли блог по id, то выдаем ошибку и выходим из эндпоинта

@@ -6,9 +6,11 @@ import {postsService} from "../domain/posts-service";
 import {BlogsService} from "../domain/blogs-service";
 import {inputValidationMiddleware} from "../middleware/input-validation-middleware";
 import {queryRepository} from "../repositories/query-repository";
-import {feedbackService} from "../domain/feedbacks-service";
 import {authMiddlewareBasic, authMiddlewareBearer} from "../middleware/auth-middleware";
 import {DEFAULT_SORT_BY, DEFAULT_SORT_DIRECTION} from "../utils/constants";
+import {FeedbackService} from "../domain/feedbacks-service";
+import {FeedbackRepository} from "../repositories/feedback-repository";
+import {BlogsRepository} from "../repositories/blogs-repository";
 
 
 const validationPost = [
@@ -16,7 +18,9 @@ const validationPost = [
     body('shortDescription').isString().isLength({min: 3, max: 100}).trim().notEmpty(),
     body('content').isString().isLength({min: 3, max: 1000}).trim().notEmpty(),
     body('blogId').isString().custom(async (value) => {
-        const blog = await new BlogsService().findBlogById(value)
+        // const blog = await new BlogsService.findBlogById(value)
+        const blog = new BlogsService(new BlogsRepository)
+        await blog.findBlogById(value)
         if (!blog) {
             throw new Error('blog not found')
         } else {
@@ -49,7 +53,9 @@ export const postsRouter = () => {
         if (!currentPost) {
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
         } else {
-            const createdComment = await feedbackService.createComment(req.params.postId, req.body.content, req.user!.id, req.user!.login)
+            // const createdComment = await new FeedbackService.createComment(req.params.postId, req.body.content, req.user!.id, req.user!.login)
+            const comment = new FeedbackService(new FeedbackRepository)
+            const createdComment = await comment.createComment(req.params.postId, req.body.content, req.user!.id, req.user!.login)
             res.status(HTTP_STATUS.CREATED_201).json(createdComment)
         }
     })
@@ -59,22 +65,28 @@ export const postsRouter = () => {
         const pageSize = req.query.pageSize ?? 10
         const sortBy = req.query.sortBy ?? DEFAULT_SORT_BY
         const sortDirection = req.query.sortDirection ?? DEFAULT_SORT_DIRECTION
-
         const foundSortedPosts = await queryRepository.findPostsAndSort(Number(pageNumber), Number(pageSize), sortBy, sortDirection)
         res.status(HTTP_STATUS.OK_200).json(foundSortedPosts)
     })
 
     router.post('/', validationPost, authMiddlewareBasic, inputValidationMiddleware, async (req: ReqBodyType<PostDTO>, res: Response) => {
         const {title, shortDescription, content, blogId} = req.body
-        const blog = await new BlogsService().findBlogById(blogId)
-        const createdPost = await postsService.createPost(title, shortDescription, content, blog)
+        // const blog = await new BlogsService.findBlogById(blogId)
+        const blog = new BlogsService(new BlogsRepository)
+        // console.log({blog: blog})
+        const foundBLog = await blog.findBlogById(blogId)
+        // console.log({foundBLog: foundBLog})
+        const createdPost = await postsService.createPost(title, shortDescription, content, foundBLog)
         res.status(HTTP_STATUS.CREATED_201).json(createdPost)
     })
 
     router.get('/:id', async (req: Request, res: Response<PostViewModel>) => {
         const foundPost = await postsService.findPostById(req.params.id)
-        if (!foundPost) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
-        res.status(HTTP_STATUS.OK_200).json(foundPost)
+        if (!foundPost) {
+            res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
+        } else {
+            res.status(HTTP_STATUS.OK_200).json(foundPost)
+        }
     })
 
     router.put('/:id', validationPost, authMiddlewareBasic, inputValidationMiddleware, async (req: Request, res: Response) => {

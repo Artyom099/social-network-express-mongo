@@ -1,10 +1,10 @@
-import {postCollection} from "../db/db";
 import {PostViewModel} from "../types/types";
+import {PostModel} from "../shemas/posts-schema";
 
 
 export const postsRepository = {
     async createPost(createdPost: PostViewModel): Promise<PostViewModel> {
-        await postCollection.insertOne(createdPost)
+        await PostModel.insertMany(createdPost)
         return {
             id: createdPost.id,
             title: createdPost.title,
@@ -17,18 +17,16 @@ export const postsRepository = {
     },
 
     async findPostById(id: string): Promise<PostViewModel | null> {
-        const post = await postCollection.findOne({ id }, {projection: {_id: 0}})
-        if (post) return post
-        else return null
+        return PostModel.findOne({ id }, {projection: {_id: 0}});
     },
 
     async updatePostById(id: string, title: string, shortDescription: string, content: string): Promise<boolean> {
-        const updatedResult = await postCollection.updateOne({ id },
-            {$set: {title: title, shortDescription: shortDescription, content: content}})
-        return updatedResult.matchedCount === 1
+        const result = await PostModel.updateOne({ id }, { title, shortDescription, content })
+        return result.matchedCount === 1
     },
 
     async deletePostById(id: string) {
-        return await postCollection.deleteOne({ id })
+        const result = await PostModel.deleteOne({ id })
+        return result.deletedCount === 1
     }
 }

@@ -2,10 +2,13 @@ import request from "supertest";
 import {app} from "../../src";
 import {HTTP_STATUS} from "../../src/utils/constants";
 import {getRefreshTokenByResponse} from "../../src/utils/utils";
+import mongoose from "mongoose";
+import {mongoURI2} from "../../src/db/db";
 
 
 describe('/feedback', () => {
     beforeAll(async () => {
+        await mongoose.connect(mongoURI2)
         await request(app).delete ('/testing/all-data')
     })
 
@@ -57,6 +60,7 @@ describe('/feedback', () => {
         const refreshToken = getRefreshTokenByResponse(loginResponse).split('=')[1]
         expect(refreshToken).toBeDefined()
         expect(refreshToken).toEqual(expect.any(String))
+        console.log(getRefreshTokenByResponse(loginResponse))
 
         expect.setState({accessToken, firstRefreshToken: refreshToken})
     })
@@ -111,40 +115,44 @@ describe('/feedback', () => {
                 myStatus: 'None'
             }
         })
-        console.log(createCommentResponse.body.id)
+        // console.log({commentId: createCommentResponse.body.id})
         expect.setState({commentId: createCommentResponse.body.id})
     });
 
-    it('6 – /:commentId/likes-status – return 404 – non exist comment', async () => {
+    it('6 – /comments/:commentId/likes-status – return 404 – non exist comment', async () => {
         const {firstRefreshToken} = expect.getState()
         const setLike = await request(app)
-            .put(`/${123}/likes-status`)
-            .auth(firstRefreshToken, {type: 'bearer'})
+            .put(`/comments/${123}/likes-status`)
+            .set('cookie', `refreshToken=${firstRefreshToken}`)
             .send({likeStatus: 'Like'})
 
         expect(setLike).toBeDefined()
         expect(setLike.status).toEqual(HTTP_STATUS.NOT_FOUND_404)
     });
-    it('7 – /:commentId/likes-status – return 204 & set like', async () => {
-        const {commentId, firstRefreshToken} = expect.getState()
-        const setLike = await request(app)
-            .put(`/${commentId}/likes-status`)
-            .auth(firstRefreshToken, {type: 'bearer'})
-            .send({likeStatus: 'Like'})
-
-        console.log(commentId)
-        expect(setLike).toBeDefined()
-        expect(setLike.status).toEqual(HTTP_STATUS.NO_CONTENT_204)
-    });
-    it('8 – /:id – return 200 & found comment', async () => {
-        const {commentId, firstRefreshToken} = expect.getState()
+    it('7 – /comments/:id – return 200 & found comment', async () => {
+        const {commentId} = expect.getState()
         const getComment = await request(app)
-            .get(`/${commentId}`)
-            .auth(firstRefreshToken, {type: 'bearer'})
+            .get(`/comments/${commentId}`)
 
-        console.log(commentId)
+        // console.log({commentId: commentId})
         expect(getComment).toBeDefined()
         expect(getComment.status).toEqual(HTTP_STATUS.OK_200)
     });
 
+    it('8 – /comments/:commentId/likes-status – return 204 & set like', async () => {
+        const {commentId, firstRefreshToken} = expect.getState()
+        const setLike = await request(app)
+            .put(`/comments/${commentId}/likes-status`)
+            .set('cookie', `refreshToken=${firstRefreshToken}`)
+            .send({likeStatus: 'Like'})
+
+        console.log({commentIdT: commentId})
+        expect(setLike).toBeDefined()
+        expect(setLike.status).toEqual(HTTP_STATUS.NO_CONTENT_204)
+    });
+
+
+    afterAll(async () => {
+        await mongoose.connection.close()
+    })
 })

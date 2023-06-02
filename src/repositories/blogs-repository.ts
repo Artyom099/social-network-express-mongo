@@ -1,5 +1,5 @@
 import {BlogViewModel} from "../types/types";
-import {BlogModel} from "../shemas/blogs-schemas";
+import {BlogModel} from "../shemas/blogs-schema";
 
 
 export class BlogsRepository {
@@ -18,11 +18,11 @@ export class BlogsRepository {
         return BlogModel.findOne({ id },{ _id: 0, __v: 0 })
     }
     async updateBlogById(id: string, name: string, description: string, websiteUrl: string): Promise<boolean> {
-        const res = await BlogModel.updateOne({ id },  { name, description, websiteUrl })
-        return res.matchedCount === 1
+        const result = await BlogModel.updateOne({ id },  { name, description, websiteUrl })
+        return result.matchedCount === 1
     }
     async deleteBlogById(id: string): Promise<boolean> {
-        const res = await BlogModel.deleteOne({ id })
-        return res.deletedCount === 1
+        const result = await BlogModel.deleteOne({ id })
+        return result.deletedCount === 1
     }
 }

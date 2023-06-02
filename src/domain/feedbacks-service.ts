@@ -1,14 +1,14 @@
 import {CommentBDType, CommentViewModel} from "../types/types";
-import {feedbackRepository} from "../repositories/feedback-repository";
+import {FeedbackRepository} from "../repositories/feedback-repository";
 import {randomUUID} from "crypto";
 
 
-export const feedbackService = {
+export class FeedbackService {
+    constructor(protected feedbackRepository: FeedbackRepository) {}
     async findCommentById(commentId: string): Promise<CommentViewModel | null> {
-        return await feedbackRepository.findCommentByID(commentId)
-    },
-
-    async createComment(postId: string, content: string, userId: string, userLogin: string) {
+        return await this.feedbackRepository.findCommentByID(commentId)
+    }
+    async createComment(postId: string, content: string, userId: string, userLogin: string): Promise<CommentViewModel> {
         const createdComment: CommentBDType = {
             id: randomUUID().toString(),
             postId,
@@ -24,18 +24,15 @@ export const feedbackService = {
                 myStatus: 'None'
             }
         }
-        return await feedbackRepository.createComment(createdComment)
-    },
-
+        return await this.feedbackRepository.createComment(createdComment)
+    }
     async updateCommentById(commentId: string, content: string): Promise<boolean> {
-        return await feedbackRepository.updateCommentById(commentId, content)
-    },
-
+        return await this.feedbackRepository.updateCommentById(commentId, content)
+    }
     async deleteCommentById(commentId: string) {
-        await feedbackRepository.deleteCommentById(commentId)
-    },
-
+        await this.feedbackRepository.deleteCommentById(commentId)
+    }
     async updateCommentLikes(commentId: string, likeStatus: string): Promise<boolean | undefined> {
-        return await feedbackRepository.updateCommentLikes(commentId, likeStatus)
+        return await this.feedbackRepository.updateCommentLikes(commentId, likeStatus)
     }
 }
