@@ -1,7 +1,7 @@
 import request from "supertest";
 import {app} from "../../src";
 import {HTTP_STATUS} from "../../src/utils/constants";
-import {getRefreshTokenByResponse} from "../../src/utils/utils";
+import {getRefreshTokenByResponseWithTokenName} from "../../src/utils/utils";
 
 const sleep = (seconds: number) => new Promise((r) => setTimeout(r, seconds * 1000))
 
@@ -57,7 +57,7 @@ describe('/security', () => {
         const {accessToken} = loginResponse.body
         expect(loginResponse.body).toEqual({accessToken: expect.any(String)})
 
-        const refreshToken = getRefreshTokenByResponse(loginResponse)
+        const refreshToken = getRefreshTokenByResponseWithTokenName(loginResponse)
         expect(refreshToken).toBeDefined()
         expect(refreshToken).toEqual(expect.any(String))
 
@@ -80,7 +80,7 @@ describe('/security', () => {
         expect(loginResponse.body).toEqual({accessToken: expect.any(String)})
         const {accessToken} = loginResponse.body
 
-        const refreshToken = getRefreshTokenByResponse(loginResponse)
+        const refreshToken = getRefreshTokenByResponseWithTokenName(loginResponse)
         expect(refreshToken).toBeDefined()
         expect(refreshToken).toEqual(expect.any(String))
 
@@ -103,7 +103,7 @@ describe('/security', () => {
         expect(loginResponse.body).toEqual({accessToken: expect.any(String)})
         const {accessToken} = loginResponse.body
 
-        const refreshToken = getRefreshTokenByResponse(loginResponse)
+        const refreshToken = getRefreshTokenByResponseWithTokenName(loginResponse)
         expect(refreshToken).toBeDefined()
         expect(refreshToken).toEqual(expect.any(String))
 
@@ -126,7 +126,7 @@ describe('/security', () => {
         expect(loginResponse.body).toEqual({accessToken: expect.any(String)})
         const {accessToken} = loginResponse.body
 
-        const refreshToken = getRefreshTokenByResponse(loginResponse)
+        const refreshToken = getRefreshTokenByResponseWithTokenName(loginResponse)
         expect(refreshToken).toBeDefined()
         expect(refreshToken).toEqual(expect.any(String))
 
@@ -201,7 +201,7 @@ describe('/security', () => {
                 loginOrEmail: createResponse.body.login,
                 password: password
             })
-        const firstRefreshTokenSecondUser = getRefreshTokenByResponse(loginResponse)
+        const firstRefreshTokenSecondUser = getRefreshTokenByResponseWithTokenName(loginResponse)
 
         // try to delete 1st user's devise by 2nd user
         const {firstDeviceIdFirstUser} = expect.getState()
@@ -225,7 +225,7 @@ describe('/security', () => {
         expect(goodRefreshTokenResponse.status).toBe(HTTP_STATUS.OK_200)
         expect(goodRefreshTokenResponse.body).toEqual({accessToken: expect.any(String)})
 
-        const newFirstRefreshToken = getRefreshTokenByResponse(goodRefreshTokenResponse)
+        const newFirstRefreshToken = getRefreshTokenByResponseWithTokenName(goodRefreshTokenResponse)
         expect(newFirstRefreshToken).toBeDefined()
         expect(newFirstRefreshToken).toEqual(expect.any(String))
         expect(newFirstRefreshToken).not.toBe(firstRefreshToken)

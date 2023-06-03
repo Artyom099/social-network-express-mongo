@@ -4,7 +4,7 @@ import {CommentModel} from "../shemas/feedback-schema";
 
 export class FeedbackRepository {
     async findCommentByID(id: string) {
-        return CommentModel.findOne({ id },{ _id: 0, __v: 0, postId: 0 })
+        return CommentModel.findOne({ id }, { _id: 0, __v: 0, postId: 0 })
     }
     async createComment(createdComment: CommentBDType): Promise<CommentViewModel> {
         await CommentModel.insertMany(createdComment)
@@ -49,8 +49,8 @@ export class FeedbackRepository {
                 return result.matchedCount === 1
             } else {
                 const result = await CommentModel.updateOne({ id }, {
-                    $set: {'likesInfo.myStatus': likeStatus},
-                    $inc: {'likesInfo.likesCount': 1, 'likesInfo.dislikesCount': -1}
+                    'likesInfo.myStatus': likeStatus,
+                    'likesInfo.likesCount': 1, 'likesInfo.dislikesCount': -1
                 })
                 console.log({result2: result})
                 return result.matchedCount === 1
@@ -60,15 +60,15 @@ export class FeedbackRepository {
         if (likeStatus === 'Dislike') {
             if (comment?.likesInfo.myStatus === "None") {
                 const result = await CommentModel.updateOne({ id }, {
-                    $set: {'likesInfo.myStatus': likeStatus},
-                    $inc: {'likesInfo.dislikesCount': 1}
+                    'likesInfo.myStatus': likeStatus,
+                    'likesInfo.dislikesCount': 1
                 })
                 console.log({result3: result})
                 return result.matchedCount === 1
             } else {
                 const result = await CommentModel.updateOne({ id }, {
-                    $set: {'likesInfo.myStatus': likeStatus},
-                    $inc: {'likesInfo.likesCount': -1, 'likesInfo.dislikesCount': 1}
+                    'likesInfo.myStatus': likeStatus,
+                    'likesInfo.likesCount': -1, 'likesInfo.dislikesCount': 1
                 })
                 console.log({result4: result})
                 return result.matchedCount === 1

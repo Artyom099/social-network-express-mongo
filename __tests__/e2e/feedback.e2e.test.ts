@@ -1,7 +1,7 @@
 import request from "supertest";
 import {app} from "../../src";
 import {HTTP_STATUS} from "../../src/utils/constants";
-import {getRefreshTokenByResponse} from "../../src/utils/utils";
+import {getRefreshTokenByResponse, getRefreshTokenByResponseWithTokenName} from "../../src/utils/utils";
 import mongoose from "mongoose";
 import {mongoURI2} from "../../src/db/db";
 
@@ -43,7 +43,7 @@ describe('/feedback', () => {
 
         expect.setState({firstUser: firstUser, firstCreateResponse: firstCreateResponse})
     })
-    it('2 – /auth/login – return 200 and login', async () => {
+    it('2 – /auth/login – return 200, login and refreshToken', async () => {
         const {firstUser} = expect.getState()
         const loginResponse = await request(app)
             .post('/auth/login')
@@ -56,13 +56,13 @@ describe('/feedback', () => {
         expect(loginResponse.status).toBe(HTTP_STATUS.OK_200)
         expect(loginResponse.body).toEqual({accessToken: expect.any(String)})
         const {accessToken} = loginResponse.body
-        //todo доработать ф-ю getRefreshTokenByResponse
-        const refreshToken = getRefreshTokenByResponse(loginResponse).split('=')[1]
+
+        const refreshToken = getRefreshTokenByResponse(loginResponse)
+        const refreshTokenWithName = getRefreshTokenByResponseWithTokenName(loginResponse)
         expect(refreshToken).toBeDefined()
         expect(refreshToken).toEqual(expect.any(String))
-        console.log(getRefreshTokenByResponse(loginResponse))
 
-        expect.setState({accessToken, firstRefreshToken: refreshToken})
+        expect.setState({accessToken, firstRefreshToken: refreshToken, firstRefreshTokenWithName: refreshTokenWithName})
     })
     it('3 – /blogs – return 201 & create blog', async () => {
         const createBlogResponse = await request(app)
@@ -120,10 +120,10 @@ describe('/feedback', () => {
     });
 
     it('6 – /comments/:commentId/likes-status – return 404 – non exist comment', async () => {
-        const {firstRefreshToken} = expect.getState()
+        const {firstRefreshTokenWithName} = expect.getState()
         const setLike = await request(app)
             .put(`/comments/${123}/likes-status`)
-            .set('cookie', `refreshToken=${firstRefreshToken}`)
+            .set('cookie', firstRefreshTokenWithName)
             .send({likeStatus: 'Like'})
 
         expect(setLike).toBeDefined()
@@ -140,10 +140,10 @@ describe('/feedback', () => {
     });
 
     it('8 – /comments/:commentId/likes-status – return 204 & set like', async () => {
-        const {commentId, firstRefreshToken} = expect.getState()
+        const {commentId, firstRefreshTokenWithName} = expect.getState()
         const setLike = await request(app)
             .put(`/comments/${commentId}/likes-status`)
-            .set('cookie', `refreshToken=${firstRefreshToken}`)
+            .set('cookie', firstRefreshTokenWithName)
             .send({likeStatus: 'Like'})
 
         console.log({commentIdT: commentId})
