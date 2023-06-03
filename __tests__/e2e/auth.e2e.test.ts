@@ -1,7 +1,7 @@
 import request from "supertest";
 import {HTTP_STATUS} from "../../src/utils/constants";
 import {app} from "../../src";
-import {getRefreshTokenByResponse} from "../../src/utils/utils";
+import {getRefreshTokenByResponseWithTokenName} from "../../src/utils/utils";
 
 const sleep = (seconds: number) => new Promise((r) => setTimeout(r, seconds * 1000))
 
@@ -60,7 +60,7 @@ describe('/auth', () => {
         const {firstUser, firstCreateResponse} = expect.getState()
         //чтобы .split не ругался на возможный undefined
         if (!firstCreateResponse.headers.authorization) return new Error()
-        const accessToken = getRefreshTokenByResponse(firstCreateResponse)
+        const accessToken = getRefreshTokenByResponseWithTokenName(firstCreateResponse)
         await request(app)
             .get('/auth/me')
             .auth('accessToken', {type: 'bearer'})
@@ -181,7 +181,7 @@ describe('/auth', () => {
         expect(loginResponse.body).toEqual({accessToken: expect.any(String)})
         const {accessToken} = loginResponse.body
 
-        const refreshToken = getRefreshTokenByResponse(loginResponse)
+        const refreshToken = getRefreshTokenByResponseWithTokenName(loginResponse)
         expect(refreshToken).toBeDefined()
         expect(refreshToken).toEqual(expect.any(String))
 
@@ -203,7 +203,7 @@ describe('/auth', () => {
         const newAccessToken = goodRefreshTokenResponse.body.accessToken
         expect(newAccessToken).not.toBe(accessToken)
 
-        const newRefreshToken = getRefreshTokenByResponse(goodRefreshTokenResponse)
+        const newRefreshToken = getRefreshTokenByResponseWithTokenName(goodRefreshTokenResponse)
         expect(newRefreshToken).toBeDefined()
         expect(newRefreshToken).toEqual(expect.any(String))
         expect(newRefreshToken).not.toBe(firstRefreshToken)
