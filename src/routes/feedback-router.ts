@@ -23,19 +23,16 @@ feedbackRouter.get('/:id', feedbackController.getComment.bind(feedbackController
 
 feedbackRouter.put('/:commentId',
     validationComment,
-    // cookieMiddleware,
     authMiddlewareBearer,
     inputValidationMiddleware,
     feedbackController.updateComment.bind(feedbackController))
 
 feedbackRouter.delete('/:commentId',
-    // cookieMiddleware,
     authMiddlewareBearer,
     feedbackController.deleteComment.bind(feedbackController))
 
 feedbackRouter.put('/:commentId/likes-status',
-    // cookieMiddleware,
-    validationLikes,
     authMiddlewareBearer,
+    validationLikes,
     inputValidationMiddleware,
     feedbackController.updateLikeStatus.bind(feedbackController))
