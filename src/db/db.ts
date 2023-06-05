@@ -1,9 +1,7 @@
 import {
-    CommentBDType, DeviceDBType,
+    DeviceDBType,
     ExpiredTokenDBType,
     IPDBType,
-    BlogViewModel,
-    PostViewModel,
     VideoViewModel,
     UserAccountDBType
 } from "../types/types"
@@ -22,10 +20,10 @@ export const mongoURI2 = process.env.MONGO_URL || `mongodb://0.0.0.0:27017/${dbN
 
 const database = client.db();
 export const videoCollection = database.collection<VideoViewModel>('videos')
-export const blogCollection = database.collection<BlogViewModel>('blogs')
-export const postCollection = database.collection<PostViewModel>('posts')
+// export const blogCollection = database.collection<BlogViewModel>('blogs')
+// export const postCollection = database.collection<PostViewModel>('posts')
 export const userCollection = database.collection<UserAccountDBType>('users')
-export const commentCollection = database.collection<CommentBDType>('comments')
+// export const commentCollection = database.collection<CommentBDType>('comments')
 export const expiredTokenCollection = database.collection<ExpiredTokenDBType>('expiredTokens')
 export const apiRequestCollection = database.collection<IPDBType>('ip')
 export const devicesCollection = database.collection<DeviceDBType>('devices')
