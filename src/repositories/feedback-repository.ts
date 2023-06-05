@@ -33,6 +33,8 @@ export class FeedbackRepository {
         return result.deletedCount === 1
     }
     async updateCommentLikes(id: string, likeStatus: LikeStatus): Promise<boolean> {
+        console.log('id', id);
+        console.log("likeSttaus", likeStatus)
         const comment = await CommentModel.findOne({ id })
         console.log({comment_1: comment})
 

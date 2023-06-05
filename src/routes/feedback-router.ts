@@ -31,7 +31,7 @@ feedbackRouter.delete('/:commentId',
     authMiddlewareBearer,
     feedbackController.deleteComment.bind(feedbackController))
 
-feedbackRouter.put('/:commentId/likes-status',
+feedbackRouter.put('/:commentId/like-status',
     authMiddlewareBearer,
     validationLikes,
     inputValidationMiddleware,
