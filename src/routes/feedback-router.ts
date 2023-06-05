@@ -6,7 +6,7 @@ import {inputValidationMiddleware} from "../middleware/input-validation-middlewa
 import {body} from "express-validator";
 import {feedbackController} from "../composition-root";
 
-const validationLikes = body('likeStatus').isString().trim().notEmpty().toLowerCase()
+const validationLikes = body('likeStatus').isString().trim().notEmpty()
     .custom(async (value) => {
         const correctStatuses = Object.values(LikeStatus)
         if (!correctStatuses.includes(value)) {
