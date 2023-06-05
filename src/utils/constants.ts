@@ -10,9 +10,9 @@ export const HTTP_STATUS = {
     INTERNAL_SERVER_ERROR: 500
 }
 export enum LikeStatus {
-    Like = 'like',
-    Dislike = 'dislike',
-    None = 'none'
+    Like = 'Like',
+    Dislike = 'Dislike',
+    None = 'None'
 }
 export enum ResultCode {
     Success = 0,
