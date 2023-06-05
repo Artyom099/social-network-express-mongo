@@ -1,6 +1,6 @@
 import request from "supertest";
 import {app} from "../../src";
-import {HTTP_STATUS} from "../../src/utils/constants";
+import {HTTP_STATUS, LikeStatus} from "../../src/utils/constants";
 import {getRefreshTokenByResponse, getRefreshTokenByResponseWithTokenName} from "../../src/utils/utils";
 import mongoose from "mongoose";
 import {mongoURI2} from "../../src/db/db";
@@ -112,19 +112,19 @@ describe('/feedback', () => {
             likesInfo: {
                 likesCount: 0,
                 dislikesCount: 0,
-                myStatus: 'None'
+                myStatus: LikeStatus.None
             }
         })
-        // console.log({commentId: createCommentResponse.body.id})
+        console.log({commentId6: createCommentResponse.body.id})
         expect.setState({commentId: createCommentResponse.body.id})
     });
 
     it('6 – /comments/:commentId/likes-status – return 404 – non exist comment', async () => {
-        const {firstRefreshTokenWithName} = expect.getState()
+        const {accessToken} = expect.getState()
         const setLike = await request(app)
             .put(`/comments/${123}/likes-status`)
-            .set('cookie', firstRefreshTokenWithName)
-            .send({likeStatus: 'Like'})
+            .auth(accessToken, {type: 'bearer'})
+            .send({likeStatus: LikeStatus.Like})
 
         expect(setLike).toBeDefined()
         expect(setLike.status).toEqual(HTTP_STATUS.NOT_FOUND_404)
@@ -134,19 +134,19 @@ describe('/feedback', () => {
         const getComment = await request(app)
             .get(`/comments/${commentId}`)
 
-        // console.log({commentId: commentId})
+        // console.log({commentId_7: commentId})
         expect(getComment).toBeDefined()
         expect(getComment.status).toEqual(HTTP_STATUS.OK_200)
     });
 
     it('8 – /comments/:commentId/likes-status – return 204 & set like', async () => {
-        const {commentId, firstRefreshTokenWithName} = expect.getState()
+        const {commentId, accessToken} = expect.getState()
         const setLike = await request(app)
             .put(`/comments/${commentId}/likes-status`)
-            .set('cookie', firstRefreshTokenWithName)
-            .send({likeStatus: 'Like'})
+            .auth(accessToken, {type: 'bearer'})
+            .send({likeStatus: LikeStatus.Like})
 
-        console.log({commentIdT: commentId})
+        console.log({commentId_8: commentId})
         expect(setLike).toBeDefined()
         expect(setLike.status).toEqual(HTTP_STATUS.NO_CONTENT_204)
     });

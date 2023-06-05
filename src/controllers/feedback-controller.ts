@@ -1,7 +1,7 @@
 import {FeedbackService} from "../domain/feedbacks-service";
 import {IdDTO, ReqParamsBodyType, ReqParamsType} from "../types/types";
 import {Response} from "express";
-import {HTTP_STATUS} from "../utils/constants";
+import {HTTP_STATUS, LikeStatus} from "../utils/constants";
 
 
 export class FeedbackController {
@@ -41,8 +41,9 @@ export class FeedbackController {
             res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
         }
     }
-    async updateLikeStatus(req: ReqParamsBodyType<{commentId: string}, {likeStatus: string}>, res: Response) {
+    async updateLikeStatus(req: ReqParamsBodyType<{commentId: string}, {likeStatus: LikeStatus}>, res: Response) {
         const likedComment = await this.feedbackService.updateCommentLikes(req.params.commentId, req.body.likeStatus)
+
         if (!likedComment) {
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
         } else {
