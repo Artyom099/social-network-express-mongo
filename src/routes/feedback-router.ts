@@ -5,7 +5,6 @@ import {validationComment} from "./posts-router";
 import {inputValidationMiddleware} from "../middleware/input-validation-middleware";
 import {body} from "express-validator";
 import {feedbackController} from "../composition-root";
-import {cookieMiddleware} from "../middleware/cookie-middleware";
 
 const validationLikes = body('likeStatus').isString().trim().notEmpty().toLowerCase()
     .custom(async (value) => {
@@ -35,8 +34,8 @@ feedbackRouter.delete('/:commentId',
     feedbackController.deleteComment.bind(feedbackController))
 
 feedbackRouter.put('/:commentId/likes-status',
-    cookieMiddleware,
+    // cookieMiddleware,
     validationLikes,
-    // authMiddlewareBearer,
+    authMiddlewareBearer,
     inputValidationMiddleware,
     feedbackController.updateLikeStatus.bind(feedbackController))

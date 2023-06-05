@@ -1,5 +1,5 @@
 import {Request} from 'express'
-import {ResultCode} from "../utils/constants";
+import {LikeStatus, ResultCode} from "../utils/constants";
 
 
 // ViewModels
@@ -47,7 +47,7 @@ export type CommentViewModel = {
     likesInfo: {
         likesCount: number
         dislikesCount: number
-        myStatus: 'None' | 'Like' | 'Dislike'
+        myStatus: LikeStatus
     }
 }
 export type DeviceViewModel = {
@@ -86,7 +86,7 @@ export type CommentBDType = {
     likesInfo: {
         likesCount: number
         dislikesCount: number
-        myStatus: 'None' | 'Like' | 'Dislike'
+        myStatus: LikeStatus
     }
 }
 export type ExpiredTokenDBType = {

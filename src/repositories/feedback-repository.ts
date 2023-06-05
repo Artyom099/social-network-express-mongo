@@ -1,5 +1,6 @@
 import {CommentBDType, CommentViewModel} from "../types/types";
 import {CommentModel} from "../shemas/feedback-schema";
+import {LikeStatus} from "../utils/constants";
 
 
 export class FeedbackRepository {
@@ -17,9 +18,9 @@ export class FeedbackRepository {
             },
             createdAt: createdComment.createdAt,
             likesInfo: {
-                likesCount: 0,
-                dislikesCount: 0,
-                myStatus: 'None'
+                likesCount: createdComment.likesInfo.likesCount,
+                dislikesCount: createdComment.likesInfo.dislikesCount,
+                myStatus: createdComment.likesInfo.myStatus
             }
         }
     }
@@ -31,7 +32,7 @@ export class FeedbackRepository {
         const result = await CommentModel.deleteOne({ id })
         return result.deletedCount === 1
     }
-    async updateCommentLikes(id: string, likeStatus: string): Promise<boolean | undefined> {
+    async updateCommentLikes(id: string, likeStatus: LikeStatus): Promise<boolean> {
         const comment = await CommentModel.findOne({ id })
         console.log({comment1: comment})
 
@@ -39,14 +40,15 @@ export class FeedbackRepository {
            return true
        }
 
-        if (likeStatus === 'Like') {
-            if (comment?.likesInfo.myStatus === "None") {
+        if (likeStatus === LikeStatus.Like) {
+            if (comment?.likesInfo.myStatus === LikeStatus.None) {
                 const result = await CommentModel.updateOne({ id }, {
-                    'likesInfo.myStatus': likeStatus,   //$set: {}
-                    'likesInfo.likesCount': 1           //$inc: {}
-                })
+                    'likesInfo.myStatus': likeStatus,
+                    'likesInfo.likesCount': 1
+                    })
                 console.log({result1: result})
                 return result.matchedCount === 1
+
             } else {
                 const result = await CommentModel.updateOne({ id }, {
                     'likesInfo.myStatus': likeStatus,
@@ -57,8 +59,8 @@ export class FeedbackRepository {
             }
         }
 
-        if (likeStatus === 'Dislike') {
-            if (comment?.likesInfo.myStatus === "None") {
+        if (likeStatus === LikeStatus.Dislike) {
+            if (comment?.likesInfo.myStatus === LikeStatus.None) {
                 const result = await CommentModel.updateOne({ id }, {
                     'likesInfo.myStatus': likeStatus,
                     'likesInfo.dislikesCount': 1
@@ -74,5 +76,9 @@ export class FeedbackRepository {
                 return result.matchedCount === 1
             }
         }
+        return false
     }
 }
+
+// const result = await CommentModel.updateOne({ id }, {})
+    // .set({'likesInfo.myStatus': likeStatus}, {'likesInfo.likesCount': 1})

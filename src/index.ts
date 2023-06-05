@@ -6,7 +6,7 @@ const port = process.env.PORT || 3000
 export const app = express()
 applyAppSettings(app)
 
-const startApp = async () => {
+const startApp = async() => {
     await runDb()
     app.listen(port, () => {
         console.log(`Server running on: http://localhost:${port}`)
