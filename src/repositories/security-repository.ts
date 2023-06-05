@@ -8,15 +8,15 @@ export const securityRepository = {
     },
 
     async updateLastActiveDateByDeviceId(deviceId: string, date: string) {
-        await devicesCollection.updateOne({deviceId: deviceId}, {$set: {lastActiveDate: date}})
+        await devicesCollection.updateOne({ deviceId }, {$set: {lastActiveDate: date}})
     },
 
     async finaAllActiveSessionsByUserId(userId: string): Promise<DeviceViewModel[]> {
-        return await devicesCollection.find({userId: userId}, {projection: {_id: 0, userId: 0}}).toArray()
+        return await devicesCollection.find({ userId }, {projection: {_id: 0, userId: 0}}).toArray()
     },
 
     async findActiveSessionByDeviceId(deviceId: string): Promise<DeviceViewModel | null> {
-        const activeSession = await devicesCollection.findOne({deviceId: deviceId}, {projection: {_id: 0}})
+        const activeSession = await devicesCollection.findOne({ deviceId }, {projection: {_id: 0}})
         if (!activeSession) return null
         else return {
             ip: activeSession.ip,
@@ -28,11 +28,11 @@ export const securityRepository = {
 
     async deleteOtherActiveSessionsByDeviceId(deviceId: string) {
         // todo - можно ли заменить $nor на $not ?
-        await devicesCollection.deleteMany({$nor: [{deviceId: deviceId}] })
+        await devicesCollection.deleteMany({$nor: [{ deviceId }] })
 
     },
 
     async deleteCurrentSessionByDeviceId(deviceId: string) {
-        await devicesCollection.deleteOne({deviceId: deviceId})
+        await devicesCollection.deleteOne({ deviceId })
     }
 }

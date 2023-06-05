@@ -34,7 +34,7 @@ export class FeedbackRepository {
     }
     async updateCommentLikes(id: string, likeStatus: LikeStatus): Promise<boolean> {
         const comment = await CommentModel.findOne({ id })
-        console.log({comment1: comment})
+        console.log({comment_1: comment})
 
        if (comment && comment.likesInfo.myStatus === likeStatus) {
            return true
@@ -43,37 +43,55 @@ export class FeedbackRepository {
         if (likeStatus === LikeStatus.Like) {
             if (comment?.likesInfo.myStatus === LikeStatus.None) {
                 const result = await CommentModel.updateOne({ id }, {
-                    'likesInfo.myStatus': likeStatus,
-                    'likesInfo.likesCount': 1
+                    $set: {'likesInfo.myStatus': likeStatus},
+                    $inc: {'likesInfo.likesCount': +1}
                     })
-                console.log({result1: result})
-                return result.matchedCount === 1
+                console.log({result_1: result})
+                return result.modifiedCount === 1
 
             } else {
                 const result = await CommentModel.updateOne({ id }, {
-                    'likesInfo.myStatus': likeStatus,
-                    'likesInfo.likesCount': 1, 'likesInfo.dislikesCount': -1
+                    $set: {'likesInfo.myStatus': likeStatus},
+                    $inc: {'likesInfo.likesCount': +1, 'likesInfo.dislikesCount': -1}
                 })
-                console.log({result2: result})
-                return result.matchedCount === 1
+                console.log({result_2: result})
+                return result.modifiedCount === 1
             }
         }
 
         if (likeStatus === LikeStatus.Dislike) {
             if (comment?.likesInfo.myStatus === LikeStatus.None) {
                 const result = await CommentModel.updateOne({ id }, {
-                    'likesInfo.myStatus': likeStatus,
-                    'likesInfo.dislikesCount': 1
+                    $set: {'likesInfo.myStatus': likeStatus},
+                    $inc: {'likesInfo.dislikesCount': +1}
                 })
-                console.log({result3: result})
-                return result.matchedCount === 1
+                console.log({result_3: result})
+                return result.modifiedCount === 1
             } else {
                 const result = await CommentModel.updateOne({ id }, {
-                    'likesInfo.myStatus': likeStatus,
-                    'likesInfo.likesCount': -1, 'likesInfo.dislikesCount': 1
+                    $set: {'likesInfo.myStatus': likeStatus},
+                    $inc: {'likesInfo.likesCount': -1, 'likesInfo.dislikesCount': +1}
                 })
-                console.log({result4: result})
-                return result.matchedCount === 1
+                console.log({result_4: result})
+                return result.modifiedCount === 1
+            }
+        }
+
+        if (likeStatus === LikeStatus.None) {
+            if (comment?.likesInfo.myStatus === LikeStatus.Like) {
+                const result = await CommentModel.updateOne({ id }, {
+                    $set: {'likesInfo.myStatus': likeStatus},
+                    $inc: {'likesInfo.likesCount': -1}
+                })
+                console.log({result_5: result})
+                return result.modifiedCount === 1
+            } else {
+                const result = await CommentModel.updateOne({ id }, {
+                    $set: {'likesInfo.myStatus': likeStatus},
+                    $inc: {'likesInfo.dislikesCount': -1}
+                })
+                console.log({result_6: result})
+                return result.modifiedCount === 1
             }
         }
         return false

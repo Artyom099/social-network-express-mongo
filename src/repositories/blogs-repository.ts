@@ -19,7 +19,7 @@ export class BlogsRepository {
     }
     async updateBlogById(id: string, name: string, description: string, websiteUrl: string): Promise<boolean> {
         const result = await BlogModel.updateOne({ id },  { name, description, websiteUrl })
-        return result.matchedCount === 1
+        return result.modifiedCount === 1
     }
     async deleteBlogById(id: string): Promise<boolean> {
         const result = await BlogModel.deleteOne({ id })
