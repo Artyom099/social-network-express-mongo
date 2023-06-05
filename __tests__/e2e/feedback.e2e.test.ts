@@ -87,7 +87,7 @@ describe('/feedback', () => {
 
         expect.setState({secondUser: secondUser, secondCreateResponse: secondCreateResponse})
     })
-    it('2 – /auth/login – return 200, login and refreshToken', async () => {
+    it('2 – /auth/login – return 200, 1st login and refreshToken', async () => {
         const {firstUser} = expect.getState()
         const loginResponse = await request(app)
             .post('/auth/login')
@@ -106,7 +106,7 @@ describe('/feedback', () => {
         expect(refreshToken).toBeDefined()
         expect(refreshToken).toEqual(expect.any(String))
 
-        expect.setState({accessToken, firstRefreshToken: refreshToken, firstRefreshTokenWithName: refreshTokenWithName})
+        expect.setState({firstAccessToken: accessToken, firstRefreshToken: refreshToken, firstRefreshTokenWithName: refreshTokenWithName})
     })
     it('3 – /blogs – return 201 & create blog', async () => {
         const createBlogResponse = await request(app)
@@ -164,20 +164,20 @@ describe('/feedback', () => {
     });
 
     it('6 – /comments/:commentId/likes-status – return 404 – non exist comment', async () => {
-        const {accessToken} = expect.getState()
+        const {firstAccessToken} = expect.getState()
         const setLike = await request(app)
             .put(`/comments/${123}/likes-status`)
-            .auth(accessToken, {type: 'bearer'})
+            .auth(firstAccessToken, {type: 'bearer'})
             .send({likeStatus: LikeStatus.Like})
 
         expect(setLike).toBeDefined()
         expect(setLike.status).toEqual(HTTP_STATUS.NOT_FOUND_404)
     });
     it('7 – /comments/:commentId/likes-status – return 400 – likeStatus: invalid', async () => {
-        const {commentId, accessToken} = expect.getState()
+        const {commentId, firstAccessToken} = expect.getState()
         const setLike = await request(app)
             .put(`/comments/${commentId}/likes-status`)
-            .auth(accessToken, {type: 'bearer'})
+            .auth(firstAccessToken, {type: 'bearer'})
             .send({likeStatus: 'invalid'})
 
         expect(setLike).toBeDefined()
@@ -217,10 +217,10 @@ describe('/feedback', () => {
     });
 
     it('10 – /comments/:commentId/likes-status – return 204 & set like', async () => {
-        const {commentId, accessToken} = expect.getState()
+        const {commentId, firstAccessToken} = expect.getState()
         const setLike = await request(app)
             .put(`/comments/${commentId}/likes-status`)
-            .auth(accessToken, {type: 'bearer'})
+            .auth(firstAccessToken, {type: 'bearer'})
             .send({likeStatus: LikeStatus.Like})
 
         // console.log({commentId_10: commentId})
@@ -251,10 +251,10 @@ describe('/feedback', () => {
     });
 
     it('12 – /comments/:commentId/likes-status – return 204 & set dislike', async () => {
-        const {commentId, accessToken} = expect.getState()
+        const {commentId, firstAccessToken} = expect.getState()
         const setDislike = await request(app)
             .put(`/comments/${commentId}/likes-status`)
-            .auth(accessToken, {type: 'bearer'})
+            .auth(firstAccessToken, {type: 'bearer'})
             .send({likeStatus: LikeStatus.Dislike})
 
         expect(setDislike).toBeDefined()
@@ -284,10 +284,10 @@ describe('/feedback', () => {
     });
 
     it('14 – /comments/:commentId/likes-status – return 204 & delete dislike', async () => {
-        const {commentId, accessToken} = expect.getState()
+        const {commentId, firstAccessToken} = expect.getState()
         const deleteDislike = await request(app)
             .put(`/comments/${commentId}/likes-status`)
-            .auth(accessToken, {type: 'bearer'})
+            .auth(firstAccessToken, {type: 'bearer'})
             .send({likeStatus: LikeStatus.None})
 
         expect(deleteDislike).toBeDefined()
@@ -312,6 +312,68 @@ describe('/feedback', () => {
                 likesCount: 0,
                 dislikesCount: 0,
                 myStatus: LikeStatus.None
+            }
+        })
+    });
+
+    it('16 – /auth/login – return 200, 1st login and refreshToken', async () => {
+        const {secondUser} = expect.getState()
+        const loginResponse = await request(app)
+            .post('/auth/login')
+            .send({
+                loginOrEmail: secondUser.login,
+                password: secondUser.password
+            })
+
+        expect(loginResponse).toBeDefined()
+        expect(loginResponse.status).toBe(HTTP_STATUS.OK_200)
+        expect(loginResponse.body).toEqual({accessToken: expect.any(String)})
+        const {accessToken} = loginResponse.body
+
+        const refreshToken = getRefreshTokenByResponse(loginResponse)
+        const refreshTokenWithName = getRefreshTokenByResponseWithTokenName(loginResponse)
+        expect(refreshToken).toBeDefined()
+        expect(refreshToken).toEqual(expect.any(String))
+
+        expect.setState({secondAccessToken: accessToken, secondRefreshToken: refreshToken, secondRefreshTokenWithName: refreshTokenWithName})
+    })
+
+    it('17 – /comments/:commentId/likes-status – return 204 & set 2 likes', async () => {
+        const {commentId, firstAccessToken} = expect.getState()
+        const setLikeFirstUser = await request(app)
+            .put(`/comments/${commentId}/likes-status`)
+            .auth(firstAccessToken, {type: 'bearer'})
+            .send({likeStatus: LikeStatus.Like})
+        expect(setLikeFirstUser).toBeDefined()
+        expect(setLikeFirstUser.status).toEqual(HTTP_STATUS.NO_CONTENT_204)
+
+        const {secondAccessToken} = expect.getState()
+        const setLikeSecondUser = await request(app)
+            .put(`/comments/${commentId}/likes-status`)
+            .auth(secondAccessToken, {type: 'bearer'})
+            .send({likeStatus: LikeStatus.Like})
+        expect(setLikeSecondUser).toBeDefined()
+        expect(setLikeSecondUser.status).toEqual(HTTP_STATUS.NO_CONTENT_204)
+    });
+    it('18 – /comments/:id – return 200 & found comment', async () => {
+        const {commentId, firstUser, firstCreatedUser} = expect.getState()
+        const getComment = await request(app)
+            .get(`/comments/${commentId}`)
+
+        expect(getComment).toBeDefined()
+        expect(getComment.status).toEqual(HTTP_STATUS.OK_200)
+        expect(getComment.body).toEqual({
+            id: commentId,
+            content: 'valid-super-long-content',
+            commentatorInfo: {
+                userId: firstCreatedUser.id,
+                userLogin: firstUser.login
+            },
+            createdAt: expect.any(String),
+            likesInfo: {
+                likesCount: 2,
+                dislikesCount: 0,
+                myStatus: LikeStatus.Like
             }
         })
     });

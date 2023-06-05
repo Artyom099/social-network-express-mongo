@@ -97,6 +97,3 @@ export class FeedbackRepository {
         return false
     }
 }
-
-// const result = await CommentModel.updateOne({ id }, {})
-    // .set({'likesInfo.myStatus': likeStatus}, {'likesInfo.likesCount': 1})
