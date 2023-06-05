@@ -1,20 +1,21 @@
 import {
     videoCollection,
-    blogCollection,
-    postCollection,
     userCollection,
-    commentCollection, expiredTokenCollection, apiRequestCollection, devicesCollection,
+    expiredTokenCollection, apiRequestCollection, devicesCollection,
 } from "../db/db";
+import {BlogModel} from "../shemas/blogs-schema";
+import {PostModel} from "../shemas/posts-schema";
+import {CommentModel} from "../shemas/feedback-schema";
 
 
 export const testsRepository = {
     async deleteAllData() {
         await Promise.all([
             videoCollection.deleteMany(),
-            blogCollection.deleteMany(),
-            postCollection.deleteMany(),
+            BlogModel.deleteMany(),
+            PostModel.deleteMany(),
             userCollection.deleteMany(),
-            commentCollection.deleteMany(),
+            CommentModel.deleteMany(),
             expiredTokenCollection.deleteMany(),
             apiRequestCollection.deleteMany(),
             devicesCollection.deleteMany(),
