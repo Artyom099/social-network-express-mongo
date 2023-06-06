@@ -6,8 +6,9 @@ import {LikeStatus} from "../utils/constants";
 
 export class FeedbackService {
     constructor(protected feedbackRepository: FeedbackRepository) {}
-    async findCommentById(commentId: string): Promise<CommentViewModel | null> {
-        return this.feedbackRepository.findCommentByID(commentId)
+    // todo можно ли так добавить необязтельное значение, ли мы ищем коммент, а юзер не зареган?
+    async findCommentById(commentId: string, currentUserId: string = '0'): Promise<CommentViewModel | null> {
+        return this.feedbackRepository.findCommentByID(commentId, currentUserId)
     }
     async createComment(postId: string, content: string, userId: string, userLogin: string): Promise<CommentViewModel> {
         const createdComment: CommentBDType = {
@@ -22,10 +23,10 @@ export class FeedbackService {
             likesInfo: {
                 likesCount: 0,
                 dislikesCount: 0,
-                myStatus: LikeStatus.None
+                statuses: []
             }
         }
-        return await this.feedbackRepository.createComment(createdComment)
+        return this.feedbackRepository.createComment(createdComment)
     }
     async updateCommentById(commentId: string, content: string): Promise<boolean> {
         return await this.feedbackRepository.updateCommentById(commentId, content)

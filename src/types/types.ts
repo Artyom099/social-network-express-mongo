@@ -86,7 +86,11 @@ export type CommentBDType = {
     likesInfo: {
         likesCount: number
         dislikesCount: number
-        myStatus: LikeStatus
+        statuses: {
+            // [key: string]: LikeStatus
+            userId: string
+            status: LikeStatus
+        } []
     }
 }
 export type ExpiredTokenDBType = {
