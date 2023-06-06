@@ -4,8 +4,31 @@ import {LikeStatus} from "../utils/constants";
 
 
 export class FeedbackRepository {
-    async findCommentByID(id: string) {
-        return CommentModel.findOne({ id }, { _id: 0, __v: 0, postId: 0 })
+    async findCommentByID(id: string, currentUserId: string): Promise<CommentViewModel | null> {
+        const comment = await CommentModel.findOne({ id }, { _id: 0, __v: 0, postId: 0 })
+        if (!comment) return null
+        let myStatus = LikeStatus.None
+        let likesCount = 0
+        let dislikesCount = 0
+        comment.likesInfo.statuses.forEach(s => {
+            if (s.userId === currentUserId) myStatus = s.status
+            if (s.status === LikeStatus.Like) likesCount++
+            if (s.status === LikeStatus.Dislike) dislikesCount++
+        })
+        return {
+            id: comment.id,
+            content: comment.content,
+            commentatorInfo: {
+                userId: comment.commentatorInfo.userId,
+                userLogin: comment.commentatorInfo.userLogin
+            },
+            createdAt: comment.createdAt,
+            likesInfo: {
+                likesCount,
+                dislikesCount,
+                myStatus,
+            }
+        }
     }
     async createComment(createdComment: CommentBDType): Promise<CommentViewModel> {
         await CommentModel.insertMany(createdComment)
@@ -20,7 +43,7 @@ export class FeedbackRepository {
             likesInfo: {
                 likesCount: createdComment.likesInfo.likesCount,
                 dislikesCount: createdComment.likesInfo.dislikesCount,
-                myStatus: createdComment.likesInfo.myStatus
+                myStatus: LikeStatus.None
             }
         }
     }
@@ -33,8 +56,7 @@ export class FeedbackRepository {
         return result.deletedCount === 1
     }
     async updateCommentLikes(id: string, likeStatus: LikeStatus): Promise<boolean> {
-        console.log('id', id);
-        console.log("likeSttaus", likeStatus)
+        console.log("likeStatus", likeStatus)
         const comment = await CommentModel.findOne({ id })
         console.log({comment_1: comment})
 

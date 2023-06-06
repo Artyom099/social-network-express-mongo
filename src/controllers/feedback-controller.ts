@@ -15,7 +15,7 @@ export class FeedbackController {
         }
     }
     async updateComment(req: ReqParamsBodyType<{commentId: string}, {content: string}>, res: Response) {
-        const foundComment = await this.feedbackService.findCommentById(req.params.commentId)
+        const foundComment = await this.feedbackService.findCommentById(req.params.commentId, req.user!.id)
         if (!foundComment) {
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
         }
@@ -30,7 +30,7 @@ export class FeedbackController {
         }
     }
     async deleteComment(req: ReqParamsType<{commentId: string}>, res: Response) {
-        const foundComment = await this.feedbackService.findCommentById(req.params.commentId)
+        const foundComment = await this.feedbackService.findCommentById(req.params.commentId, req.user!.id)
         if (!foundComment) {
             return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
         }
