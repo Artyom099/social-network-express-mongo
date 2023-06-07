@@ -35,6 +35,7 @@ export const postsRouter = () => {
     const router = express.Router()
 
     router.get('/:id/comments', async (req: ReqParamsQueryType<IdDTO, PagingDTO>, res: Response) => {
+        //todo - middleware для нахождения userId
         const foundPost = await postsService.findPostById(req.params.id)
         if (!foundPost) {
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)

@@ -7,7 +7,8 @@ import {HTTP_STATUS, LikeStatus} from "../utils/constants";
 export class FeedbackController {
     constructor(protected feedbackService: FeedbackService) {}
     async getComment(req: ReqParamsType<IdDTO>, res: Response) {
-        const foundComment = await this.feedbackService.findCommentById(req.params.id)
+        //todo - middleware для нахождения userId
+        const foundComment = await this.feedbackService.findCommentById(req.params.id, req.user?.id)
         if (!foundComment) {
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
         } else {
@@ -42,8 +43,7 @@ export class FeedbackController {
         }
     }
     async updateLikeStatus(req: ReqParamsBodyType<{commentId: string}, {likeStatus: LikeStatus}>, res: Response) {
-        const likedComment = await this.feedbackService.updateCommentLikes(req.params.commentId, req.body.likeStatus)
-
+        const likedComment = await this.feedbackService.updateCommentLikes(req.params.commentId, req.user!.id, req.body.likeStatus)
         if (!likedComment) {
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
         } else {

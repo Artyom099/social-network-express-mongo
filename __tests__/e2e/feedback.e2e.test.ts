@@ -163,58 +163,58 @@ describe('/feedback', () => {
         expect.setState({commentId: createCommentResponse.body.id})
     });
 
-    // it('6 – /comments/:commentId/like-status – return 404 – non exist comment', async () => {
-    //     const {firstAccessToken} = expect.getState()
-    //     const setLike = await request(app)
-    //         .put(`/comments/${123}/like-status`)
-    //         .auth(firstAccessToken, {type: 'bearer'})
-    //         .send({likeStatus: LikeStatus.Like})
-    //
-    //     expect(setLike).toBeDefined()
-    //     expect(setLike.status).toEqual(HTTP_STATUS.NOT_FOUND_404)
-    // });
-    // it('7 – /comments/:commentId/like-status – return 400 – likeStatus: invalid', async () => {
-    //     const {commentId, firstAccessToken} = expect.getState()
-    //     const setLike = await request(app)
-    //         .put(`/comments/${commentId}/like-status`)
-    //         .auth(firstAccessToken, {type: 'bearer'})
-    //         .send({likeStatus: 'invalid'})
-    //
-    //     expect(setLike).toBeDefined()
-    //     expect(setLike.status).toEqual(HTTP_STATUS.BAD_REQUEST_400)
-    // });
-    // it('8 – /comments/:commentId/like-status – return 401 – likeStatus: invalid', async () => {
-    //     const {commentId} = expect.getState()
-    //     const setLike = await request(app)
-    //         .put(`/comments/${commentId}/like-status`)
-    //         .send({likeStatus: LikeStatus.Like})
-    //
-    //     expect(setLike).toBeDefined()
-    //     expect(setLike.status).toEqual(HTTP_STATUS.UNAUTHORIZED_401)
-    // });
+    it('6 – /comments/:commentId/like-status – return 404 – non exist comment', async () => {
+        const {firstAccessToken} = expect.getState()
+        const setLike = await request(app)
+            .put(`/comments/${123}/like-status`)
+            .auth(firstAccessToken, {type: 'bearer'})
+            .send({likeStatus: LikeStatus.Like})
 
-    // it('9 – /comments/:id – return 200 & found comment', async () => {
-    //     const {commentId, firstUser, firstCreatedUser} = expect.getState()
-    //     const getComment = await request(app)
-    //         .get(`/comments/${commentId}`)
-    //
-    //     expect(getComment).toBeDefined()
-    //     expect(getComment.status).toEqual(HTTP_STATUS.OK_200)
-    //     expect(getComment.body).toEqual({
-    //         id: commentId,
-    //         content: 'valid-super-long-content',
-    //         commentatorInfo: {
-    //             userId: firstCreatedUser.id,
-    //             userLogin: firstUser.login
-    //         },
-    //         createdAt: expect.any(String),
-    //         likesInfo: {
-    //             likesCount: 0,
-    //             dislikesCount: 0,
-    //             myStatus: LikeStatus.None
-    //         }
-    //     })
-    // });
+        expect(setLike).toBeDefined()
+        expect(setLike.status).toEqual(HTTP_STATUS.NOT_FOUND_404)
+    });
+    it('7 – /comments/:commentId/like-status – return 400 – likeStatus: invalid', async () => {
+        const {commentId, firstAccessToken} = expect.getState()
+        const setLike = await request(app)
+            .put(`/comments/${commentId}/like-status`)
+            .auth(firstAccessToken, {type: 'bearer'})
+            .send({likeStatus: 'invalid'})
+
+        expect(setLike).toBeDefined()
+        expect(setLike.status).toEqual(HTTP_STATUS.BAD_REQUEST_400)
+    });
+    it('8 – /comments/:commentId/like-status – return 401 – likeStatus: invalid', async () => {
+        const {commentId} = expect.getState()
+        const setLike = await request(app)
+            .put(`/comments/${commentId}/like-status`)
+            .send({likeStatus: LikeStatus.Like})
+
+        expect(setLike).toBeDefined()
+        expect(setLike.status).toEqual(HTTP_STATUS.UNAUTHORIZED_401)
+    });
+
+    it('9 – /comments/:id – return 200 & found comment', async () => {
+        const {commentId, firstUser, firstCreatedUser} = expect.getState()
+        const getComment = await request(app)
+            .get(`/comments/${commentId}`)
+
+        expect(getComment).toBeDefined()
+        expect(getComment.status).toEqual(HTTP_STATUS.OK_200)
+        expect(getComment.body).toEqual({
+            id: commentId,
+            content: 'valid-super-long-content',
+            commentatorInfo: {
+                userId: firstCreatedUser.id,
+                userLogin: firstUser.login
+            },
+            createdAt: expect.any(String),
+            likesInfo: {
+                likesCount: 0,
+                dislikesCount: 0,
+                myStatus: LikeStatus.None
+            }
+        })
+    });
 
     it('10 – /comments/:commentId/like-status – return 204 & set like', async () => {
         const {commentId, firstAccessToken} = expect.getState()
@@ -228,9 +228,10 @@ describe('/feedback', () => {
         expect(setLike.status).toEqual(HTTP_STATUS.NO_CONTENT_204)
     });
     it('11 – /comments/:id – return 200 & found comment', async () => {
-        const {commentId, firstUser, firstCreatedUser} = expect.getState()
+        const {commentId, firstUser, firstCreatedUser, firstAccessToken} = expect.getState()
         const getComment = await request(app)
             .get(`/comments/${commentId}`)
+            .auth(firstAccessToken, {type: 'bearer'})
 
         expect(getComment).toBeDefined()
         expect(getComment.status).toEqual(HTTP_STATUS.OK_200)
@@ -377,28 +378,28 @@ describe('/feedback', () => {
         })
     });
 
-    // it('18 – /comments/:id – return 200 & found comment', async () => {
-    //     const {commentId, firstUser, firstCreatedUser} = expect.getState()
-    //     const getComment = await request(app)
-    //         .get(`/comments/${commentId}`)
-    //
-    //     expect(getComment).toBeDefined()
-    //     expect(getComment.status).toEqual(HTTP_STATUS.OK_200)
-    //     expect(getComment.body).toEqual({
-    //         id: commentId,
-    //         content: 'valid-super-long-content',
-    //         commentatorInfo: {
-    //             userId: firstCreatedUser.id,
-    //             userLogin: firstUser.login
-    //         },
-    //         createdAt: expect.any(String),
-    //         likesInfo: {
-    //             likesCount: 2,
-    //             dislikesCount: 0,
-    //             myStatus: LikeStatus.Like
-    //         }
-    //     })
-    // });
+    it('18 – /comments/:id – return 200 & found comment', async () => {
+        const {commentId, firstUser, firstCreatedUser} = expect.getState()
+        const getComment = await request(app)
+            .get(`/comments/${commentId}`)
+
+        expect(getComment).toBeDefined()
+        expect(getComment.status).toEqual(HTTP_STATUS.OK_200)
+        expect(getComment.body).toEqual({
+            id: commentId,
+            content: 'valid-super-long-content',
+            commentatorInfo: {
+                userId: firstCreatedUser.id,
+                userLogin: firstUser.login
+            },
+            createdAt: expect.any(String),
+            likesInfo: {
+                likesCount: 2,
+                dislikesCount: 0,
+                myStatus: LikeStatus.Like
+            }
+        })
+    });
 
     afterAll(async () => {
         await mongoose.connection.close()
