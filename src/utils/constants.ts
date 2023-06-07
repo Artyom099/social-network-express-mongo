@@ -14,11 +14,18 @@ export enum LikeStatus {
     Dislike = 'Dislike',
     None = 'None'
 }
+export enum SortDirection {
+    asc = 'asc',
+    desc = 'desc',
+    default = 'desc'
+}
+export enum SortBy {
+    default = 'createdAt',
+    createdAt = 'createdAt',
+}
 export enum ResultCode {
     Success = 0,
     NotFound = 1,
     BedRequest = 2,
     Unauthorized = 3
 }
-export const DEFAULT_SORT_BY: string = 'createdAt'
-export const DEFAULT_SORT_DIRECTION: string = 'desc'

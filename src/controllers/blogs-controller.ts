@@ -9,9 +9,10 @@ import {
     ReqQueryType
 } from "../types/types";
 import {Request, Response} from "express";
-import {DEFAULT_SORT_BY, DEFAULT_SORT_DIRECTION, HTTP_STATUS} from "../utils/constants";
+import {HTTP_STATUS, SortBy, SortDirection} from "../utils/constants";
 import {queryRepository} from "../repositories/query-repository";
-import {postsService} from "../domain/posts-service";
+import {PostsService} from "../domain/posts-service";
+import {PostsRepository} from "../repositories/posts-repository";
 
 
 export class BlogsController {
@@ -20,8 +21,8 @@ export class BlogsController {
         const searchNameTerm = req.query.searchNameTerm ?? null
         const pageNumber = req.query.pageNumber ?? 1
         const pageSize = req.query.pageSize ?? 10
-        const sortBy = req.query.sortBy ?? DEFAULT_SORT_BY
-        const sortDirection = req.query.sortDirection ?? DEFAULT_SORT_DIRECTION
+        const sortBy = req.query.sortBy ?? SortBy.default
+        const sortDirection = req.query.sortDirection ?? SortDirection.default
 
         const foundSortedBlogs = await queryRepository.findBlogsAndSort(searchNameTerm, Number(pageNumber), Number(pageSize), sortBy, sortDirection)
         res.status(HTTP_STATUS.OK_200).json(foundSortedBlogs)
@@ -39,8 +40,8 @@ export class BlogsController {
         } else {
             const pageNumber = req.query.pageNumber ?? 1
             const pageSize = req.query.pageSize ?? 10
-            const sortBy = req.query.sortBy ?? DEFAULT_SORT_BY
-            const sortDirection = req.query.sortDirection ?? DEFAULT_SORT_DIRECTION
+            const sortBy = req.query.sortBy ?? SortBy.default
+            const sortDirection = req.query.sortDirection ?? SortDirection.default
             const postsThisBlog = await queryRepository.findPostsThisBlogById(findBlog.id, Number(pageNumber), Number(pageSize), sortBy, sortDirection)
             res.status(HTTP_STATUS.OK_200).json(postsThisBlog)
         }
@@ -51,7 +52,8 @@ export class BlogsController {
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
         } else {
             const {title, shortDescription, content} = req.body
-            const createdPostThisBlog = await postsService.createPost(title, shortDescription, content, findBlog)
+            const post = new PostsService(new PostsRepository)
+            const createdPostThisBlog = await post.createPost(title, shortDescription, content, findBlog)
             res.status(HTTP_STATUS.CREATED_201).json(createdPostThisBlog)
         }
     }

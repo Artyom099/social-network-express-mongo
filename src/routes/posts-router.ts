@@ -1,17 +1,10 @@
 import {body} from "express-validator";
-import express, {Request, Response} from "express";
-import {ReqParamsQueryType, IdDTO, PagingDTO, ReqQueryType, PostViewModel, PostDTO, ReqBodyType} from "../types/types";
-import {HTTP_STATUS} from "../utils/constants";
-import {postsService} from "../domain/posts-service";
+import {Router} from "express";
 import {BlogsService} from "../domain/blogs-service";
 import {inputValidationMiddleware} from "../middleware/input-validation-middleware";
-import {queryRepository} from "../repositories/query-repository";
 import {authMiddlewareBasic, authMiddlewareBearer} from "../middleware/auth-middleware";
-import {DEFAULT_SORT_BY, DEFAULT_SORT_DIRECTION} from "../utils/constants";
-import {FeedbackService} from "../domain/feedbacks-service";
-import {FeedbackRepository} from "../repositories/feedback-repository";
 import {BlogsRepository} from "../repositories/blogs-repository";
-
+import {postsController} from "../composition-root";
 
 const validationPost = [
     body('title').isString().isLength({min: 3, max: 30}).trim().not().isEmpty(),
@@ -31,85 +24,29 @@ export const validationComment = [
     body('content').isString().isLength({min: 20, max: 300}).trim().not().isEmpty()
 ]
 
-export const postsRouter = () => {
-    const router = express.Router()
 
-    router.get('/:id/comments', async (req: ReqParamsQueryType<IdDTO, PagingDTO>, res: Response) => {
-        //todo - middleware для нахождения userId
-        const foundPost = await postsService.findPostById(req.params.id)
-        if (!foundPost) {
-            res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
-        } else {
-            const pageNumber = req.query.pageNumber ?? 1
-            const pageSize = req.query.pageSize ?? 10
-            const sortBy = req.query.sortBy ?? DEFAULT_SORT_BY
-            const sortDirection = req.query.sortDirection ?? DEFAULT_SORT_DIRECTION
-            const foundSortedComments = await queryRepository.findCommentsThisPostAndSort(foundPost.id, Number(pageNumber), Number(pageSize), sortBy, sortDirection)
-            res.status(HTTP_STATUS.OK_200).json(foundSortedComments)
-        }
-    })
+export const postsRouter = Router({})
 
-    router.post('/:postId/comments', validationComment, authMiddlewareBearer, inputValidationMiddleware, async (req: Request, res: Response) => {
-        const currentPost = await postsService.findPostById(req.params.postId)
-        if (!currentPost) {
-            res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
-        } else {
-            // const createdComment = await new FeedbackService.createComment(req.params.postId, req.body.content, req.user!.id, req.user!.login)
-            const comment = new FeedbackService(new FeedbackRepository)
-            const createdComment = await comment.createComment(req.params.postId, req.body.content, req.user!.id, req.user!.login)
-            res.status(HTTP_STATUS.CREATED_201).json(createdComment)
-        }
-    })
+postsRouter.get('/', postsController.getPosts.bind(postsController))
+postsRouter.post('/',
+    validationPost,
+    authMiddlewareBasic,
+    inputValidationMiddleware,
+    postsController.createPost.bind(postsController))
 
-    router.get('/', async (req: ReqQueryType<PagingDTO>, res: Response) => {
-        const pageNumber = req.query.pageNumber ?? 1
-        const pageSize = req.query.pageSize ?? 10
-        const sortBy = req.query.sortBy ?? DEFAULT_SORT_BY
-        const sortDirection = req.query.sortDirection ?? DEFAULT_SORT_DIRECTION
-        const foundSortedPosts = await queryRepository.findPostsAndSort(Number(pageNumber), Number(pageSize), sortBy, sortDirection)
-        res.status(HTTP_STATUS.OK_200).json(foundSortedPosts)
-    })
+postsRouter.get('/:id/comments', postsController.findCommentsCurrentPost.bind(postsController))
+postsRouter.post('/:postId/comments',
+    validationComment,
+    authMiddlewareBearer,
+    inputValidationMiddleware,
+    postsController.createCommentCurrentPost.bind(postsController))
 
-    router.post('/', validationPost, authMiddlewareBasic, inputValidationMiddleware, async (req: ReqBodyType<PostDTO>, res: Response) => {
-        const {title, shortDescription, content, blogId} = req.body
-        // const blog = await new BlogsService.findBlogById(blogId)
-        const blog = new BlogsService(new BlogsRepository)
-        // console.log({blog: blog})
-        const foundBLog = await blog.findBlogById(blogId)
-        // console.log({foundBLog: foundBLog})
-        const createdPost = await postsService.createPost(title, shortDescription, content, foundBLog)
-        res.status(HTTP_STATUS.CREATED_201).json(createdPost)
-    })
-
-    router.get('/:id', async (req: Request, res: Response<PostViewModel>) => {
-        const foundPost = await postsService.findPostById(req.params.id)
-        if (!foundPost) {
-            res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
-        } else {
-            res.status(HTTP_STATUS.OK_200).json(foundPost)
-        }
-    })
-
-    router.put('/:id', validationPost, authMiddlewareBasic, inputValidationMiddleware, async (req: Request, res: Response) => {
-        const {title, shortDescription, content} = req.body
-        const result = await postsService.updatePostById(req.params.id, title, shortDescription, content)
-        if (!result) {
-            res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
-        } else {
-            const updatedPost = await postsService.findPostById(req.params.id)
-            res.status(HTTP_STATUS.NO_CONTENT_204).json(updatedPost)
-        }
-    })
-
-    router.delete('/:id', authMiddlewareBasic, async (req: Request, res: Response) => {
-        const foundPost = await postsService.findPostById(req.params.id)
-        if (!foundPost) {
-            res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
-        } else {
-            await postsService.deletePostById(req.params.id)
-            res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
-        }
-    })
-
-    return router
-}
+postsRouter.get('/:id', postsController.getPost.bind(postsController))
+postsRouter.put('/:id',
+    validationPost,
+    authMiddlewareBasic,
+    inputValidationMiddleware,
+    postsController.updatePost.bind(postsController))
+postsRouter.delete('/:id',
+    authMiddlewareBasic,
+    postsController.deletePost.bind(postsController))

@@ -4,7 +4,6 @@ import {inputValidationMiddleware} from "../middleware/input-validation-middlewa
 import {authMiddlewareBasic} from "../middleware/auth-middleware"
 import {blogsController} from "../composition-root";
 
-
 const validationBlog = [
     body('name').isString().isLength({min: 3, max: 15}).trim().not().isEmpty(),
     body('description').isString().isLength({min: 3, max: 500}).trim().notEmpty(),
@@ -39,4 +38,6 @@ blogsRouter.put('/:id',
     authMiddlewareBasic,
     inputValidationMiddleware,
     blogsController.updateBlog.bind(blogsController))
-blogsRouter.delete('/:id', authMiddlewareBasic, blogsController.deleteBlog.bind(blogsController))
+blogsRouter.delete('/:id',
+    authMiddlewareBasic,
+    blogsController.deleteBlog.bind(blogsController))

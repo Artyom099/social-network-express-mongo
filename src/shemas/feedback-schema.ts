@@ -24,8 +24,3 @@ export const CommentSchema = new mongoose.Schema<WithId<CommentBDType>>({
     }
 })
 export const CommentModel = mongoose.model<CommentBDType>('comments', CommentSchema)
-
-// default: [ {
-//     userId: { type: String, require: true },
-//     status: { type: String, require: true, default: LikeStatus.None }
-// } ]

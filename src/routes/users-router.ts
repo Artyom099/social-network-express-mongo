@@ -1,12 +1,11 @@
 import express, {Request, Response} from "express"
 import {inputValidationMiddleware} from "../middleware/input-validation-middleware"
-import {HTTP_STATUS} from "../utils/constants";
+import {HTTP_STATUS, SortBy, SortDirection} from "../utils/constants";
 import {usersService} from "../domain/users-service"
 import {body} from "express-validator"
 import {ReqQueryType, UserGetDTO} from "../types/types"
 import {queryRepository} from "../repositories/query-repository"
 import {authMiddlewareBasic} from "../middleware/auth-middleware";
-import {DEFAULT_SORT_BY, DEFAULT_SORT_DIRECTION} from "../utils/constants";
 
 const validationUser = [
     body('login').isString().isLength({min: 3, max: 10}).trim().notEmpty().matches('^[a-zA-Z0-9_-]*$'),
@@ -23,8 +22,8 @@ export const usersRouter = () => {
         const searchLoginTerm = req.query.searchLoginTerm ?? null
         const pageNumber = req.query.pageNumber ?? 1
         const pageSize = req.query.pageSize ?? 10
-        const sortBy = req.query.sortBy ?? DEFAULT_SORT_BY
-        const sortDirection = req.query.sortDirection ?? DEFAULT_SORT_DIRECTION
+        const sortBy = req.query.sortBy ?? SortBy.default
+        const sortDirection = req.query.sortDirection ?? SortDirection.default
 
         const foundSortedUsers = await queryRepository.findUsersAndSort(searchEmailTerm, searchLoginTerm,
             Number(pageNumber), Number(pageSize), sortBy, sortDirection)
