@@ -4,7 +4,7 @@ import {LikeStatus} from "../utils/constants";
 
 
 export class FeedbackRepository {
-    async findCommentByID(id: string, currentUserId?: string): Promise<CommentViewModel | null> {
+    async findCommentByID(id: string, currentUserId?: string | null): Promise<CommentViewModel | null> {
         const comment = await CommentModel.findOne({ id })
         if (!comment) return null
         let myStatus = LikeStatus.None
@@ -19,7 +19,6 @@ export class FeedbackRepository {
             if (s.status === LikeStatus.Like) likesCount++
             if (s.status === LikeStatus.Dislike) dislikesCount++
         })
-
         return {
             id: comment.id,
             content: comment.content,
@@ -63,24 +62,28 @@ export class FeedbackRepository {
     async updateCommentLikes(id: string, currentUserId: string, newLikeStatus: LikeStatus): Promise<boolean> {
         const comment = await CommentModel.findOne({ id })
         if (!comment) return false
-        // если юзер есть в массиве, обновляем его статус
 
+        // если юзер есть в массиве, обновляем его статус
         comment.likesInfo.statuses.map(async s => {
             if (s.userId === currentUserId) {
-                const result = await CommentModel.updateOne({id}, {$set: {'likesInfo.statuses': {status: newLikeStatus}}});
-                result.modifiedCount === 1;
+                const result = await CommentModel.updateOne({ id }, {$set: {'likesInfo.statuses': {status: newLikeStatus}}});
+                return result.modifiedCount === 1;
             }
         })
-        // если нет, то добавляем его id и статус
+        // или его id и статус , если статус like/dislike
         const result = await CommentModel.updateOne({ id }, {$addToSet: {'likesInfo.statuses': {userId: currentUserId, status: newLikeStatus}}})
         return result.modifiedCount === 1
 
 
-        // for (const s of comment.likesInfo.statuses) {
-        //     if (s.userId === currentUserId) {
-        //         const result = await CommentModel.updateOne({id}, {$set: {'likesInfo.statuses': {status: newLikeStatus}}});
-        //         result.modifiedCount === 1;
-        //     }
+        // если нет, то удаляем юзера, если статус None
+        // if (newLikeStatus === LikeStatus.None) {
+        //     const result = await CommentModel.deleteOne({ id })
+        //     return result.deletedCount === 1
+        // } else {
+        //     // или его id и статус , если статус like/dislike
+        //     const result = await CommentModel.updateOne({ id }, {$addToSet: {'likesInfo.statuses': {userId: currentUserId, status: newLikeStatus}}})
+        //     return result.modifiedCount === 1
         // }
+
     }
 }

@@ -1,4 +1,11 @@
-import {IdDTO, PagingDTO, PostDTO, PostViewModel, ReqBodyType, ReqParamsQueryType, ReqQueryType} from "../types/types";
+import {
+    IdDTO,
+    PagingDTO,
+    PostDTO,
+    PostViewModel,
+    ReqBodyType, ReqParamsBodyQueryType,
+    ReqQueryType, UserIdModel,
+} from "../types/types";
 import {Request, Response} from "express";
 import {PostsService} from "../domain/posts-service";
 import {HTTP_STATUS, SortBy, SortDirection} from "../utils/constants";
@@ -11,7 +18,6 @@ import {BlogsRepository} from "../repositories/blogs-repository";
 
 export class PostsController {
     constructor(protected postsService: PostsService) {}
-
     async getPosts(req: ReqQueryType<PagingDTO>, res: Response) {
         const pageNumber = req.query.pageNumber ?? 1
         const pageSize = req.query.pageSize ?? 10
@@ -58,7 +64,9 @@ export class PostsController {
         }
     }
 
-    async findCommentsCurrentPost(req: ReqParamsQueryType<IdDTO, PagingDTO>, res: Response) {
+    //ReqParamsBodyQueryType<IdDTO, UserIdModel, PagingDTO>   |    ReqParamsQueryType<IdDTO, PagingDTO>
+    async findCommentsCurrentPost(req: ReqParamsBodyQueryType<IdDTO, UserIdModel, PagingDTO>, res: Response) {
+
         //todo - middleware для нахождения userId
         const foundPost = await this.postsService.findPostById(req.params.id)
         if (!foundPost) {
@@ -73,12 +81,12 @@ export class PostsController {
         }
     }
     async createCommentCurrentPost(req: Request, res: Response) {
-        const currentPost = await this.postsService.findPostById(req.params.postId)
+        const currentPost = await this.postsService.findPostById(req.params.id)
         if (!currentPost) {
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
         } else {
             const comment = new FeedbackService(new FeedbackRepository)
-            const createdComment = await comment.createComment(req.params.postId, req.body.content, req.user!.id, req.user!.login)
+            const createdComment = await comment.createComment(req.params.id, req.body.content, req.user!.id, req.user!.login)
             res.status(HTTP_STATUS.CREATED_201).json(createdComment)
         }
     }

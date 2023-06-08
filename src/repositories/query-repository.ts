@@ -1,4 +1,4 @@
-import {OutputModel, BlogViewModel, CommentViewModel, PostViewModel, UserAccountDBType} from "../types/types"
+import {PagingOutputModel, BlogViewModel, CommentViewModel, PostViewModel, UserAccountDBType} from "../types/types"
 import {userCollection} from "../db/db";
 import {Filter} from "mongodb"
 import {BlogModel} from "../shemas/blogs-schema";
@@ -8,7 +8,7 @@ import {CommentModel} from "../shemas/feedback-schema";
 
 export const queryRepository = {
     async findBlogsAndSort(searchNameTerm: string | null, pageNumber: number, pageSize: number, sortBy: string,
-                           sortDirection: 'asc' | 'desc'): Promise<OutputModel<BlogViewModel[]>> {
+                           sortDirection: 'asc'|'desc'): Promise<PagingOutputModel<BlogViewModel[]>> {
         const filter = searchNameTerm ? {name: {$regex: searchNameTerm, $options: 'i'}} : {}
         const totalCount: number = await BlogModel.countDocuments(filter)
         const sortedBlogs: BlogViewModel[] = await BlogModel.find(filter,{ _id: 0, __v: 0 })
@@ -23,7 +23,7 @@ export const queryRepository = {
     },
 
     async findPostsThisBlogById(blogId: string, pageNumber: number, pageSize: number, sortBy: string,
-                                sortDirection: 'asc' | 'desc'): Promise<OutputModel<PostViewModel[]>> {   // get
+                                sortDirection: 'asc'|'desc'): Promise<PagingOutputModel<PostViewModel[]>> {   // get
         const filter: {blogId: string} = {blogId: blogId}
         const totalCount: number = await PostModel.countDocuments(filter)
         const sortedPosts: PostViewModel[] = await PostModel.find(filter, {projection: {_id: 0, __v: 0}})
@@ -37,8 +37,9 @@ export const queryRepository = {
         }
     },
 
-    async findPostsAndSort(pageNumber: number, pageSize: number, sortBy: string,
-                           sortDirection: 'asc' | 'desc'): Promise<OutputModel<PostViewModel[]>> {
+    async findPostsAndSort(pageNumber: number, pageSize: number, sortBy: string, sortDirection: 'asc'|'desc'):
+                           Promise<PagingOutputModel<PostViewModel[]>> {
+
         const totalCount: number = await PostModel.countDocuments()
         const sortedPosts: PostViewModel[] = await PostModel.find({}, {projection: {_id: 0, __v: 0}})
             .sort({[sortBy]: sortDirection}).skip((pageNumber - 1) * pageSize).limit(pageSize).lean()
@@ -52,7 +53,7 @@ export const queryRepository = {
     },
 
     async findUsersAndSort(searchEmailTerm: string | null, searchLoginTerm: string | null, pageNumber: number, pageSize: number, sortBy: string,
-                           sortDirection: 'asc' | 'desc'): Promise<OutputModel<UserAccountDBType[]>> {
+                           sortDirection: 'asc'|'desc'): Promise<PagingOutputModel<UserAccountDBType[]>> {
         const filter: Filter<UserAccountDBType> = { $or: [
             { 'accountData.login': {$regex: searchLoginTerm ?? '', $options: "i"} },
             { 'accountData.email': {$regex: searchEmailTerm ?? '', $options: "i"} }
@@ -71,7 +72,7 @@ export const queryRepository = {
     },
 
     async findCommentsThisPostAndSort(postId: string, pageNumber: number, pageSize: number, sortBy: string,
-                                      sortDirection: 'asc' | 'desc'): Promise<OutputModel<CommentViewModel[]>> {
+                                      sortDirection: 'asc'|'desc'): Promise<PagingOutputModel<CommentViewModel[]>> {
         const filter: {postId: string} = {postId: postId}
         const totalCount: number = await CommentModel.countDocuments(filter)
         const sortedComments: CommentViewModel[] = await CommentModel.find(filter, {projection: {_id: 0, __v: 0, postId: 0}})

@@ -6,7 +6,7 @@ import {LikeStatus} from "../utils/constants";
 
 export class FeedbackService {
     constructor(protected feedbackRepository: FeedbackRepository) {}
-    async findCommentById(commentId: string, currentUserId?: string): Promise<CommentViewModel | null> {
+    async findCommentById(commentId: string, currentUserId?: string | null): Promise<CommentViewModel | null> {
         return this.feedbackRepository.findCommentByID(commentId, currentUserId)
     }
     async createComment(postId: string, content: string, userId: string, userLogin: string): Promise<CommentViewModel> {

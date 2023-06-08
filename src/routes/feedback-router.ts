@@ -5,6 +5,7 @@ import {validationComment} from "./posts-router";
 import {inputValidationMiddleware} from "../middleware/input-validation-middleware";
 import {body} from "express-validator";
 import {feedbackController} from "../composition-root";
+import {checkUserIdMiddleware} from "../middleware/check-userid-middleware";
 
 const validationLikes = body('likeStatus').isString().trim().notEmpty()
     .custom(async (value) => {
@@ -19,7 +20,9 @@ const validationLikes = body('likeStatus').isString().trim().notEmpty()
 
 export const feedbackRouter = Router({})
 
-feedbackRouter.get('/:id', feedbackController.getComment.bind(feedbackController))
+feedbackRouter.get('/:id',
+    checkUserIdMiddleware,
+    feedbackController.getComment.bind(feedbackController))
 
 feedbackRouter.put('/:commentId',
     validationComment,

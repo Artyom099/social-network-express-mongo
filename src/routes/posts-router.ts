@@ -5,6 +5,7 @@ import {inputValidationMiddleware} from "../middleware/input-validation-middlewa
 import {authMiddlewareBasic, authMiddlewareBearer} from "../middleware/auth-middleware";
 import {BlogsRepository} from "../repositories/blogs-repository";
 import {postsController} from "../composition-root";
+import {checkUserIdMiddleware} from "../middleware/check-userid-middleware";
 
 const validationPost = [
     body('title').isString().isLength({min: 3, max: 30}).trim().not().isEmpty(),
@@ -34,8 +35,11 @@ postsRouter.post('/',
     inputValidationMiddleware,
     postsController.createPost.bind(postsController))
 
-postsRouter.get('/:id/comments', postsController.findCommentsCurrentPost.bind(postsController))
-postsRouter.post('/:postId/comments',
+postsRouter.get('/:id/comments',
+    checkUserIdMiddleware,
+    postsController.findCommentsCurrentPost.bind(postsController))
+
+postsRouter.post('/:id/comments',
     validationComment,
     authMiddlewareBearer,
     inputValidationMiddleware,

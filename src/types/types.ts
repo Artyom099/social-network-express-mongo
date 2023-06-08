@@ -1,5 +1,5 @@
 import {Request} from 'express'
-import {LikeStatus, ResultCode} from "../utils/constants";
+import {LikeStatus, ResultCode, SortDirection} from "../utils/constants";
 
 
 // ViewModels
@@ -114,17 +114,17 @@ export type IdDTO = {
     id: string
 }
 export type PagingDTO = {
-    pageNumber: number
-    pageSize: number
-    sortBy: string
-    sortDirection: 'asc' | 'desc'
+    pageNumber?: number
+    pageSize?: number
+    sortBy?: string
+    sortDirection?: SortDirection
 }
 export type PagingWithSearchDTO = {
     searchNameTerm: string
     pageNumber: number
     pageSize: number
     sortBy: string
-    sortDirection: 'asc' | 'desc'
+    sortDirection: SortDirection
 }
 
 export type VideoPostDTO = {
@@ -183,13 +183,20 @@ export type PassCodeDTO = {
 // e.Request<P,ResBody,ReqBody,ReqQuery,Locals>
 //     <Params, ??????,   Body,   Query, ?????>
 
+export type UserIdModel = {
+    userId?: string |  null
+}
+
 export type ReqParamsType<T>         = Request<T>
 export type ReqBodyType<T>           = Request<{},{},T>
 export type ReqQueryType<T>          = Request<{},{},{},T>
-export type ReqParamsBodyType<T, Y>  = Request<T,{},Y>
-export type ReqParamsQueryType<T, Y> = Request<T,{},{},Y>
 
-export type OutputModel<T> = {
+export type ReqBodyQueryType<T, Y>        = Request<{},{},T,Y>
+export type ReqParamsBodyType<T, Y>       = Request<T,{},Y>
+export type ReqParamsQueryType<T, Y>      = Request<T,{},{},Y>
+export type ReqParamsBodyQueryType<P,B,Q> = Request<P,{},B,Q>
+
+export type PagingOutputModel<T> = {
     pagesCount: number
     page: number
     pageSize: number
