@@ -1,9 +1,10 @@
 import {BlogViewModel, PostViewModel} from "../types/types";
-import {postsRepository} from "../repositories/posts-repository";
+import {PostsRepository} from "../repositories/posts-repository";
 import {randomUUID} from "crypto";
 
 
-export const postsService = {
+export class PostsService {
+    constructor(protected postsRepository: PostsRepository) {}
     async createPost(title: string, shortDescription: string, content: string, blog: BlogViewModel | null): Promise<PostViewModel> {
         const createdPost: PostViewModel = {
             id: randomUUID().toString(),
@@ -14,18 +15,15 @@ export const postsService = {
             blogName: blog!.name,
             createdAt: new Date().toISOString()
         }
-        return await postsRepository.createPost(createdPost)
-    },
-
+        return this.postsRepository.createPost(createdPost)
+    }
     async findPostById(postId: string): Promise<PostViewModel | null> {
-        return await postsRepository.findPostById(postId)
-    },
-
+        return this.postsRepository.findPostById(postId)
+    }
     async updatePostById(postId: string, title: string, shortDescription: string, content: string): Promise<boolean> {
-        return await postsRepository.updatePostById(postId, title, shortDescription, content)
-    },
-
+        return this.postsRepository.updatePostById(postId, title, shortDescription, content)
+    }
     async deletePostById(postId: string) {
-        return await postsRepository.deletePostById(postId)
-    },
+        return this.postsRepository.deletePostById(postId)
+    }
 }
