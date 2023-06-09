@@ -287,125 +287,125 @@ describe('/feedback', () => {
         })
     });
 
-    // it('14 – /comments/:commentId/like-status – return 204 & delete dislike', async () => {
-    //     const {commentId, firstAccessToken} = expect.getState()
-    //     const deleteDislike = await request(app)
-    //         .put(`/comments/${commentId}/like-status`)
-    //         .auth(firstAccessToken, {type: 'bearer'})
-    //         .send({likeStatus: LikeStatus.None})
-    //
-    //     expect(deleteDislike).toBeDefined()
-    //     expect(deleteDislike.status).toEqual(HTTP_STATUS.NO_CONTENT_204)
-    // });
-    // it('15 – /comments/:id – return 200 & found comment', async () => {
-    //     const {commentId, firstUser, firstCreatedUser, firstAccessToken} = expect.getState()
-    //     const getComment = await request(app)
-    //         .get(`/comments/${commentId}`)
-    //         .auth(firstAccessToken, {type: 'bearer'})
-    //
-    //     expect(getComment).toBeDefined()
-    //     expect(getComment.status).toEqual(HTTP_STATUS.OK_200)
-    //     expect(getComment.body).toEqual({
-    //         id: commentId,
-    //         content: 'valid-super-long-content',
-    //         commentatorInfo: {
-    //             userId: firstCreatedUser.id,
-    //             userLogin: firstUser.login
-    //         },
-    //         createdAt: expect.any(String),
-    //         likesInfo: {
-    //             likesCount: 0,
-    //             dislikesCount: 0,
-    //             myStatus: LikeStatus.None
-    //         }
-    //     })
-    // });
-    //
-    // it('16 – /auth/login – return 200, 1st login and refreshToken', async () => {
-    //     const {secondUser} = expect.getState()
-    //     const loginResponse = await request(app)
-    //         .post('/auth/login')
-    //         .send({
-    //             loginOrEmail: secondUser.login,
-    //             password: secondUser.password
-    //         })
-    //
-    //     expect(loginResponse).toBeDefined()
-    //     expect(loginResponse.status).toBe(HTTP_STATUS.OK_200)
-    //     expect(loginResponse.body).toEqual({accessToken: expect.any(String)})
-    //     const {accessToken} = loginResponse.body
-    //
-    //     const refreshToken = getRefreshTokenByResponse(loginResponse)
-    //     const refreshTokenWithName = getRefreshTokenByResponseWithTokenName(loginResponse)
-    //     expect(refreshToken).toBeDefined()
-    //     expect(refreshToken).toEqual(expect.any(String))
-    //
-    //     expect.setState({secondAccessToken: accessToken, secondRefreshToken: refreshToken, secondRefreshTokenWithName: refreshTokenWithName})
-    // })
-    //
-    // it('17 – /comments/:commentId/like-status – return 204 & set 2 likes', async () => {
-    //     const {commentId, firstAccessToken} = expect.getState()
-    //     const setLikeFirstUser = await request(app)
-    //         .put(`/comments/${commentId}/like-status`)
-    //         .auth(firstAccessToken, {type: 'bearer'})
-    //         .send({likeStatus: LikeStatus.Like})
-    //     expect(setLikeFirstUser).toBeDefined()
-    //     expect(setLikeFirstUser.status).toEqual(HTTP_STATUS.NO_CONTENT_204)
-    //
-    //     const {secondAccessToken} = expect.getState()
-    //     const setLikeSecondUser = await request(app)
-    //         .put(`/comments/${commentId}/like-status`)
-    //         .auth(secondAccessToken, {type: 'bearer'})
-    //         .send({likeStatus: LikeStatus.Like})
-    //     expect(setLikeSecondUser).toBeDefined()
-    //     expect(setLikeSecondUser.status).toEqual(HTTP_STATUS.NO_CONTENT_204)
-    //
-    //     const {firstUser, firstCreatedUser} = expect.getState()
-    //     const getComment = await request(app)
-    //         .get(`/comments/${commentId}`)
-    //         .auth(firstAccessToken, {type: 'bearer'})
-    //
-    //     expect(getComment).toBeDefined()
-    //     expect(getComment.status).toEqual(HTTP_STATUS.OK_200)
-    //     expect(getComment.body).toEqual({
-    //         id: commentId,
-    //         content: 'valid-super-long-content',
-    //         commentatorInfo: {
-    //             userId: firstCreatedUser.id,
-    //             userLogin: firstUser.login
-    //         },
-    //         createdAt: expect.any(String),
-    //         likesInfo: {
-    //             likesCount: 2,
-    //             dislikesCount: 0,
-    //             myStatus: LikeStatus.Like
-    //         }
-    //     })
-    // });
-    //
-    // it('18 – /comments/:id – return 200 & found comment', async () => {
-    //     const {commentId, firstUser, firstCreatedUser, firstAccessToken} = expect.getState()
-    //     const getComment = await request(app)
-    //         .get(`/comments/${commentId}`)
-    //         .auth(firstAccessToken, {type: 'bearer'})
-    //
-    //     expect(getComment).toBeDefined()
-    //     expect(getComment.status).toEqual(HTTP_STATUS.OK_200)
-    //     expect(getComment.body).toEqual({
-    //         id: commentId,
-    //         content: 'valid-super-long-content',
-    //         commentatorInfo: {
-    //             userId: firstCreatedUser.id,
-    //             userLogin: firstUser.login
-    //         },
-    //         createdAt: expect.any(String),
-    //         likesInfo: {
-    //             likesCount: 2,
-    //             dislikesCount: 0,
-    //             myStatus: LikeStatus.Like
-    //         }
-    //     })
-    // });
+    it('14 – PUT: /comments/:commentId/like-status – return 204 & delete dislike', async () => {
+        const {commentId, firstAccessToken} = expect.getState()
+        const deleteDislike = await request(app)
+            .put(`/comments/${commentId}/like-status`)
+            .auth(firstAccessToken, {type: 'bearer'})
+            .send({likeStatus: LikeStatus.None})
+
+        expect(deleteDislike).toBeDefined()
+        expect(deleteDislike.status).toEqual(HTTP_STATUS.NO_CONTENT_204)
+    });
+    it('15 – GET: /comments/:id – return 200 & found comment', async () => {
+        const {commentId, firstUser, firstCreatedUser, firstAccessToken} = expect.getState()
+        const getComment = await request(app)
+            .get(`/comments/${commentId}`)
+            .auth(firstAccessToken, {type: 'bearer'})
+
+        expect(getComment).toBeDefined()
+        expect(getComment.status).toEqual(HTTP_STATUS.OK_200)
+        expect(getComment.body).toEqual({
+            id: commentId,
+            content: 'valid-super-long-content',
+            commentatorInfo: {
+                userId: firstCreatedUser.id,
+                userLogin: firstUser.login
+            },
+            createdAt: expect.any(String),
+            likesInfo: {
+                likesCount: 0,
+                dislikesCount: 0,
+                myStatus: LikeStatus.None
+            }
+        })
+    });
+
+    it('16 – POST: /auth/login – return 200, 1st login and refreshToken', async () => {
+        const {secondUser} = expect.getState()
+        const loginResponse = await request(app)
+            .post('/auth/login')
+            .send({
+                loginOrEmail: secondUser.login,
+                password: secondUser.password
+            })
+
+        expect(loginResponse).toBeDefined()
+        expect(loginResponse.status).toBe(HTTP_STATUS.OK_200)
+        expect(loginResponse.body).toEqual({accessToken: expect.any(String)})
+        const {accessToken} = loginResponse.body
+
+        const refreshToken = getRefreshTokenByResponse(loginResponse)
+        const refreshTokenWithName = getRefreshTokenByResponseWithTokenName(loginResponse)
+        expect(refreshToken).toBeDefined()
+        expect(refreshToken).toEqual(expect.any(String))
+
+        expect.setState({secondAccessToken: accessToken, secondRefreshToken: refreshToken, secondRefreshTokenWithName: refreshTokenWithName})
+    })
+
+    it('17 – PUT: /comments/:commentId/like-status – return 204 & set 2 likes', async () => {
+        const {commentId, firstAccessToken} = expect.getState()
+        const setLikeFirstUser = await request(app)
+            .put(`/comments/${commentId}/like-status`)
+            .auth(firstAccessToken, {type: 'bearer'})
+            .send({likeStatus: LikeStatus.Like})
+        expect(setLikeFirstUser).toBeDefined()
+        expect(setLikeFirstUser.status).toEqual(HTTP_STATUS.NO_CONTENT_204)
+
+        const {secondAccessToken} = expect.getState()
+        const setLikeSecondUser = await request(app)
+            .put(`/comments/${commentId}/like-status`)
+            .auth(secondAccessToken, {type: 'bearer'})
+            .send({likeStatus: LikeStatus.Like})
+        expect(setLikeSecondUser).toBeDefined()
+        expect(setLikeSecondUser.status).toEqual(HTTP_STATUS.NO_CONTENT_204)
+
+        // const {firstUser, firstCreatedUser} = expect.getState()
+        // const getComment = await request(app)
+        //     .get(`/comments/${commentId}`)
+        //     .auth(firstAccessToken, {type: 'bearer'})
+        //
+        // expect(getComment).toBeDefined()
+        // expect(getComment.status).toEqual(HTTP_STATUS.OK_200)
+        // expect(getComment.body).toEqual({
+        //     id: commentId,
+        //     content: 'valid-super-long-content',
+        //     commentatorInfo: {
+        //         userId: firstCreatedUser.id,
+        //         userLogin: firstUser.login
+        //     },
+        //     createdAt: expect.any(String),
+        //     likesInfo: {
+        //         likesCount: 2,
+        //         dislikesCount: 0,
+        //         myStatus: LikeStatus.Like
+        //     }
+        // })
+    });
+
+    it('18 – GET: /comments/:id – return 200 & found comment', async () => {
+        const {commentId, firstUser, firstCreatedUser, firstAccessToken} = expect.getState()
+        const getComment = await request(app)
+            .get(`/comments/${commentId}`)
+            .auth(firstAccessToken, {type: 'bearer'})
+
+        expect(getComment).toBeDefined()
+        expect(getComment.status).toEqual(HTTP_STATUS.OK_200)
+        expect(getComment.body).toEqual({
+            id: commentId,
+            content: 'valid-super-long-content',
+            commentatorInfo: {
+                userId: firstCreatedUser.id,
+                userLogin: firstUser.login
+            },
+            createdAt: expect.any(String),
+            likesInfo: {
+                likesCount: 2,
+                dislikesCount: 0,
+                myStatus: LikeStatus.Like
+            }
+        })
+    });
 
     afterAll(async () => {
         await mongoose.connection.close()

@@ -64,10 +64,7 @@ export class PostsController {
         }
     }
 
-    //ReqParamsBodyQueryType<IdDTO, UserIdModel, PagingDTO>   |    ReqParamsQueryType<IdDTO, PagingDTO>
     async findCommentsCurrentPost(req: ReqParamsBodyQueryType<IdDTO, UserIdModel, PagingDTO>, res: Response) {
-
-        //todo - middleware для нахождения userId
         const foundPost = await this.postsService.findPostById(req.params.id)
         if (!foundPost) {
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
