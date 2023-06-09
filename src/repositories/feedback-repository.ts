@@ -66,11 +66,11 @@ export class FeedbackRepository {
         // если юзер есть в массиве, обновляем его статус
         comment.likesInfo.statuses.map(async s => {
             if (s.userId === currentUserId) {
-                const result = await CommentModel.updateOne({ id }, {$set: {'likesInfo.statuses': {status: newLikeStatus}}});
+                const result = await CommentModel.updateOne({ id }, {$set: {'likesInfo.statuses': {userId: currentUserId, 's.status': newLikeStatus}}});
                 return result.modifiedCount === 1;
             }
         })
-        // или его id и статус , если статус like/dislike
+        // иначе добавляем юзера и его статус в массив
         const result = await CommentModel.updateOne({ id }, {$addToSet: {'likesInfo.statuses': {userId: currentUserId, status: newLikeStatus}}})
         return result.modifiedCount === 1
 
