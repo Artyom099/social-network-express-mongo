@@ -5,16 +5,16 @@ import {LikeStatus} from "../utils/constants";
 
 export class FeedbackRepository {
     async findCommentByID(id: string, currentUserId?: string | null): Promise<CommentViewModel | null> {
-        const comment = await CommentModel.findOne({ id })
+        const comment = await CommentModel.findOne({ id }, {})
         if (!comment) return null
         let myStatus = LikeStatus.None
         let likesCount = 0
         let dislikesCount = 0
         comment.likesInfo.statuses.forEach(s => {
             if (s.userId === currentUserId) {
-                console.log({myStatus_before: myStatus})
+                // console.log({myStatus_before: myStatus})
                 myStatus = s.status
-                console.log({myStatus_after: myStatus})
+                // console.log({myStatus_after: myStatus})
             }
             if (s.status === LikeStatus.Like) likesCount++
             if (s.status === LikeStatus.Dislike) dislikesCount++
