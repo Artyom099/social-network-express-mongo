@@ -69,11 +69,12 @@ export class PostsController {
         if (!foundPost) {
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
         } else {
+            const currentUserId = req.body.userId
             const pageNumber = req.query.pageNumber ?? 1
             const pageSize = req.query.pageSize ?? 10
             const sortBy = req.query.sortBy ?? SortBy.default
             const sortDirection = req.query.sortDirection ?? SortDirection.default
-            const foundSortedComments = await queryRepository.findCommentsThisPostAndSort(foundPost.id, Number(pageNumber), Number(pageSize), sortBy, sortDirection)
+            const foundSortedComments = await queryRepository.findCommentsThisPostAndSort(currentUserId!, foundPost.id, Number(pageNumber), Number(pageSize), sortBy, sortDirection)
             res.status(HTTP_STATUS.OK_200).json(foundSortedComments)
         }
     }

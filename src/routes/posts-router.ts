@@ -38,7 +38,6 @@ postsRouter.post('/',
 postsRouter.get('/:id/comments',
     checkUserIdMiddleware,
     postsController.findCommentsCurrentPost.bind(postsController))
-
 postsRouter.post('/:id/comments',
     validationComment,
     authMiddlewareBearer,

@@ -56,6 +56,13 @@ export type DeviceViewModel = {
     lastActiveDate: string
     deviceId: string
 }
+export type PagingViewModel<T> = {
+    pagesCount: number
+    page: number
+    pageSize: number
+    totalCount: number
+    items: T
+}
 
 // DBTypes
 export type UserAccountDBType = {
@@ -196,13 +203,6 @@ export type ReqParamsBodyType<T, Y>       = Request<T,{},Y>
 export type ReqParamsQueryType<T, Y>      = Request<T,{},{},Y>
 export type ReqParamsBodyQueryType<P,B,Q> = Request<P,{},B,Q>
 
-export type PagingOutputModel<T> = {
-    pagesCount: number
-    page: number
-    pageSize: number
-    totalCount: number
-    items: T
-}
 export type Result<T> = {
     code: ResultCode
     data: T
