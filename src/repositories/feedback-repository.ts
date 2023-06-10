@@ -64,26 +64,19 @@ export class FeedbackRepository {
         if (!comment) return false
 
         // если юзер есть в массиве, обновляем его статус
+        let isFound = false
         comment.likesInfo.statuses.map(async s => {
             if (s.userId === currentUserId) {
-                const result = await CommentModel.updateOne({ id }, {$set: {'likesInfo.statuses': {userId: currentUserId, 's.status': newLikeStatus}}});
-                return result.modifiedCount === 1;
+                console.log('123')
+                isFound = true
+                const result = await CommentModel.updateOne({id, 'likesInfo.statuses.userId': currentUserId}, {'likesInfo.statuses': {userId: currentUserId, status: newLikeStatus}})
+                return result.modifiedCount === 1
             }
         })
+        if (isFound) return true
+        console.log('456')
         // иначе добавляем юзера и его статус в массив
-        const result = await CommentModel.updateOne({ id }, {$addToSet: {'likesInfo.statuses': {userId: currentUserId, status: newLikeStatus}}})
+        const result = await CommentModel.updateOne({ id }, {$addToSet: {'likesInfo.statuses': {userId: currentUserId, status: `${newLikeStatus}`}}})
         return result.modifiedCount === 1
-
-
-        // если нет, то удаляем юзера, если статус None
-        // if (newLikeStatus === LikeStatus.None) {
-        //     const result = await CommentModel.deleteOne({ id })
-        //     return result.deletedCount === 1
-        // } else {
-        //     // или его id и статус , если статус like/dislike
-        //     const result = await CommentModel.updateOne({ id }, {$addToSet: {'likesInfo.statuses': {userId: currentUserId, status: newLikeStatus}}})
-        //     return result.modifiedCount === 1
-        // }
-
     }
 }

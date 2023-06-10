@@ -9,7 +9,6 @@ export const checkUserIdMiddleware = async (req: Request, res: Response, next: N
     } else {
         const [authType, authToken] = auth.split(' ')
         req.body.userId = await jwtService.getUserIdByToken(authToken)
-        console.log('1234')
     }
     next()
 }

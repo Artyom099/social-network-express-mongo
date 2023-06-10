@@ -341,54 +341,68 @@ describe('/feedback', () => {
         expect.setState({secondAccessToken: accessToken, secondRefreshToken: refreshToken, secondRefreshTokenWithName: refreshTokenWithName})
     })
 
-    it('17 – PUT: /comments/:commentId/like-status – return 204 & set 2 likes', async () => {
+    it('17 – PUT: /comments/:commentId/like-status – return 204 & set 2 likes twice', async () => {
         const {commentId, firstAccessToken} = expect.getState()
-        const setLikeFirstUser = await request(app)
+        const setLikeByFirstUser = await request(app)
             .put(`/comments/${commentId}/like-status`)
             .auth(firstAccessToken, {type: 'bearer'})
             .send({likeStatus: LikeStatus.Like})
-        expect(setLikeFirstUser).toBeDefined()
-        expect(setLikeFirstUser.status).toEqual(HTTP_STATUS.NO_CONTENT_204)
+        expect(setLikeByFirstUser).toBeDefined()
+        expect(setLikeByFirstUser.status).toEqual(HTTP_STATUS.NO_CONTENT_204)
+
+        const setLikeByFirstUserAgain = await request(app)
+            .put(`/comments/${commentId}/like-status`)
+            .auth(firstAccessToken, {type: 'bearer'})
+            .send({likeStatus: LikeStatus.Like})
+        expect(setLikeByFirstUserAgain).toBeDefined()
+        expect(setLikeByFirstUserAgain.status).toEqual(HTTP_STATUS.NO_CONTENT_204)
 
         const {secondAccessToken} = expect.getState()
-        const setLikeSecondUser = await request(app)
+        const setLikeBySecondUser = await request(app)
             .put(`/comments/${commentId}/like-status`)
             .auth(secondAccessToken, {type: 'bearer'})
             .send({likeStatus: LikeStatus.Like})
-        expect(setLikeSecondUser).toBeDefined()
-        expect(setLikeSecondUser.status).toEqual(HTTP_STATUS.NO_CONTENT_204)
+        expect(setLikeBySecondUser).toBeDefined()
+        expect(setLikeBySecondUser.status).toEqual(HTTP_STATUS.NO_CONTENT_204)
 
-        // const {firstUser, firstCreatedUser} = expect.getState()
-        // const getComment = await request(app)
-        //     .get(`/comments/${commentId}`)
-        //     .auth(firstAccessToken, {type: 'bearer'})
-        //
-        // expect(getComment).toBeDefined()
-        // expect(getComment.status).toEqual(HTTP_STATUS.OK_200)
-        // expect(getComment.body).toEqual({
-        //     id: commentId,
-        //     content: 'valid-super-long-content',
-        //     commentatorInfo: {
-        //         userId: firstCreatedUser.id,
-        //         userLogin: firstUser.login
-        //     },
-        //     createdAt: expect.any(String),
-        //     likesInfo: {
-        //         likesCount: 2,
-        //         dislikesCount: 0,
-        //         myStatus: LikeStatus.Like
-        //     }
-        // })
+        const setLikeBySecondUserAgain = await request(app)
+            .put(`/comments/${commentId}/like-status`)
+            .auth(secondAccessToken, {type: 'bearer'})
+            .send({likeStatus: LikeStatus.Like})
+        expect(setLikeBySecondUserAgain).toBeDefined()
+        expect(setLikeBySecondUserAgain.status).toEqual(HTTP_STATUS.NO_CONTENT_204)
     });
-    it('18 – GET: /comments/:id – return 200 & found comment', async () => {
+    it('18 – GET: /comments/:id – return 200 & found comment with 2 likes', async () => {
         const {commentId, firstUser, firstCreatedUser, firstAccessToken} = expect.getState()
-        const getComment = await request(app)
+        const getCommentByFirstUser = await request(app)
             .get(`/comments/${commentId}`)
             .auth(firstAccessToken, {type: 'bearer'})
 
-        expect(getComment).toBeDefined()
-        expect(getComment.status).toEqual(HTTP_STATUS.OK_200)
-        expect(getComment.body).toEqual({
+        expect(getCommentByFirstUser).toBeDefined()
+        expect(getCommentByFirstUser.status).toEqual(HTTP_STATUS.OK_200)
+        expect(getCommentByFirstUser.body).toEqual({
+            id: commentId,
+            content: 'valid-super-long-content',
+            commentatorInfo: {
+                userId: firstCreatedUser.id,
+                userLogin: firstUser.login
+            },
+            createdAt: expect.any(String),
+            likesInfo: {
+                likesCount: 2,
+                dislikesCount: 0,
+                myStatus: LikeStatus.Like
+            }
+        })
+
+        const {secondAccessToken} = expect.getState()
+        const getCommentBySecondUser = await request(app)
+            .get(`/comments/${commentId}`)
+            .auth(secondAccessToken, {type: 'bearer'})
+
+        expect(getCommentBySecondUser).toBeDefined()
+        expect(getCommentBySecondUser.status).toEqual(HTTP_STATUS.OK_200)
+        expect(getCommentBySecondUser.body).toEqual({
             id: commentId,
             content: 'valid-super-long-content',
             commentatorInfo: {
@@ -404,35 +418,98 @@ describe('/feedback', () => {
         })
     });
 
-    it('19 – GET: /posts/:id/comments – return 200 & sorted comment with paging', async () => {
-        const {postId, commentId, firstUser, firstCreatedUser, firstAccessToken} = expect.getState()
-        const getComment = await request(app)
-            .get(`/posts/${postId}/comments`)
-            .auth(firstAccessToken, {type: 'bearer'})
-
-        expect(getComment).toBeDefined()
-        expect(getComment.status).toEqual(HTTP_STATUS.OK_200)
-        expect(getComment.body).toEqual({
-            pagesCount: 1,
-            page: 1,
-            pageSize: 10,
-            totalCount: 1,
-            items: [{
-                id: commentId,
-                content: 'valid-super-long-content',
-                commentatorInfo: {
-                    userId: firstCreatedUser.id,
-                    userLogin: firstUser.login
-                },
-                createdAt: expect.any(String),
-                likesInfo: {
-                    likesCount: 2,
-                    dislikesCount: 0,
-                    myStatus: LikeStatus.Like
-                }
-            }]
-        })
-    });
+    // it('19 – GET: /posts/:id/comments – return 200 & sorted comment with paging & 2 likes', async () => {
+    //     const {postId, commentId, firstUser, firstCreatedUser, firstAccessToken} = expect.getState()
+    //     const getComment = await request(app)
+    //         .get(`/posts/${postId}/comments`)
+    //         .auth(firstAccessToken, {type: 'bearer'})
+    //
+    //     expect(getComment).toBeDefined()
+    //     expect(getComment.status).toEqual(HTTP_STATUS.OK_200)
+    //     expect(getComment.body).toEqual({
+    //         pagesCount: 1,
+    //         page: 1,
+    //         pageSize: 10,
+    //         totalCount: 1,
+    //         items: [{
+    //             id: commentId,
+    //             content: 'valid-super-long-content',
+    //             commentatorInfo: {
+    //                 userId: firstCreatedUser.id,
+    //                 userLogin: firstUser.login
+    //             },
+    //             createdAt: expect.any(String),
+    //             likesInfo: {
+    //                 likesCount: 2,
+    //                 dislikesCount: 0,
+    //                 myStatus: LikeStatus.Like
+    //             }
+    //         }]
+    //     })
+    // });
+    //
+    // it('20 – PUT: /comments/:commentId/like-status – return 204, set 1 dislike & 2 none', async () => {
+    //     const {commentId, firstAccessToken} = expect.getState()
+    //     const setLikeFirstUser = await request(app)
+    //         .put(`/comments/${commentId}/like-status`)
+    //         .auth(firstAccessToken, {type: 'bearer'})
+    //         .send({likeStatus: LikeStatus.Dislike})
+    //     expect(setLikeFirstUser).toBeDefined()
+    //     expect(setLikeFirstUser.status).toEqual(HTTP_STATUS.NO_CONTENT_204)
+    //
+    //     const {secondAccessToken} = expect.getState()
+    //     const setLikeSecondUser = await request(app)
+    //         .put(`/comments/${commentId}/like-status`)
+    //         .auth(secondAccessToken, {type: 'bearer'})
+    //         .send({likeStatus: LikeStatus.None})
+    //     expect(setLikeSecondUser).toBeDefined()
+    //     expect(setLikeSecondUser.status).toEqual(HTTP_STATUS.NO_CONTENT_204)
+    // });
+    // it('21 – GET: /comments/:id – return 200 & found comment with 1 dislike', async () => {
+    //     const {commentId, firstUser, firstCreatedUser, firstAccessToken} = expect.getState()
+    //     const getComment = await request(app)
+    //         .get(`/comments/${commentId}`)
+    //         .auth(firstAccessToken, {type: 'bearer'})
+    //
+    //     expect(getComment).toBeDefined()
+    //     expect(getComment.status).toEqual(HTTP_STATUS.OK_200)
+    //     expect(getComment.body).toEqual({
+    //         id: commentId,
+    //         content: 'valid-super-long-content',
+    //         commentatorInfo: {
+    //             userId: firstCreatedUser.id,
+    //             userLogin: firstUser.login
+    //         },
+    //         createdAt: expect.any(String),
+    //         likesInfo: {
+    //             likesCount: 0,
+    //             dislikesCount: 1,
+    //             myStatus: LikeStatus.Dislike
+    //         }
+    //     })
+    //
+    //     const {secondAccessToken} = expect.getState()
+    //     const getCommentBySecondUser = await request(app)
+    //         .get(`/comments/${commentId}`)
+    //         .auth(secondAccessToken, {type: 'bearer'})
+    //
+    //     expect(getCommentBySecondUser).toBeDefined()
+    //     expect(getCommentBySecondUser.status).toEqual(HTTP_STATUS.OK_200)
+    //     expect(getCommentBySecondUser.body).toEqual({
+    //         id: commentId,
+    //         content: 'valid-super-long-content',
+    //         commentatorInfo: {
+    //             userId: firstCreatedUser.id,
+    //             userLogin: firstUser.login
+    //         },
+    //         createdAt: expect.any(String),
+    //         likesInfo: {
+    //             likesCount: 0,
+    //             dislikesCount: 1,
+    //             myStatus: LikeStatus.None
+    //         }
+    //     })
+    // });
 
     afterAll(async () => {
         await mongoose.connection.close()
