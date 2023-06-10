@@ -5,17 +5,13 @@ import {LikeStatus} from "../utils/constants";
 
 export class FeedbackRepository {
     async findCommentByID(id: string, currentUserId?: string | null): Promise<CommentViewModel | null> {
-        const comment = await CommentModel.findOne({ id }, {})
+        const comment = await CommentModel.findOne({ id })
         if (!comment) return null
         let myStatus = LikeStatus.None
         let likesCount = 0
         let dislikesCount = 0
         comment.likesInfo.statuses.forEach(s => {
-            if (s.userId === currentUserId) {
-                // console.log({myStatus_before: myStatus})
-                myStatus = s.status
-                // console.log({myStatus_after: myStatus})
-            }
+            if (s.userId === currentUserId) myStatus = s.status
             if (s.status === LikeStatus.Like) likesCount++
             if (s.status === LikeStatus.Dislike) dislikesCount++
         })
@@ -62,19 +58,14 @@ export class FeedbackRepository {
     async updateCommentLikes(id: string, currentUserId: string, newLikeStatus: LikeStatus): Promise<boolean> {
         const comment = await CommentModel.findOne({ id })
         if (!comment) return false
-
         // если юзер есть в массиве, обновляем его статус
-        let isFound = false
-        comment.likesInfo.statuses.map(async s => {
+        for (const s of comment.likesInfo.statuses) {
             if (s.userId === currentUserId) {
-                console.log('123')
-                isFound = true
-                const result = await CommentModel.updateOne({id, 'likesInfo.statuses.userId': currentUserId}, {'likesInfo.statuses': {userId: currentUserId, status: newLikeStatus}})
+                if (s.status === newLikeStatus) return true
+                const result = await CommentModel.updateOne({ id }, {'likesInfo.statuses': {userId: currentUserId, status: newLikeStatus}})
                 return result.modifiedCount === 1
             }
-        })
-        if (isFound) return true
-        console.log('456')
+        }
         // иначе добавляем юзера и его статус в массив
         const result = await CommentModel.updateOne({ id }, {$addToSet: {'likesInfo.statuses': {userId: currentUserId, status: `${newLikeStatus}`}}})
         return result.modifiedCount === 1
