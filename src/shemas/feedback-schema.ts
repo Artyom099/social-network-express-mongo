@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import {WithId} from "mongodb";
-import {CommentBDType} from "../types/types";
+import {CommentBDModel} from "../types/types";
 import {LikeStatus} from "../utils/constants";
 
 const LikeStatusesSchema = new mongoose.Schema<{userId: string, status: LikeStatus}>( {
@@ -8,7 +8,7 @@ const LikeStatusesSchema = new mongoose.Schema<{userId: string, status: LikeStat
     status: { type: String, enum: LikeStatus, require: true }
 })
 
-export const CommentSchema = new mongoose.Schema<WithId<CommentBDType>>({
+export const CommentSchema = new mongoose.Schema<WithId<CommentBDModel>>({
     id: { type: String, require: true },
     postId: { type: String, require: true },
     content: { type: String, require: true },
@@ -23,4 +23,4 @@ export const CommentSchema = new mongoose.Schema<WithId<CommentBDType>>({
         statuses: { type: [LikeStatusesSchema]  }
     }
 })
-export const CommentModel = mongoose.model<CommentBDType>('comments', CommentSchema)
+export const CommentModel = mongoose.model<CommentBDModel>('comments', CommentSchema)

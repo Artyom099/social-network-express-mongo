@@ -3,8 +3,8 @@ import {
     BlogViewModel,
     CommentViewModel,
     PostViewModel,
-    UserAccountDBType,
-    CommentBDType
+    UserAccountDBModel,
+    CommentBDModel, PostDBModel
 } from "../types/types"
 import {userCollection} from "../db/db";
 import {Filter} from "mongodb"
@@ -45,29 +45,56 @@ export const queryRepository = {
         }
     },
 
-    async findPostsAndSort(pageNumber: number, pageSize: number, sortBy: string, sortDirection: 'asc'|'desc'):
-                           Promise<PagingViewModel<PostViewModel[]>> {
-
+    async findPostsAndSort(currentUserId: string | null, pageNumber: number, pageSize: number, sortBy: string,
+                           sortDirection: 'asc'|'desc'): Promise<PagingViewModel<PostViewModel[]>> {
         const totalCount: number = await PostModel.countDocuments()
-        const sortedPosts: PostViewModel[] = await PostModel.find({}, {projection: {_id: 0, __v: 0}})
-            .sort({[sortBy]: sortDirection}).skip((pageNumber - 1) * pageSize).limit(pageSize).lean()
+        const sortedPosts: PostDBModel[] = await PostModel.find().sort({[sortBy]: sortDirection})
+            .skip((pageNumber - 1) * pageSize).limit(pageSize).lean()
+
+        const items = sortedPosts.map(p => {
+            let myStatus = LikeStatus.None
+            let likesCount = 0
+            let dislikesCount = 0
+            let newestLikes: any[] = []
+            p.extendedLikesInfo.statuses.forEach(p => {
+                if (p.userId === currentUserId) myStatus = p.status
+                if (p.status === LikeStatus.Like) likesCount++
+                if (p.status === LikeStatus.Dislike) dislikesCount++
+            })
+            return {
+                id: p.id,
+                title: p.title,
+                shortDescription: p.shortDescription,
+                content: p.content,
+                blogId: p.blogId,
+                blogName: p.blogName,
+                createdAt: p.createdAt,
+                extendedLikesInfo: {
+                    likesCount,
+                    dislikesCount,
+                    myStatus,
+                    newestLikes
+                }
+            }
+        })
+
         return {
             pagesCount: Math.ceil(totalCount / pageSize),    // общее количество страниц
             page: pageNumber,                                   // текущая страница
             pageSize,                                           // количество постов на странице
             totalCount,                                         // общее количество постов
-            items: sortedPosts          // выводить pageSize постов на pageNumber странице
+            items                                               // выводить pageSize постов на pageNumber странице
         }
     },
 
-    async findUsersAndSort(searchEmailTerm: string | null, searchLoginTerm: string | null, pageNumber: number, pageSize: number, sortBy: string,
-                           sortDirection: 'asc'|'desc'): Promise<PagingViewModel<UserAccountDBType[]>> {
-        const filter: Filter<UserAccountDBType> = { $or: [
+    async findUsersAndSort(searchEmailTerm: string | null, searchLoginTerm: string | null, pageNumber: number, pageSize: number,
+                           sortBy: string, sortDirection: 'asc'|'desc'): Promise<PagingViewModel<UserAccountDBModel[]>> {
+        const filter: Filter<UserAccountDBModel> = { $or: [
             { 'accountData.login': {$regex: searchLoginTerm ?? '', $options: "i"} },
             { 'accountData.email': {$regex: searchEmailTerm ?? '', $options: "i"} }
         ]}
         const totalCount: number = await userCollection.countDocuments(filter)
-        const sortedUsers: UserAccountDBType[] = await userCollection
+        const sortedUsers: UserAccountDBModel[] = await userCollection
             .find(filter, {projection: {_id: 0, id: 1, login: '$accountData.login', email: '$accountData.email', createdAt: '$accountData.createdAt'}})
             .sort({[sortBy]: sortDirection}).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
         return {
@@ -83,8 +110,8 @@ export const queryRepository = {
                                       sortDirection: 'asc'|'desc'): Promise<PagingViewModel<CommentViewModel[]>> {
         const filter: {postId: string} = {postId: postId}
         const totalCount: number = await CommentModel.countDocuments(filter)
-        let sortedComments: CommentBDType[] = await CommentModel.find(filter, {_id: 0, __v: 0, postId: 0})
-            .sort({[sortBy]: sortDirection}).skip((pageNumber - 1) * pageSize).limit(pageSize).lean()
+        let sortedComments: CommentBDModel[] = await CommentModel.find(filter).sort({[sortBy]: sortDirection})
+            .skip((pageNumber - 1) * pageSize).limit(pageSize).lean()
 
         const items = sortedComments.map(c => {
             let myStatus = LikeStatus.None

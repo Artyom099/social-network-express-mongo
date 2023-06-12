@@ -48,7 +48,7 @@ describe('/feedback', () => {
             })
 
         expect.setState({firstUser, firstCreateResponse, firstCreatedUser})
-    })
+    });
     it('2 – POST: /users – create 2nd user by admin', async () => {
         const {firstCreatedUser} = expect.getState()
         const secondUser = {
@@ -86,7 +86,7 @@ describe('/feedback', () => {
             })
 
         expect.setState({secondUser: secondUser, secondCreateResponse: secondCreateResponse})
-    })
+    });
     it('2 – POST: /auth/login – return 200, 1st login and refreshToken', async () => {
         const {firstUser} = expect.getState()
         const loginResponse = await request(app)
@@ -107,7 +107,7 @@ describe('/feedback', () => {
         expect(refreshToken).toEqual(expect.any(String))
 
         expect.setState({firstAccessToken: accessToken, firstRefreshToken: refreshToken, firstRefreshTokenWithName: refreshTokenWithName})
-    })
+    });
     it('3 – POST: /blogs – return 201 & create blog', async () => {
         const createBlogResponse = await request(app)
             .post('/blogs')
@@ -223,7 +223,6 @@ describe('/feedback', () => {
             .auth(firstAccessToken, {type: 'bearer'})
             .send({likeStatus: LikeStatus.Like})
 
-        // console.log({commentId_10: commentId})
         expect(setLike).toBeDefined()
         expect(setLike.status).toEqual(HTTP_STATUS.NO_CONTENT_204)
     });
@@ -509,7 +508,6 @@ describe('/feedback', () => {
     });
 
     it('23 – PUT: /comments/:commentId/like-status – return 204 & set like by 2nd user again', async () => {
-        console.log('+++')
         const {commentId, secondAccessToken} = expect.getState()
         const setLikeBySecondUserAgain = await request(app)
             .put(`/comments/${commentId}/like-status`)
@@ -521,7 +519,6 @@ describe('/feedback', () => {
 
     });
     it('24 – GET: /comments/:id – return 200 & found comment with 2 likes', async () => {
-        console.log('---')
         const {commentId, firstUser, firstCreatedUser, firstAccessToken} = expect.getState()
         const getCommentByFirstUser = await request(app)
             .get(`/comments/${commentId}`)
@@ -566,7 +563,6 @@ describe('/feedback', () => {
             }
         })
     });
-
 
     it('25 – GET: /posts/:id/comments – return 200 & sorted comment with paging & 2 likes', async () => {
         const {postId, commentId, firstUser, firstCreatedUser, firstAccessToken} = expect.getState()

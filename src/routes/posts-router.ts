@@ -6,13 +6,13 @@ import {authMiddlewareBasic, authMiddlewareBearer} from "../middleware/auth-midd
 import {BlogsRepository} from "../repositories/blogs-repository";
 import {postsController} from "../composition-root";
 import {checkUserIdMiddleware} from "../middleware/check-userid-middleware";
+import {validationLikes} from "./feedback-router";
 
 const validationPost = [
     body('title').isString().isLength({min: 3, max: 30}).trim().not().isEmpty(),
     body('shortDescription').isString().isLength({min: 3, max: 100}).trim().notEmpty(),
     body('content').isString().isLength({min: 3, max: 1000}).trim().notEmpty(),
     body('blogId').isString().custom(async (value) => {
-        // const blog = await new BlogsService.findBlogById(value)
         const blog = new BlogsService(new BlogsRepository)
         await blog.findBlogById(value)
         if (!blog) {
@@ -28,12 +28,26 @@ export const validationComment = [
 
 export const postsRouter = Router({})
 
-postsRouter.get('/', postsController.getPosts.bind(postsController))
+postsRouter.get('/',
+    checkUserIdMiddleware,
+    postsController.getPosts.bind(postsController))
 postsRouter.post('/',
     validationPost,
     authMiddlewareBasic,
     inputValidationMiddleware,
     postsController.createPost.bind(postsController))
+
+postsRouter.get('/:id',
+    checkUserIdMiddleware,
+    postsController.getPost.bind(postsController))
+postsRouter.put('/:id',
+    validationPost,
+    authMiddlewareBasic,
+    inputValidationMiddleware,
+    postsController.updatePost.bind(postsController))
+postsRouter.delete('/:id',
+    authMiddlewareBasic,
+    postsController.deletePost.bind(postsController))
 
 postsRouter.get('/:id/comments',
     checkUserIdMiddleware,
@@ -44,12 +58,8 @@ postsRouter.post('/:id/comments',
     inputValidationMiddleware,
     postsController.createCommentCurrentPost.bind(postsController))
 
-postsRouter.get('/:id', postsController.getPost.bind(postsController))
-postsRouter.put('/:id',
-    validationPost,
-    authMiddlewareBasic,
+postsRouter.put('/:id/like-status',
+    authMiddlewareBearer,
+    validationLikes,
     inputValidationMiddleware,
-    postsController.updatePost.bind(postsController))
-postsRouter.delete('/:id',
-    authMiddlewareBasic,
-    postsController.deletePost.bind(postsController))
+    postsController.updateLikeStatus.bind(postsController))

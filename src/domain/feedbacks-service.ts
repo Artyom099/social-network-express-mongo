@@ -1,4 +1,4 @@
-import {CommentBDType, CommentViewModel} from "../types/types";
+import {CommentBDModel, CommentViewModel} from "../types/types";
 import {FeedbackRepository} from "../repositories/feedback-repository";
 import {randomUUID} from "crypto";
 import {LikeStatus} from "../utils/constants";
@@ -10,7 +10,7 @@ export class FeedbackService {
         return this.feedbackRepository.findCommentByID(commentId, currentUserId)
     }
     async createComment(postId: string, content: string, userId: string, userLogin: string): Promise<CommentViewModel> {
-        const createdComment: CommentBDType = {
+        const createdComment: CommentBDModel = {
             id: randomUUID().toString(),
             postId,
             content,

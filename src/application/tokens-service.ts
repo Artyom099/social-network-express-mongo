@@ -1,4 +1,4 @@
-import {ExpiredTokenDBType} from "../types/types";
+import {ExpiredTokenDBModel} from "../types/types";
 import {tokensRepository} from "../repositories/tokens-repository";
 
 
@@ -7,7 +7,7 @@ export const tokensService = {
         await tokensRepository.addTokenToBlackList(token)
     },
 
-    async checkTokenInBlackList(token: ExpiredTokenDBType): Promise<true | null> {
+    async checkTokenInBlackList(token: ExpiredTokenDBModel): Promise<true | null> {
         return await tokensRepository.checkTokenInBlackList(token)
     }
 }

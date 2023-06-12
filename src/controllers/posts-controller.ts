@@ -3,12 +3,12 @@ import {
     PagingDTO,
     PostDTO,
     PostViewModel,
-    ReqBodyType, ReqParamsBodyQueryType,
+    ReqBodyType, ReqParamsBodyQueryType, ReqParamsBodyType,
     ReqQueryType, UserIdModel,
 } from "../types/types";
 import {Request, Response} from "express";
 import {PostsService} from "../domain/posts-service";
-import {HTTP_STATUS, SortBy, SortDirection} from "../utils/constants";
+import {HTTP_STATUS, LikeStatus, SortBy, SortDirection} from "../utils/constants";
 import {queryRepository} from "../repositories/query-repository";
 import {FeedbackService} from "../domain/feedbacks-service";
 import {FeedbackRepository} from "../repositories/feedback-repository";
@@ -37,7 +37,7 @@ export class PostsController {
     }
 
     async getPost(req: Request, res: Response<PostViewModel>) {
-        const foundPost = await this.postsService.findPostById(req.params.id)
+        const foundPost = await this.postsService.getPostById(req.params.id)
         if (!foundPost) {
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
         } else {
@@ -50,12 +50,12 @@ export class PostsController {
         if (!foundPost) {
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
         } else {
-            const updatedPost = await this.postsService.findPostById(req.params.id)
+            const updatedPost = await this.postsService.getPostById(req.params.id)
             res.status(HTTP_STATUS.NO_CONTENT_204).json(updatedPost)
         }
     }
     async deletePost(req: Request, res: Response) {
-        const foundPost = await this.postsService.findPostById(req.params.id)
+        const foundPost = await this.postsService.getPostById(req.params.id)
             if (!foundPost) {
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
         } else {
@@ -65,7 +65,7 @@ export class PostsController {
     }
 
     async findCommentsCurrentPost(req: ReqParamsBodyQueryType<IdDTO, UserIdModel, PagingDTO>, res: Response) {
-        const foundPost = await this.postsService.findPostById(req.params.id)
+        const foundPost = await this.postsService.getPostById(req.params.id)
         if (!foundPost) {
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
         } else {
@@ -79,13 +79,22 @@ export class PostsController {
         }
     }
     async createCommentCurrentPost(req: Request, res: Response) {
-        const currentPost = await this.postsService.findPostById(req.params.id)
+        const currentPost = await this.postsService.getPostById(req.params.id)
         if (!currentPost) {
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
         } else {
             const comment = new FeedbackService(new FeedbackRepository)
             const createdComment = await comment.createComment(req.params.id, req.body.content, req.user!.id, req.user!.login)
             res.status(HTTP_STATUS.CREATED_201).json(createdComment)
+        }
+    }
+
+    async updateLikeStatus(req: ReqParamsBodyType<{id: string}, {likeStatus: LikeStatus}>, res: Response) {
+        const likedPost = await this.postsService.updatePostLikes(req.params.id, req.user!.id, req.body.likeStatus)
+        if (!likedPost) {
+            res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
+        } else {
+            res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
         }
     }
 }
