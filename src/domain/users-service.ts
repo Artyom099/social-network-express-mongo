@@ -37,18 +37,18 @@ export const usersService = {
     },
 
     async _generateHash(password: string, salt: string) {
-        return await bcrypt.hash(password, salt)
+        return bcrypt.hash(password, salt)
     },
 
-    async findUserById(userId: string): Promise<UserViewModel | null> {    // get, put, delete
-        return await usersRepository.findUserById(userId)
+    async findUserById(userId: string): Promise<UserViewModel | null> {
+        return usersRepository.findUserById(userId)
     },
 
     async findUserByLoginOrEmail(LoginOrEmail: string): Promise<UserAccountDBModel | null> {
-        return await usersRepository.findUserByLoginOrEmail(LoginOrEmail)
+        return usersRepository.findUserByLoginOrEmail(LoginOrEmail)
     },
 
     async deleteUserById(userId: string) {
-        return await usersRepository.deleteUserById(userId)
+        return usersRepository.deleteUserById(userId)
     }
 }

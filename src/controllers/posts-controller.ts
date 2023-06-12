@@ -23,7 +23,7 @@ export class PostsController {
         const pageSize = req.query.pageSize ?? 10
         const sortBy = req.query.sortBy ?? SortBy.default
         const sortDirection = req.query.sortDirection ?? SortDirection.default
-        const foundSortedPosts = await queryRepository.findPostsAndSort(Number(pageNumber), Number(pageSize), sortBy, sortDirection)
+        const foundSortedPosts = await queryRepository.getSortedPosts(Number(pageNumber), Number(pageSize), sortBy, sortDirection)
         res.status(HTTP_STATUS.OK_200).json(foundSortedPosts)
     }
     async createPost(req: ReqBodyType<PostDTO>, res: Response) {
@@ -74,7 +74,7 @@ export class PostsController {
             const pageSize = req.query.pageSize ?? 10
             const sortBy = req.query.sortBy ?? SortBy.default
             const sortDirection = req.query.sortDirection ?? SortDirection.default
-            const foundSortedComments = await queryRepository.findCommentsThisPostAndSort(currentUserId!, foundPost.id, Number(pageNumber), Number(pageSize), sortBy, sortDirection)
+            const foundSortedComments = await queryRepository.getSortedCommentsCurrentPost(currentUserId!, foundPost.id, Number(pageNumber), Number(pageSize), sortBy, sortDirection)
             res.status(HTTP_STATUS.OK_200).json(foundSortedComments)
         }
     }

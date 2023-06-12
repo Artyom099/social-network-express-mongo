@@ -5,18 +5,21 @@ import {LikeStatus} from "../utils/constants";
 
 export class PostsRepository {
     async getPostById(id: string, currentUserId?: string | null): Promise<PostViewModel | null> {
-        const post = await PostModel.findOne({ id }, {_id: 0})
+        const post = await PostModel.findOne({ id })
         if (!post) return null
         let myStatus = LikeStatus.None
         let likesCount = 0
         let dislikesCount = 0
-        // найти 3 последних лайка
-        let newestLikes: any[] = post.extendedLikesInfo.statuses.slice(-3)
-        post.extendedLikesInfo.statuses.forEach(s => {
-            if (s.userId === currentUserId) myStatus = s.status
-            if (s.status === LikeStatus.Like) likesCount++
-            if (s.status === LikeStatus.Dislike) dislikesCount++
+        let newestLikes: any[] = []
+        post.extendedLikesInfo.statuses.forEach(p => {
+            if (p.userId === currentUserId) myStatus = p.status
+            if (p.status === LikeStatus.Like) {
+                likesCount++
+                newestLikes.push({addedAt: p.addedAt, userId: p.userId, login: p.login})
+            }
+            if (p.status === LikeStatus.Dislike) dislikesCount++
         })
+
         return {
             id: post.id,
             title: post.title,
@@ -29,7 +32,7 @@ export class PostsRepository {
                 likesCount,
                 dislikesCount,
                 myStatus,
-                newestLikes
+                newestLikes: newestLikes.slice(-3)
             }
         }
     }
