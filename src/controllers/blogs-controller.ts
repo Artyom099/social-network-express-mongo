@@ -24,7 +24,7 @@ export class BlogsController {
         const sortBy = req.query.sortBy ?? SortBy.default
         const sortDirection = req.query.sortDirection ?? SortDirection.default
 
-        const foundSortedBlogs = await queryRepository.findBlogsAndSort(searchNameTerm, Number(pageNumber), Number(pageSize), sortBy, sortDirection)
+        const foundSortedBlogs = await queryRepository.getSortedBlogs(searchNameTerm, Number(pageNumber), Number(pageSize), sortBy, sortDirection)
         res.status(HTTP_STATUS.OK_200).json(foundSortedBlogs)
     }
     async createBlog(req: Request, res: Response) {
@@ -42,7 +42,7 @@ export class BlogsController {
             const pageSize = req.query.pageSize ?? 10
             const sortBy = req.query.sortBy ?? SortBy.default
             const sortDirection = req.query.sortDirection ?? SortDirection.default
-            const postsThisBlog = await queryRepository.findPostsThisBlogById(findBlog.id, Number(pageNumber), Number(pageSize), sortBy, sortDirection)
+            const postsThisBlog = await queryRepository.getSortedPostsCurrentBlog(findBlog.id, Number(pageNumber), Number(pageSize), sortBy, sortDirection)
             res.status(HTTP_STATUS.OK_200).json(postsThisBlog)
         }
     }

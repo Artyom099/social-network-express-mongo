@@ -2,6 +2,7 @@ import {BlogViewModel, PostViewModel} from "../types/types";
 import {PostsRepository} from "../repositories/posts-repository";
 import {randomUUID} from "crypto";
 import {LikeStatus} from "../utils/constants";
+import {usersService} from "./users-service";
 
 
 export class PostsService {
@@ -33,9 +34,10 @@ export class PostsService {
     async deletePostById(postId: string) {
         return this.postsRepository.deletePostById(postId)
     }
-    async updatePostLikes(postId: string, currentUserId: string, likeStatus: LikeStatus): Promise<boolean> {
+    async updatePostLikes(postId: string, userId: string, likeStatus: LikeStatus): Promise<boolean> {
+        const user = await usersService.findUserById(userId)
+        if (!user) return false
         const addedAt = new Date().toString()
-        const login = ''
-        return this.postsRepository.updatePostLikes(postId, currentUserId, likeStatus, addedAt, login)
+        return this.postsRepository.updatePostLikes(postId, userId, likeStatus, addedAt, user.login)
     }
 }
