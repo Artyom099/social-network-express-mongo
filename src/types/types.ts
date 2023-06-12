@@ -163,12 +163,12 @@ export type PagingWithSearchDTO = {
     sortDirection: SortDirection
 }
 
-export type VideoPostDTO = {
+export type VideoCreateDTO = {
     title: string
     author: string
     availableResolutions: string[]
 }
-export type VideoPutDTO = {
+export type VideoUpdateDTO = {
     title: string
     author: string
     availableResolutions: string[]
@@ -176,12 +176,12 @@ export type VideoPutDTO = {
     minAgeRestriction: number | null
     publicationDate: string
 }
-export type BlogPostDTO = {
+export type BlogCreateDTO = {
     title: string
     shortDescription: string
     content: string
 }
-export type BlogPutDTO = {
+export type BlogUpdateDTO = {
     name: string
     description: string
     websiteUrl: string

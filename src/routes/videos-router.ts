@@ -1,6 +1,6 @@
 import {body} from "express-validator";
 import express, {Request, Response} from "express";
-import { ReqBodyType, ReqParamsBodyType, ReqParamsType, VideoViewModel, IdDTO, VideoPostDTO, VideoPutDTO} from "../types/types";
+import { ReqBodyType, ReqParamsBodyType, ReqParamsType, VideoViewModel, IdDTO, VideoCreateDTO, VideoUpdateDTO} from "../types/types";
 import {convertResultErrorCodeToHttp} from "../utils/utils";
 import {videosService} from "../domain/videos-service";
 import {inputValidationMiddleware} from "../middleware/input-validation-middleware";
@@ -29,7 +29,7 @@ export const videosRouter = () => {
         res.status(HTTP_STATUS.OK_200).send(foundVideos)
     })
     // authMiddleware,
-    router.post('/', validationVideoPost, inputValidationMiddleware, async (req: ReqBodyType<VideoPostDTO>, res: Response) => {
+    router.post('/', validationVideoPost, inputValidationMiddleware, async (req: ReqBodyType<VideoCreateDTO>, res: Response) => {
         const {title, author, availableResolutions} = req.body
         const createdVideo = await videosService.createVideo(title, author, availableResolutions)
         res.status(HTTP_STATUS.CREATED_201).json(createdVideo)
@@ -41,7 +41,7 @@ export const videosRouter = () => {
         res.status(HTTP_STATUS.OK_200).json(foundVideo)
     })
     // authMiddleware,
-    router.put('/:id', validationVideoPut, inputValidationMiddleware, async (req: ReqParamsBodyType<IdDTO, VideoPutDTO>, res: Response) => {
+    router.put('/:id', validationVideoPut, inputValidationMiddleware, async (req: ReqParamsBodyType<IdDTO, VideoUpdateDTO>, res: Response) => {
         const {title, author, availableResolutions, canBeDownloaded, minAgeRestriction, publicationDate} = req.body
         const result = await videosService.updateVideo(req.params.id, title, author, availableResolutions, canBeDownloaded, minAgeRestriction, publicationDate)
         if (!result.data) {

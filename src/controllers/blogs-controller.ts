@@ -1,6 +1,6 @@
 import {BlogsService} from "../domain/blogs-service";
 import {
-    BlogPostDTO, BlogPutDTO, BlogViewModel,
+    BlogCreateDTO, BlogUpdateDTO, BlogViewModel,
     IdDTO,
     PagingDTO,
     PagingWithSearchDTO, ReqParamsBodyQueryType,
@@ -40,7 +40,7 @@ export class BlogsController {
             res.status(HTTP_STATUS.OK_200).json(findBlog)
         }
     }
-    async updateBlog(req: ReqParamsBodyType<IdDTO, BlogPutDTO>, res: Response) {
+    async updateBlog(req: ReqParamsBodyType<IdDTO, BlogUpdateDTO>, res: Response) {
         const {name, description, websiteUrl} = req.body
         const result = await this.blogsService.updateBlogById(req.params.id, name, description, websiteUrl)
         if (!result) {
@@ -73,7 +73,7 @@ export class BlogsController {
             res.status(HTTP_STATUS.OK_200).json(postsThisBlog)
         }
     }
-    async createPostCurrentBlog(req: ReqParamsBodyType<IdDTO, BlogPostDTO>, res: Response) {
+    async createPostCurrentBlog(req: ReqParamsBodyType<IdDTO, BlogCreateDTO>, res: Response) {
         const findBlog = await this.blogsService.findBlogById(req.params.id)
         if (!findBlog) {
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
