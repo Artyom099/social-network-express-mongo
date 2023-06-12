@@ -1,4 +1,4 @@
-import {CommentBDType, CommentViewModel} from "../types/types";
+import {CommentBDModel, CommentViewModel} from "../types/types";
 import {CommentModel} from "../shemas/feedback-schema";
 import {LikeStatus} from "../utils/constants";
 
@@ -30,7 +30,7 @@ export class FeedbackRepository {
             }
         }
     }
-    async createComment(createdComment: CommentBDType): Promise<CommentViewModel> {
+    async createComment(createdComment: CommentBDModel): Promise<CommentViewModel> {
         await CommentModel.insertMany(createdComment)
         return  {
             id: createdComment.id,
@@ -67,7 +67,7 @@ export class FeedbackRepository {
             }
         }
         // иначе добавляем юзера и его статус в массив
-        const result = await CommentModel.updateOne({ id }, {$addToSet: {'likesInfo.statuses': {userId: currentUserId, status: `${newLikeStatus}`}}})
+        const result = await CommentModel.updateOne({ id }, {$addToSet: {'likesInfo.statuses': {userId: currentUserId, status: newLikeStatus}}})
         return result.modifiedCount === 1
     }
 }

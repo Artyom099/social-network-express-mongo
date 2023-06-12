@@ -29,6 +29,16 @@ export type PostViewModel = {
     blogId: string
     blogName: string
     createdAt: string
+    extendedLikesInfo: {
+        likesCount: number
+        dislikesCount: number
+        myStatus: LikeStatus
+        newestLikes: {
+            addedAt: string
+            userId: string
+            login: string
+        } []
+    }
 }
 export type UserViewModel = {
     id: string
@@ -64,8 +74,8 @@ export type PagingViewModel<T> = {
     items: T
 }
 
-// DBTypes
-export type UserAccountDBType = {
+// DBModels
+export type UserAccountDBModel = {
     id: string
     accountData: {
         login: string
@@ -81,7 +91,26 @@ export type UserAccountDBType = {
     }
     recoveryCode: string | null
 }
-export type CommentBDType = {
+export type PostDBModel = {
+    id: string
+    title: string
+    shortDescription: string
+    content: string
+    blogId: string
+    blogName: string
+    createdAt: string
+    extendedLikesInfo: {
+        likesCount: number
+        dislikesCount: number
+        statuses: {
+            addedAt: string
+            userId: string
+            status: LikeStatus
+            login: string
+        } []
+    }
+}
+export type CommentBDModel = {
     id: string
     postId: string
     content: string
@@ -100,15 +129,15 @@ export type CommentBDType = {
         } []
     }
 }
-export type ExpiredTokenDBType = {
+export type ExpiredTokenDBModel = {
     token: string
 }
-export type IPDBType = {
+export type IPDBModel = {
     ip: string
     url: string
     date: Date
 }
-export type DeviceDBType = {
+export type DeviceDBModel = {
     ip: string
     title: string
     lastActiveDate: string

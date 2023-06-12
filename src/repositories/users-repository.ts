@@ -1,9 +1,9 @@
-import {UserViewModel, UserAccountDBType} from "../types/types";
+import {UserViewModel, UserAccountDBModel} from "../types/types";
 import {userCollection} from "../db/db";
 
 
 export const usersRepository = {
-    async createUser(newUser: UserAccountDBType): Promise<UserViewModel> {
+    async createUser(newUser: UserAccountDBModel): Promise<UserViewModel> {
         await userCollection.insertOne(newUser)
         return {
             id: newUser.id,
@@ -13,7 +13,7 @@ export const usersRepository = {
         }
     },
 
-    async findUserByLoginOrEmail(loginOrEmail: string): Promise<UserAccountDBType | null> {
+    async findUserByLoginOrEmail(loginOrEmail: string): Promise<UserAccountDBModel | null> {
         const user = await userCollection.findOne({ $or: [ {'accountData.email': loginOrEmail}, {'accountData.login': loginOrEmail} ]})
         if (user) return user
         else return null
@@ -34,7 +34,7 @@ export const usersRepository = {
         return await userCollection.deleteOne({ id })
     },
 
-    async findUserByConfirmationCode(code: string): Promise<UserAccountDBType | null> {
+    async findUserByConfirmationCode(code: string): Promise<UserAccountDBModel | null> {
         const user = await userCollection.findOne({'emailConfirmation.confirmationCode': code})
         if (user) return user
         else return null

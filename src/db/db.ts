@@ -1,9 +1,9 @@
 import {
-    DeviceDBType,
-    ExpiredTokenDBType,
-    IPDBType,
+    DeviceDBModel,
+    ExpiredTokenDBModel,
+    IPDBModel,
     VideoViewModel,
-    UserAccountDBType
+    UserAccountDBModel
 } from "../types/types"
 import {MongoClient} from 'mongodb'
 import dotenv from 'dotenv'
@@ -22,11 +22,11 @@ const database = client.db();
 export const videoCollection = database.collection<VideoViewModel>('videos')
 // export const blogCollection = database.collection<BlogViewModel>('blogs')
 // export const postCollection = database.collection<PostViewModel>('posts')
-export const userCollection = database.collection<UserAccountDBType>('users')
+export const userCollection = database.collection<UserAccountDBModel>('users')
 // export const commentCollection = database.collection<CommentBDType>('comments')
-export const expiredTokenCollection = database.collection<ExpiredTokenDBType>('expiredTokens')
-export const apiRequestCollection = database.collection<IPDBType>('ip')
-export const devicesCollection = database.collection<DeviceDBType>('devices')
+export const expiredTokenCollection = database.collection<ExpiredTokenDBModel>('expiredTokens')
+export const apiRequestCollection = database.collection<IPDBModel>('ip')
+export const devicesCollection = database.collection<DeviceDBModel>('devices')
 
 
 export async function runDb() {

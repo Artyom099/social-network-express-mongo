@@ -9,6 +9,7 @@
     "test": "jest -i --detectOpenHandles --no-cache --coverage",
     "test_auth": "jest ./__tests__/e2e/auth.e2e.test.ts --detectOpenHandles --coverage",
     "test_blogs": "jest ./__tests__/e2e/blogs.e2e.test.ts --detectOpenHandles --coverage",
+    "test_posts": "jest ./__tests__/e2e/posts.e2e.test.ts --detectOpenHandles --coverage",
     "test_security": "jest ./__tests__/e2e/security.e2e.test.ts --detectOpenHandles --coverage",
     "test_feedback": "jest ./__tests__/e2e/feedback.e2e.test.ts --detectOpenHandles --coverage"
   },

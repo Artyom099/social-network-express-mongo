@@ -1,9 +1,9 @@
 import {devicesCollection} from "../db/db";
-import {DeviceDBType, DeviceViewModel} from "../types/types";
+import {DeviceDBModel, DeviceViewModel} from "../types/types";
 
 
 export const securityRepository = {
-    async addActiveSession(device: DeviceDBType) {
+    async addActiveSession(device: DeviceDBModel) {
         await devicesCollection.insertOne(device)
     },
 
