@@ -10,6 +10,7 @@ export class PostsRepository {
         let myStatus = LikeStatus.None
         let likesCount = 0
         let dislikesCount = 0
+        // найти 3 последних лайка
         let newestLikes: any[] = post.extendedLikesInfo.statuses.slice(-3)
         post.extendedLikesInfo.statuses.forEach(s => {
             if (s.userId === currentUserId) myStatus = s.status

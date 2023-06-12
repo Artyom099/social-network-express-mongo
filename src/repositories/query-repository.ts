@@ -55,7 +55,8 @@ export const queryRepository = {
             let myStatus = LikeStatus.None
             let likesCount = 0
             let dislikesCount = 0
-            let newestLikes: any[] = []
+            // найти 3 последних лайка
+            let newestLikes = p.extendedLikesInfo.statuses.slice(-3)
             p.extendedLikesInfo.statuses.forEach(p => {
                 if (p.userId === currentUserId) myStatus = p.status
                 if (p.status === LikeStatus.Like) likesCount++

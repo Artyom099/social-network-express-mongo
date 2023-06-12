@@ -11,12 +11,6 @@ const LikeStatusesSchema = new mongoose.Schema<{addedAt: string, userId: string,
     login: { type: String, require: true }
 })
 
-// const NewestLikesSchema = new mongoose.Schema< {addedAt: string, userId: string, login: string}>({
-//     addedAt: { type: String, require: true },
-//     userId: { type: String, require: true },
-//     login: { type: String, require: true }
-// })
-
 export const PostsSchema = new mongoose.Schema<WithId<PostDBModel>>({
     id: { type: String, require: true },
     title: { type: String, require: true },
