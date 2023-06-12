@@ -5,7 +5,7 @@ import {ResultCode} from "../utils/constants";
 
 export const videosRepository = {
     async findExistVideos(): Promise<VideoViewModel[]> {
-        return await videoCollection.find({}, {projection: {_id: false}}).toArray()
+        return videoCollection.find({}, {projection: {_id: false}}).toArray()
     },
     async createVideo(createdVideo: VideoViewModel): Promise<VideoViewModel> {
         await videoCollection.insertOne(createdVideo)
@@ -22,12 +22,12 @@ export const videosRepository = {
     },
     async findVideoById(videoId: string): Promise<VideoViewModel | null> {
         const video = await videoCollection.findOne({id: videoId}, {projection: {_id: false}})
-        if (video) return video
-        else return null
+        if (!video) return null
+        else return video
     },
     async updateVideoById(videoId: string, title: string, author: string, availableResolutions: string[],
                 canBeDownloaded: boolean, minAgeRestriction: number | null,
-                publicationDate: string): Promise<Result<boolean>> {   // put
+                publicationDate: string): Promise<Result<boolean>> {
         const updatedResult = await videoCollection.updateOne({id: videoId},
             { $set: {title: title, author: author, availableResolutions: availableResolutions,
                 canBeDownloaded: canBeDownloaded, minAgeRestriction: minAgeRestriction, publicationDate: publicationDate}})
@@ -43,7 +43,7 @@ export const videosRepository = {
             }
         }
     },
-    async deleteVideoById(videoId: string) {    // delete
-        return await videoCollection.deleteOne({id: videoId})
+    async deleteVideoById(id: string) {
+        return videoCollection.deleteOne({ id })
     }
 }
