@@ -3,10 +3,9 @@ import {
     BlogPostDTO, BlogPutDTO, BlogViewModel,
     IdDTO,
     PagingDTO,
-    PagingWithSearchDTO,
+    PagingWithSearchDTO, ReqParamsBodyQueryType,
     ReqParamsBodyType,
-    ReqParamsQueryType,
-    ReqQueryType
+    ReqQueryType, UserIdModel
 } from "../types/types";
 import {Request, Response} from "express";
 import {HTTP_STATUS, SortBy, SortDirection} from "../utils/constants";
@@ -31,31 +30,6 @@ export class BlogsController {
         const {name, description, websiteUrl} = req.body
         const createdBlog = await this.blogsService.createBlog(name, description, websiteUrl)
         res.status(HTTP_STATUS.CREATED_201).json(createdBlog)
-    }
-
-    async getPostCurrentBlog(req: ReqParamsQueryType<IdDTO, PagingDTO>, res: Response) {
-        const findBlog = await this.blogsService.findBlogById(req.params.id)
-        if (!findBlog) {
-            res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
-        } else {
-            const pageNumber = req.query.pageNumber ?? 1
-            const pageSize = req.query.pageSize ?? 10
-            const sortBy = req.query.sortBy ?? SortBy.default
-            const sortDirection = req.query.sortDirection ?? SortDirection.default
-            const postsThisBlog = await queryRepository.getSortedPostsCurrentBlog(findBlog.id, Number(pageNumber), Number(pageSize), sortBy, sortDirection)
-            res.status(HTTP_STATUS.OK_200).json(postsThisBlog)
-        }
-    }
-    async createPostCurrentBlog(req: ReqParamsBodyType<IdDTO, BlogPostDTO>, res: Response) {
-        const findBlog = await this.blogsService.findBlogById(req.params.id)
-        if (!findBlog) {
-            res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
-        } else {
-            const {title, shortDescription, content} = req.body
-            const post = new PostsService(new PostsRepository)
-            const createdPostThisBlog = await post.createPost(title, shortDescription, content, findBlog)
-            res.status(HTTP_STATUS.CREATED_201).json(createdPostThisBlog)
-        }
     }
 
     async getBlog(req: Request, res: Response<BlogViewModel>) {
@@ -83,6 +57,31 @@ export class BlogsController {
         } else {
             await this.blogsService.deleteBlogById(req.params.id)
             res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
+        }
+    }
+
+    async getPostCurrentBlog(req: ReqParamsBodyQueryType<IdDTO, UserIdModel, PagingDTO>, res: Response) {
+        const findBlog = await this.blogsService.findBlogById(req.params.id)
+        if (!findBlog) {
+            res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
+        } else {
+            const pageNumber = req.query.pageNumber ?? 1
+            const pageSize = req.query.pageSize ?? 10
+            const sortBy = req.query.sortBy ?? SortBy.default
+            const sortDirection = req.query.sortDirection ?? SortDirection.default
+            const postsThisBlog = await queryRepository.getSortedPostsCurrentBlog(req.body.userId!, findBlog.id, Number(pageNumber), Number(pageSize), sortBy, sortDirection)
+            res.status(HTTP_STATUS.OK_200).json(postsThisBlog)
+        }
+    }
+    async createPostCurrentBlog(req: ReqParamsBodyType<IdDTO, BlogPostDTO>, res: Response) {
+        const findBlog = await this.blogsService.findBlogById(req.params.id)
+        if (!findBlog) {
+            res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
+        } else {
+            const {title, shortDescription, content} = req.body
+            const post = new PostsService(new PostsRepository)
+            const createdPostThisBlog = await post.createPost(title, shortDescription, content, findBlog)
+            res.status(HTTP_STATUS.CREATED_201).json(createdPostThisBlog)
         }
     }
 }

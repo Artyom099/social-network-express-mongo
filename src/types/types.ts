@@ -67,9 +67,9 @@ export type DeviceViewModel = {
     deviceId: string
 }
 export type PagingViewModel<T> = {
-    pagesCount: number
-    page: number
-    pageSize: number
+    pagesCount?: number
+    page?: number
+    pageSize?: number
     totalCount: number
     items: T
 }

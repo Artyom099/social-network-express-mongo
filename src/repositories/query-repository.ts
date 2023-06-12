@@ -14,6 +14,7 @@ import {CommentModel} from "../shemas/feedback-schema";
 import {LikeStatus} from "../utils/constants";
 
 
+// @ts-ignore
 export const queryRepository = {
     async getSortedBlogs(searchNameTerm: string | null, pageNumber: number, pageSize: number, sortBy: string,
                          sortDirection: 'asc'|'desc'): Promise<PagingViewModel<BlogViewModel[]>> {

@@ -31,7 +31,7 @@ export const usersRepository = {
     },
 
     async deleteUserById(id: string) {
-        return await userCollection.deleteOne({ id })
+        return userCollection.deleteOne({ id })
     },
 
     async findUserByConfirmationCode(code: string): Promise<UserAccountDBModel | null> {
