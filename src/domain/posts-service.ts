@@ -36,8 +36,8 @@ export class PostsService {
     }
     async updatePostLikes(postId: string, userId: string, likeStatus: LikeStatus): Promise<boolean> {
         const user = await usersService.findUserById(userId)
-        if (!user) return false
+        // if (!user) return false
         const addedAt = new Date().toString()
-        return this.postsRepository.updatePostLikes(postId, userId, likeStatus, addedAt, user.login)
+        return this.postsRepository.updatePostLikes(postId, userId, likeStatus, addedAt, user!.login)
     }
 }

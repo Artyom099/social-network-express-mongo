@@ -14,6 +14,7 @@ export const authMiddlewareBearer = async (req: Request, res: Response, next: Ne
     } else {
         // todo - req.user.id - пихать в запрос только id, чтобы не нагружать его!
         req.user = await usersService.findUserById(userId)
+        // req.userId = user.id
         return next()
     }
 }
