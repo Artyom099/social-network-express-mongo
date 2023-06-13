@@ -1,16 +1,17 @@
 import {Result, VideoViewModel} from "../types/types";
 import {videosRepository} from "../repositories/videos-repository";
+import {randomUUID} from "crypto";
 
 
 export const videosService = {
     async findVideos(): Promise<VideoViewModel[]> {
-        return await videosRepository.findExistVideos()
+        return videosRepository.findExistVideos()
     },
 
     async createVideo(title: string, author: string, availableResolutions: string[]): Promise<VideoViewModel> {
         const dateNow = new Date()
         const createdVideo: VideoViewModel = {
-            id: (+dateNow).toString(),
+            id: randomUUID().toString(),
             title,
             author,
             canBeDownloaded: false,
@@ -19,7 +20,7 @@ export const videosService = {
             publicationDate: new Date(dateNow.setDate(dateNow.getDate() + 1)).toISOString(),
             availableResolutions
         }
-        return await videosRepository.createVideo(createdVideo)
+        return videosRepository.createVideo(createdVideo)
     },
 
     async findVideoById(videoId: string): Promise<VideoViewModel | null> {
@@ -29,10 +30,10 @@ export const videosService = {
     async updateVideo(videoId: string, title: string, author: string, availableResolutions: string[],
                       canBeDownloaded: boolean, minAgeRestriction: number | null,
                       publicationDate: string): Promise<Result<boolean>> {   // put
-        return await videosRepository.updateVideoById(videoId, title, author, availableResolutions, canBeDownloaded, minAgeRestriction, publicationDate)
+        return videosRepository.updateVideoById(videoId, title, author, availableResolutions, canBeDownloaded, minAgeRestriction, publicationDate)
     },
 
-    async deleteVideoById(videoId: string) {    // delete
-        return await videosRepository.deleteVideoById(videoId)
+    async deleteVideoById(videoId: string) {
+        return videosRepository.deleteVideoById(videoId)
     }
 }

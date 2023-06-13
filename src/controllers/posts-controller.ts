@@ -2,9 +2,9 @@ import {
     IdDTO,
     PagingDTO,
     PostDTO,
-    PostViewModel,
+    PostViewModel, ReqBodyQueryType,
     ReqBodyType, ReqParamsBodyQueryType, ReqParamsBodyType,
-    ReqQueryType, UserIdModel,
+    UserIdModel,
 } from "../types/types";
 import {Request, Response} from "express";
 import {PostsService} from "../domain/posts-service";
@@ -18,12 +18,12 @@ import {BlogsRepository} from "../repositories/blogs-repository";
 
 export class PostsController {
     constructor(protected postsService: PostsService) {}
-    async getPosts(req: ReqQueryType<PagingDTO>, res: Response) {
+    async getPosts(req: ReqBodyQueryType<{userId: string}, PagingDTO>, res: Response) {
         const pageNumber = req.query.pageNumber ?? 1
         const pageSize = req.query.pageSize ?? 10
         const sortBy = req.query.sortBy ?? SortBy.default
         const sortDirection = req.query.sortDirection ?? SortDirection.default
-        const foundSortedPosts = await queryRepository.getSortedPosts(Number(pageNumber), Number(pageSize), sortBy, sortDirection)
+        const foundSortedPosts = await queryRepository.getSortedPosts(req.body.userId, Number(pageNumber), Number(pageSize), sortBy, sortDirection)
         res.status(HTTP_STATUS.OK_200).json(foundSortedPosts)
     }
     async createPost(req: ReqBodyType<PostDTO>, res: Response) {

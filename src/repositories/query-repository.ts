@@ -32,7 +32,7 @@ export const queryRepository = {
 
     async getSortedPostsCurrentBlog(currentUserId: string | null, blogId: string, pageNumber: number, pageSize: number, sortBy: string,
                                     sortDirection: 'asc'|'desc'): Promise<PagingViewModel<PostViewModel[]>> {
-        const filter: {blogId: string} = {blogId: blogId}
+        const filter: {blogId: string} = {blogId}
         const totalCount: number = await PostModel.countDocuments(filter)
         const sortedPosts: PostDBModel[] = await PostModel.find(filter).sort({[sortBy]: sortDirection})
             .skip((pageNumber - 1) * pageSize).limit(pageSize).lean()
@@ -142,7 +142,7 @@ export const queryRepository = {
 
     async getSortedCommentsCurrentPost(currentUserId: string | null, postId: string, pageNumber: number, pageSize: number, sortBy: string,
                                        sortDirection: 'asc'|'desc'): Promise<PagingViewModel<CommentViewModel[]>> {
-        const filter: {postId: string} = {postId: postId}
+        const filter: {postId: string} = { postId }
         const totalCount: number = await CommentModel.countDocuments(filter)
         let sortedComments: CommentBDModel[] = await CommentModel.find(filter).sort({[sortBy]: sortDirection})
             .skip((pageNumber - 1) * pageSize).limit(pageSize).lean()
