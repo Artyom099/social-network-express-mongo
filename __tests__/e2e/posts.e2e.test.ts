@@ -153,7 +153,6 @@ describe('/posts', () => {
     })
 
 
-
     afterAll(async () => {
         await mongoose.connection.close()
     })
