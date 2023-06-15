@@ -159,7 +159,6 @@ describe('/feedback', () => {
                 myStatus: LikeStatus.None
             }
         })
-        // console.log({commentId_5: createCommentResponse.body.id})
         expect.setState({commentId: createCommentResponse.body.id})
     });
 
