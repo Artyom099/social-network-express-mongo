@@ -66,7 +66,6 @@ export const queryRepository = {
                 }
             }
         })
-
         return {
             pagesCount: Math.ceil(totalCount / pageSize),    // общее количество страниц
             page: pageNumber,                                   // текущая страница
@@ -111,7 +110,6 @@ export const queryRepository = {
                 }
             }
         })
-
         return {
             pagesCount: Math.ceil(totalCount / pageSize),    // общее количество страниц
             page: pageNumber,                                   // текущая страница
@@ -171,7 +169,6 @@ export const queryRepository = {
                 }
             }
         })
-
         return {
             pagesCount: Math.ceil(totalCount / pageSize),    // общее количество страниц
             page: pageNumber,                                   // текущая страница
