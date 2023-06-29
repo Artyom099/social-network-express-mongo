@@ -106,7 +106,7 @@ export const queryRepository = {
                     likesCount,
                     dislikesCount,
                     myStatus,
-                    newestLikes: newestLikes.slice(-3)
+                    newestLikes: newestLikes.sort((a, b) => a.addedAt - b.addedAt).slice(-3)
                 }
             }
         })
