@@ -217,7 +217,6 @@ describe('/posts', () => {
             }
         })
     })
-
     it('9 - PUT: /posts/:id/like-status - return 204 & set dislike', async() => {
         const {firstAccessToken, firstPost} = expect.getState()
         const setLike = await request(app)
@@ -252,7 +251,6 @@ describe('/posts', () => {
             }
         })
     })
-
     it('11 - PUT: /posts/:id/like-status - return 204 & delete dislike', async() => {
         const {firstAccessToken, firstPost} = expect.getState()
         const setLike = await request(app)
@@ -287,6 +285,8 @@ describe('/posts', () => {
             }
         })
     })
+
+
 
 
     afterAll(async () => {
