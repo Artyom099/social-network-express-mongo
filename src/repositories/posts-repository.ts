@@ -19,7 +19,6 @@ export class PostsRepository {
             }
             if (p.status === LikeStatus.Dislike) dislikesCount++
         })
-        // console.log({newestLikes: newestLikes})
 
         return {
             id: post.id,
@@ -33,7 +32,7 @@ export class PostsRepository {
                 likesCount,
                 dislikesCount,
                 myStatus,
-                newestLikes: newestLikes.slice(-3)
+                newestLikes: newestLikes.sort((a, b) => a.addedAt - b.addedAt).slice(-3)
             }
         }
     }
