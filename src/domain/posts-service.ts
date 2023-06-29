@@ -7,8 +7,8 @@ import {usersService} from "./users-service";
 
 export class PostsService {
     constructor(protected postsRepository: PostsRepository) {}
-    async getPostById(postId: string): Promise<PostViewModel | null> {
-        return this.postsRepository.getPostById(postId)
+    async getPostById(postId: string, userId?: string): Promise<PostViewModel | null> {
+        return this.postsRepository.getPostById(postId, userId)
     }
     async createPost(title: string, shortDescription: string, content: string, blog: BlogViewModel | null): Promise<PostViewModel> {
         const createdPost: PostViewModel = {

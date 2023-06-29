@@ -187,7 +187,7 @@ describe('/posts', () => {
         expect(setLike).toBeDefined()
         expect(setLike.status).toEqual(HTTP_STATUS.NO_CONTENT_204)
     })
-    it('8 – GET: /posts/:id – return 200 & get post', async () => {
+    it('8 – GET: /posts/:id – return 200 & get post with 1 like', async () => {
         const {firstAccessToken, firstPost} = expect.getState()
         const getPost = await request(app)
             .get(`/posts/${firstPost.id}`)
@@ -206,7 +206,7 @@ describe('/posts', () => {
             extendedLikesInfo: {
                 likesCount: 1,
                 dislikesCount: 0,
-                myStatus: firstPost.extendedLikesInfo.myStatus,
+                myStatus: LikeStatus.Like,
                 newestLikes: [
                     {
                         addedAt: expect.any(String),
@@ -214,6 +214,76 @@ describe('/posts', () => {
                         login: expect.any(String)
                     }
                 ]
+            }
+        })
+    })
+
+    it('9 - PUT: /posts/:id/like-status - return 204 & set dislike', async() => {
+        const {firstAccessToken, firstPost} = expect.getState()
+        const setLike = await request(app)
+            .put(`/posts/${firstPost.id}/like-status`)
+            .auth(firstAccessToken, {type: 'bearer'})
+            .send({likeStatus: LikeStatus.Dislike})
+
+        expect(setLike).toBeDefined()
+        expect(setLike.status).toEqual(HTTP_STATUS.NO_CONTENT_204)
+    })
+    it('10 – GET: /posts/:id – return 200 & get post with 1 dislike', async () => {
+        const {firstAccessToken, firstPost} = expect.getState()
+        const getPost = await request(app)
+            .get(`/posts/${firstPost.id}`)
+            .auth(firstAccessToken, {type: 'bearer'})
+
+        expect(getPost).toBeDefined()
+        expect(getPost.status).toEqual(HTTP_STATUS.OK_200)
+        expect(getPost.body).toEqual({
+            id: firstPost.id,
+            title: firstPost.title,
+            shortDescription: firstPost.shortDescription,
+            content: firstPost.content,
+            blogId: firstPost.blogId,
+            blogName: firstPost.blogName,
+            createdAt: firstPost.createdAt,
+            extendedLikesInfo: {
+                likesCount: 0,
+                dislikesCount: 1,
+                myStatus: LikeStatus.Dislike,
+                newestLikes: []
+            }
+        })
+    })
+
+    it('11 - PUT: /posts/:id/like-status - return 204 & delete dislike', async() => {
+        const {firstAccessToken, firstPost} = expect.getState()
+        const setLike = await request(app)
+            .put(`/posts/${firstPost.id}/like-status`)
+            .auth(firstAccessToken, {type: 'bearer'})
+            .send({likeStatus: LikeStatus.None})
+
+        expect(setLike).toBeDefined()
+        expect(setLike.status).toEqual(HTTP_STATUS.NO_CONTENT_204)
+    })
+    it('12 – GET: /posts/:id – return 200 & get post', async () => {
+        const {firstAccessToken, firstPost} = expect.getState()
+        const getPost = await request(app)
+            .get(`/posts/${firstPost.id}`)
+            .auth(firstAccessToken, {type: 'bearer'})
+
+        expect(getPost).toBeDefined()
+        expect(getPost.status).toEqual(HTTP_STATUS.OK_200)
+        expect(getPost.body).toEqual({
+            id: firstPost.id,
+            title: firstPost.title,
+            shortDescription: firstPost.shortDescription,
+            content: firstPost.content,
+            blogId: firstPost.blogId,
+            blogName: firstPost.blogName,
+            createdAt: firstPost.createdAt,
+            extendedLikesInfo: {
+                likesCount: 0,
+                dislikesCount: 0,
+                myStatus: LikeStatus.None,
+                newestLikes: []
             }
         })
     })

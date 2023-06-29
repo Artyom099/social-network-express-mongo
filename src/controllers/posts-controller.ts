@@ -37,7 +37,7 @@ export class PostsController {
     }
 
     async getPost(req: Request, res: Response<PostViewModel>) {
-        const foundPost = await this.postsService.getPostById(req.params.id)
+        const foundPost = await this.postsService.getPostById(req.params.id, req.body.userId)
         if (!foundPost) {
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
         } else {
