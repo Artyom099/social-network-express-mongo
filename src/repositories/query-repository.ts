@@ -88,7 +88,7 @@ export const queryRepository = {
             let newestLikes: any[] = []
             p.extendedLikesInfo.statuses.forEach(p => {
                 if (p.userId === currentUserId) myStatus = p.status
-                if (p.status === LikeStatus.Like){
+                if (p.status === LikeStatus.Like) {
                     likesCount++
                     newestLikes.push({addedAt: p.addedAt, userId: p.userId, login: p.login})
                 }

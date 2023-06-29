@@ -69,12 +69,12 @@ export class PostsRepository {
         for (const s of post.extendedLikesInfo.statuses) {
             if (s.userId === userId) {
                 if (s.status === newLikeStatus) return true
-                const result = await PostModel.updateOne({ id }, {'likesInfo.statuses': {addedAt, userId, status: newLikeStatus, login}})
+                const result = await PostModel.updateOne({ id }, {'extendedLikesInfo.statuses': {addedAt, userId, status: newLikeStatus, login}})
                 return result.modifiedCount === 1
             }
         }
         // иначе добавляем юзера, его лайк статус, дату и логин в массив
-        const result = await PostModel.updateOne({ id }, {$addToSet: {'likesInfo.statuses':
+        const result = await PostModel.updateOne({ id }, {$addToSet: {'extendedLikesInfo.statuses':
                     {addedAt, userId, status: newLikeStatus, login}}})
         return result.modifiedCount === 1
     }

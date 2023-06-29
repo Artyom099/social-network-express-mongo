@@ -24,7 +24,7 @@ const validationPost = [
 export const validationComment = [
     body('content').isString().isLength({min: 20, max: 300}).trim().not().isEmpty()
 ]
-const validationLikes = body('likeStatus').isString().trim().notEmpty()
+const validationLike = body('likeStatus').isString().trim().notEmpty()
     .custom(async (value) => {
         const correctStatuses = Object.values(LikeStatus)
         if (!correctStatuses.includes(value)) {
@@ -69,6 +69,6 @@ postsRouter.post('/:id/comments',
 
 postsRouter.put('/:id/like-status',
     authMiddlewareBearer,
-    validationLikes,
+    validationLike,
     inputValidationMiddleware,
     postsController.updateLikeStatus.bind(postsController))
