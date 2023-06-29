@@ -62,7 +62,7 @@ export class PostsRepository {
         const result = await PostModel.deleteOne({ id })
         return result.deletedCount === 1
     }
-    async updatePostLikes(id: string, userId: string, newLikeStatus: LikeStatus, addedAt: string, login: string): Promise<boolean> {
+    async updatePostLikes(id: string, userId: string, newLikeStatus: LikeStatus, addedAt: Date, login: string): Promise<boolean> {
         const post = await PostModel.findOne({ id })
         if (!post) return false
         // если юзер есть в массиве, обновляем его статус
