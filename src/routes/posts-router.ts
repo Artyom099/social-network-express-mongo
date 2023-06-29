@@ -6,7 +6,7 @@ import {authMiddlewareBasic, authMiddlewareBearer} from "../middleware/auth-midd
 import {BlogsRepository} from "../repositories/blogs-repository";
 import {postsController} from "../composition-root";
 import {checkUserIdMiddleware} from "../middleware/check-userid-middleware";
-import {validationLikes} from "./feedback-router";
+import {LikeStatus} from "../utils/constants";
 
 const validationPost = [
     body('title').isString().isLength({min: 3, max: 30}).trim().not().isEmpty(),
@@ -24,6 +24,15 @@ const validationPost = [
 export const validationComment = [
     body('content').isString().isLength({min: 20, max: 300}).trim().not().isEmpty()
 ]
+const validationLikes = body('likeStatus').isString().trim().notEmpty()
+    .custom(async (value) => {
+        const correctStatuses = Object.values(LikeStatus)
+        if (!correctStatuses.includes(value)) {
+            throw new Error('incorrect like status')
+        } else {
+            return true
+        }
+})
 
 
 export const postsRouter = Router({})
