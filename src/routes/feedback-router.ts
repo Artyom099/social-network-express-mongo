@@ -7,7 +7,7 @@ import {body} from "express-validator";
 import {feedbackController} from "../composition-root";
 import {checkUserIdMiddleware} from "../middleware/check-userid-middleware";
 
-export const validationLikes = body('likeStatus').isString().trim().notEmpty()
+const validationLikes = body('likeStatus').isString().trim().notEmpty()
     .custom(async (value) => {
         const correctStatuses = Object.values(LikeStatus)
         if (!correctStatuses.includes(value)) {
