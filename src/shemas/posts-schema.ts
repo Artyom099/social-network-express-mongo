@@ -4,8 +4,8 @@ import {PostDBModel} from "../types/types";
 import {LikeStatus} from "../utils/constants";
 
 
-const LikeStatusesSchema = new mongoose.Schema<{addedAt: string, userId: string, status: LikeStatus, login: string}>( {
-    addedAt: { type: String, require: true },
+const LikeStatusesSchema = new mongoose.Schema<{addedAt: Date, userId: string, status: LikeStatus, login: string}>( {
+    addedAt: { type: Date, require: true },
     userId: { type: String, require: true },
     status: { type: String, enum: LikeStatus, require: true },
     login: { type: String, require: true }
