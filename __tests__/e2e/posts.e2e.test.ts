@@ -1,5 +1,5 @@
 import request from "supertest";
-import {HTTP_STATUS} from "../../src/utils/constants";
+import {HTTP_STATUS, LikeStatus} from "../../src/utils/constants";
 import mongoose from "mongoose";
 import {mongoURI2} from "../../src/db/db";
 import {getRefreshTokenByResponse, getRefreshTokenByResponseWithTokenName} from "../../src/utils/utils";
@@ -134,15 +134,40 @@ describe('/posts', () => {
             })
         expect(createPostResponse).toBeDefined()
         expect(createPostResponse.status).toEqual(HTTP_STATUS.CREATED_201)
-        expect.setState({postId: createPostResponse.body.id})
+        expect.setState({firstPost: createPostResponse.body})
     });
 
     it('5 - GET: /posts - return 200 and empty array', async () => {
-        const {firstRefreshToken} = expect.getState()
-        await request(app)
+        const {firstRefreshToken, firstPost, blogId} = expect.getState()
+        const getPosts = await request(app)
             .get('/posts')
             .auth(firstRefreshToken, {type: 'bearer'})
-            .expect(HTTP_STATUS.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
+
+        expect(getPosts).toBeDefined()
+        expect(getPosts.status).toEqual(HTTP_STATUS.OK_200)
+        expect(getPosts.body).toEqual({
+            pagesCount: 1,
+            page: 1,
+            pageSize: 10,
+            totalCount: 1,
+            items: [
+                {
+                    id: firstPost.id,
+                    title: firstPost.title,
+                    shortDescription: firstPost.shortDescription,
+                    content: firstPost.content,
+                    blogId,
+                    blogName: firstPost.blogName,
+                    createdAt: firstPost.createdAt,
+                    extendedLikesInfo: {
+                        likesCount: 0,
+                        dislikesCount: 0,
+                        myStatus: firstPost.extendedLikesInfo.myStatus,
+                        newestLikes: []
+                    }
+                }
+            ]
+        })
     })
     it('6 - GET: /posts - return 404 with not existing postId', async () => {
         const {firstRefreshToken} = expect.getState()

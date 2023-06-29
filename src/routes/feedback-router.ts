@@ -7,7 +7,7 @@ import {body} from "express-validator";
 import {feedbackController} from "../composition-root";
 import {checkUserIdMiddleware} from "../middleware/check-userid-middleware";
 
-const validationLikes = body('likeStatus').isString().trim().notEmpty()
+const validationLike = body('likeStatus').isString().trim().notEmpty()
     .custom(async (value) => {
         const correctStatuses = Object.values(LikeStatus)
         if (!correctStatuses.includes(value)) {
@@ -36,6 +36,6 @@ feedbackRouter.delete('/:commentId',
 
 feedbackRouter.put('/:commentId/like-status',
     authMiddlewareBearer,
-    validationLikes,
+    validationLike,
     inputValidationMiddleware,
     feedbackController.updateLikeStatus.bind(feedbackController))
