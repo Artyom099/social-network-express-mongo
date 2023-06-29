@@ -10,7 +10,6 @@ export class PostsRepository {
         let myStatus = LikeStatus.None
         let likesCount = 0
         let dislikesCount = 0
-        console.log({currentUserId: currentUserId})
         let newestLikes: any[] = []
         post.extendedLikesInfo.statuses.forEach(p => {
             if (p.userId === currentUserId) myStatus = p.status
