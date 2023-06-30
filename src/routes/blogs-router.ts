@@ -3,6 +3,7 @@ import {Router} from "express";
 import {inputValidationMiddleware} from "../middleware/input-validation-middleware";
 import {authMiddlewareBasic} from "../middleware/auth-middleware"
 import {blogsController} from "../composition-root";
+import {checkUserIdMiddleware} from "../middleware/check-userid-middleware";
 
 const validationBlog = [
     body('name').isString().isLength({min: 3, max: 15}).trim().not().isEmpty(),
@@ -25,7 +26,9 @@ blogsRouter.post('/',
     inputValidationMiddleware,
     blogsController.createBlog.bind(blogsController))
 
-blogsRouter.get('/:id/posts', blogsController.getPostCurrentBlog.bind(blogsController))
+blogsRouter.get('/:id/posts',
+    checkUserIdMiddleware,
+    blogsController.getPostCurrentBlog.bind(blogsController))
 blogsRouter.post('/:id/posts',
     validationPost,
     authMiddlewareBasic,
