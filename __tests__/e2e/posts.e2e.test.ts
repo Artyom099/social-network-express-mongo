@@ -471,7 +471,7 @@ describe('/posts', () => {
                     {
                         addedAt: expect.any(String),
                         userId: expect.any(String),
-                        login: thirdUser.login
+                        login: fifthUser.login
                     },
                     {
                         addedAt: expect.any(String),
@@ -481,7 +481,7 @@ describe('/posts', () => {
                     {
                         addedAt: expect.any(String),
                         userId: expect.any(String),
-                        login: fifthUser.login
+                        login: thirdUser.login
                     }
                 ]
             }
