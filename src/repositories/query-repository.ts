@@ -62,7 +62,7 @@ export const queryRepository = {
                     likesCount,
                     dislikesCount,
                     myStatus,
-                    newestLikes: newestLikes.slice(-3)
+                    newestLikes: newestLikes.sort((a, b) => a.addedAt - b.addedAt).slice(-3).reverse()
                 }
             }
         })
@@ -106,7 +106,7 @@ export const queryRepository = {
                     likesCount,
                     dislikesCount,
                     myStatus,
-                    newestLikes: newestLikes.sort((a, b) => b.addedAt - a.addedAt).slice(-3)
+                    newestLikes: newestLikes.sort((a, b) => a.addedAt - b.addedAt).slice(-3).reverse()
                 }
             }
         })
