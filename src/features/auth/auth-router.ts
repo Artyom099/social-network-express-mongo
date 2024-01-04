@@ -1,15 +1,15 @@
 import express, {Request, Response} from "express";
-import {usersService} from "../domain/users-service";
-import {HTTP_STATUS} from "../utils/constants";
-import {AuthDTO, PassCodeDTO, ReqBodyType, UserRegDTO} from "../types/types";
+import {usersService} from "../../domain/users-service";
+import {HTTP_STATUS} from "../../utils/constants";
+import {AuthDTO, PassCodeDTO, ReqBodyType, UserRegDTO} from "../../types/types";
 import {body} from "express-validator";
 import {inputValidationMiddleware} from "../middleware/input-validation-middleware";
-import {jwtService} from "../application/jwt-service";
+import {jwtService} from "../../application/jwt-service";
 import {authMiddlewareBearer} from "../middleware/auth-middleware";
-import {authService} from "../domain/auth-service";
+import {authService} from "../../domain/auth-service";
 import {cookieMiddleware} from "../middleware/cookie-middleware";
 import {rateLimitMiddleware} from "../middleware/rate-limit-middleware";
-import {securityService} from "../domain/security-service";
+import {securityService} from "../../domain/security-service";
 
 const validationAuth = [
     body('loginOrEmail').isString().trim().notEmpty(),

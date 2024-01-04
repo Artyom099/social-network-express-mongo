@@ -5,7 +5,8 @@ import {validationComment} from "./posts-router";
 import {inputValidationMiddleware} from "../middleware/input-validation-middleware";
 import {body} from "express-validator";
 import {feedbackController} from "../composition-root";
-import {checkUserIdMiddleware} from "../middleware/check-userid-middleware";
+import { checkUserIdMiddleware } from "../infrastructure/middleware/check-userid-middleware";
+
 
 const validationLike = body('likeStatus').isString().trim().notEmpty()
     .custom(async (value) => {

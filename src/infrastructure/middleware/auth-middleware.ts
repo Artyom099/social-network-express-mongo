@@ -1,7 +1,7 @@
 import {NextFunction, Request, Response} from "express";
-import {HTTP_STATUS} from "../utils/constants";
-import {jwtService} from "../application/jwt-service";
-import {usersService} from "../domain/users-service";
+import {HTTP_STATUS} from "../../utils/constants";
+import {jwtService} from "../../application/jwt-service";
+import {usersService} from "../../domain/users-service";
 
 
 export const authMiddlewareBearer = async (req: Request, res: Response, next: NextFunction) => {

@@ -1,5 +1,5 @@
-import {BlogViewModel} from "../types/types";
-import {BlogModel} from "../shemas/blogs-schema";
+import {BlogViewModel} from "../../types/types";
+import {BlogModel} from "../../shemas/blogs-schema";
 
 
 export class BlogsRepository {

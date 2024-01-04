@@ -5,14 +5,14 @@ import {
     PostViewModel, ReqBodyQueryType,
     ReqBodyType, ReqParamsBodyQueryType, ReqParamsBodyType,
     UserIdModel,
-} from "../types/types";
+} from "../../types/types";
 import {Request, Response} from "express";
-import {PostsService} from "../domain/posts-service";
-import {HTTP_STATUS, LikeStatus, SortBy, SortDirection} from "../utils/constants";
-import {queryRepository} from "../repositories/query-repository";
-import {FeedbackService} from "../domain/feedbacks-service";
-import {FeedbackRepository} from "../repositories/feedback-repository";
-import {BlogsService} from "../domain/blogs-service";
+import {PostsService} from "../../domain/posts-service";
+import {HTTP_STATUS, LikeStatus, SortBy, SortDirection} from "../../utils/constants";
+import {queryRepository} from "../../repositories/query-repository";
+import {FeedbackService} from "../../domain/feedbacks-service";
+import {FeedbackRepository} from "../../repositories/feedback-repository";
+import {BlogsService} from "../../domain/blogs-service";
 import {BlogsRepository} from "../repositories/blogs-repository";
 
 

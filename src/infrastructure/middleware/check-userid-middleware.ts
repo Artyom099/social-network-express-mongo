@@ -1,5 +1,5 @@
 import {NextFunction, Request, Response} from "express";
-import {jwtService} from "../application/jwt-service";
+import {jwtService} from "../../application/jwt-service";
 
 
 export const checkUserIdMiddleware = async (req: Request, res: Response, next: NextFunction) => {

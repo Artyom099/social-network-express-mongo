@@ -1,6 +1,6 @@
 import {NextFunction, Request, Response} from "express";
-import {HTTP_STATUS} from "../utils/constants";
-import {jwtService} from "../application/jwt-service";
+import {HTTP_STATUS} from "../../utils/constants";
+import {jwtService} from "../../application/jwt-service";
 
 
 export const cookieMiddleware = async (req: Request, res: Response, next: NextFunction) => {

@@ -1,4 +1,4 @@
-import {BlogsService} from "../domain/blogs-service";
+import {BlogsService} from "../../domain/blogs-service";
 import {
     BlogCreateDTO, BlogUpdateDTO, BlogViewModel,
     IdDTO,
@@ -6,12 +6,12 @@ import {
     PagingWithSearchDTO, ReqParamsBodyQueryType,
     ReqParamsBodyType,
     ReqQueryType, UserIdModel
-} from "../types/types";
+} from "../../types/types";
 import {Request, Response} from "express";
-import {HTTP_STATUS, SortBy, SortDirection} from "../utils/constants";
-import {queryRepository} from "../repositories/query-repository";
-import {PostsService} from "../domain/posts-service";
-import {PostsRepository} from "../repositories/posts-repository";
+import {HTTP_STATUS, SortBy, SortDirection} from "../../utils/constants";
+import {queryRepository} from "../../repositories/query-repository";
+import {PostsService} from "../../domain/posts-service";
+import {PostsRepository} from "../../repositories/posts-repository";
 
 
 export class BlogsController {
