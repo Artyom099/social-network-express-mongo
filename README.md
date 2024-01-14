@@ -1,5 +1,5 @@
 # Social-network API
-This is my pet project which describes endpoints for user interaction with a social network
+This is my project which describes endpoints for user interaction with a social network
 
 ## Libruaries & modules 
 Express-validator – to validate input data received from frontend,
