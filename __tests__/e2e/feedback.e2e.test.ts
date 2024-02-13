@@ -1,9 +1,9 @@
 import request from "supertest";
-import {app} from "../../src";
-import {HTTP_STATUS, LikeStatus} from "../../src/utils/constants";
-import {getRefreshTokenByResponse, getRefreshTokenByResponseWithTokenName} from "../../src/utils/utils";
+import {app} from "../../src/main";
+import {HTTP_STATUS, LikeStatus} from "../../src/infrastructure/utils/enums";
+import {getRefreshTokenByResponse, getRefreshTokenByResponseWithTokenName} from "../../src/infrastructure/utils/utils";
 import mongoose from "mongoose";
-import {mongoURI2} from "../../src/db/db";
+import {mongoURI2} from "../../src/infrastructure/db/db";
 
 
 describe('/feedback', () => {

@@ -1,28 +1,31 @@
 import express, {Request, Response} from "express";
-import {usersService} from "../../domain/users-service";
-import {HTTP_STATUS} from "../../utils/constants";
-import {AuthDTO, PassCodeDTO, ReqBodyType, UserRegDTO} from "../../types/types";
+import {usersService} from "../user/application/users-service";
+import {HTTP_STATUS} from "../../infrastructure/utils/enums";
+import {AuthDTO, PassCodeDTO, ReqBodyType, UserRegDTO} from "../../infrastructure/types/types";
 import {body} from "express-validator";
-import {inputValidationMiddleware} from "../middleware/input-validation-middleware";
-import {jwtService} from "../../application/jwt-service";
-import {authMiddlewareBearer} from "../middleware/auth-middleware";
-import {authService} from "../../domain/auth-service";
-import {cookieMiddleware} from "../middleware/cookie-middleware";
-import {rateLimitMiddleware} from "../middleware/rate-limit-middleware";
-import {securityService} from "../../domain/security-service";
+import {jwtService} from "../../infrastructure/application/jwt-service";
+import {authService} from "./auth-service";
+import {securityService} from "../device/security-service";
+import {rateLimitMiddleware} from '../../infrastructure/middleware/rate-limit-middleware';
+import {inputValidationMiddleware} from '../../infrastructure/middleware/input-validation-middleware';
+import {cookieMiddleware} from '../../infrastructure/middleware/cookie-middleware';
+import {bearerAuthMiddleware} from '../../infrastructure/middleware/auth-middleware';
 
 const validationAuth = [
     body('loginOrEmail').isString().trim().notEmpty(),
     body('password').isString().trim().notEmpty()
 ]
+
 const validationEmail = [
     body('email').isString().trim().notEmpty().isEmail()
 ]
+
 const validationReg = [
     ...validationEmail,
     body('login').isString().trim().notEmpty().isLength({min: 3, max: 10}).matches('^[a-zA-Z0-9_-]*$'),
     body('password').isString().trim().notEmpty().isLength({min: 6, max: 20}),
 ]
+
 const validationPassAndCode = [
     body('newPassword').isString().trim().notEmpty().isLength({min: 6, max: 20}),
     body('recoveryCode').isString().trim().notEmpty()
@@ -39,7 +42,7 @@ export const authRouter = () => {
             const token = await jwtService.createJWT(userId)
             const tokenPayload = await jwtService.getPayloadByToken(token.refreshToken)
             const lastActiveDate = new Date(tokenPayload.iat * 1000).toISOString()
-            await securityService.addActiveSession(req.ip, title!, lastActiveDate, tokenPayload.deviceId, userId)
+            await securityService.addActiveSession(req.ip!, title!, lastActiveDate, tokenPayload.deviceId, userId)
 
             res.cookie('refreshToken', token.refreshToken, {httpOnly: true, secure: true})
             res.status(HTTP_STATUS.OK_200).json({accessToken: token.accessToken})
@@ -158,7 +161,7 @@ export const authRouter = () => {
         res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
     })
 
-    router.get('/me', authMiddlewareBearer, async (req: Request, res: Response) => {
+    router.get('/me', bearerAuthMiddleware, async (req: Request, res: Response) => {
         res.status(HTTP_STATUS.OK_200).json({   // todo добавить тест для этого пути
             email: req.user!.email,
             login: req.user!.login,

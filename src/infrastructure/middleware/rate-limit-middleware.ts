@@ -1,6 +1,6 @@
 import {Request, Response, NextFunction} from "express";
-import {HTTP_STATUS} from "../../utils/constants";
-import {ipService} from "../../application/ip-service";
+import {HTTP_STATUS} from "../utils/enums";
+import {ipService} from "../application/ip-service";
 
 
 export const rateLimitMiddleware = async (req: Request, res: Response, next: NextFunction) => {

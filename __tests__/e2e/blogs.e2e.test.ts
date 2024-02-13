@@ -1,8 +1,8 @@
 import request from 'supertest'
-import {HTTP_STATUS} from "../../src/utils/constants";
+import {HTTP_STATUS} from "../../src/infrastructure/utils/enums";
 import mongoose from "mongoose";
-import {mongoURI2} from "../../src/db/db";
-import {app} from "../../src";
+import {mongoURI2} from "../../src/infrastructure/db/db";
+import {app} from "../../src/main";
 
 // Stmts - 100%
 describe('/blogs', () => {

@@ -1,10 +1,10 @@
 import {NextFunction, Request, Response} from "express";
-import {HTTP_STATUS} from "../../utils/constants";
-import {jwtService} from "../../application/jwt-service";
-import {usersService} from "../../domain/users-service";
+import {HTTP_STATUS} from "../utils/enums";
+import {jwtService} from "../application/jwt-service";
+import {usersService} from "../../features/user/application/users-service";
 
 
-export const authMiddlewareBearer = async (req: Request, res: Response, next: NextFunction) => {
+export const bearerAuthMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     const auth = req.headers.authorization
     if (!auth) return res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
     const [authType, authToken] = auth.split(' ')
@@ -19,7 +19,7 @@ export const authMiddlewareBearer = async (req: Request, res: Response, next: Ne
     }
 }
 
-export const authMiddlewareBasic = (req: Request, res: Response, next: NextFunction) => {
+export const basicAuthMiddleware = (req: Request, res: Response, next: NextFunction) => {
     const auth = req.headers.authorization
     if (!auth) return res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
     const [authType, authValue] = auth.split(' ')

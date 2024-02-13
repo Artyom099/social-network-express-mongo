@@ -1,22 +1,44 @@
-import {BlogsService} from "./domain/blogs-service";
-import {BlogsRepository} from "./repositories/blogs-repository";
-import {BlogsController} from "./controllers/blogs-controller";
-import {FeedbackRepository} from "./repositories/feedback-repository";
-import {FeedbackService} from "./domain/feedbacks-service";
-import {FeedbackController} from "./controllers/feedback-controller";
-import {PostsController} from "./controllers/posts-controller";
-import {PostsRepository} from "./repositories/posts-repository";
-import {PostsService} from "./domain/posts-service";
-
+import {BlogsService} from "./features/blog/application/blogs-service";
+import {CommentsRepository} from "./features/comments/infrasrtucture/comments-repository";
+import {CommentsService} from "./features/comments/application/comments-service";
+import {CommentsController} from "./features/comments/api/comments-controller";
+import {PostsRepository} from "./features/post/infrastructure/posts-repository";
+import {PostsService} from "./features/post/application/posts-service";
+import {BlogsRepository} from './features/blog/infrastructure/blogs-repository';
+import {BlogsController} from './features/blog/api/blogs-controller';
+import {PostsController} from './features/post/api/posts-controller';
+import {BlogQueryRepository} from './features/blog/infrastructure/blog.query.repository';
+import {PostQueryRepository} from './features/post/infrastructure/post.query.repository';
+import {CommentsQueryRepository} from './features/comments/infrasrtucture/comments-query.repository';
 
 const blogsRepository = new BlogsRepository()
+const blogQueryRepository = new BlogQueryRepository()
 const blogsService = new BlogsService(blogsRepository)
-export const blogsController = new BlogsController(blogsService)
 
-const feedbackRepository = new FeedbackRepository()
-const feedbackService = new FeedbackService(feedbackRepository)
-export const feedbackController = new FeedbackController(feedbackService)
+
+const feedbackRepository = new CommentsRepository()
+const commentsQueryRepository = new CommentsQueryRepository()
+const feedbackService = new CommentsService(feedbackRepository)
+
 
 const postsRepository = new PostsRepository()
+const postQueryRepository = new PostQueryRepository()
 const postsService = new PostsService(postsRepository)
-export const postsController = new PostsController(postsService)
+
+
+
+export const commentsController = new CommentsController(feedbackService)
+
+export const blogsController = new BlogsController(
+  blogsService,
+  postsService,
+  blogQueryRepository,
+  postQueryRepository)
+
+export const postsController = new PostsController(
+  postsService,
+  blogsService,
+  feedbackService,
+  postQueryRepository,
+  commentsQueryRepository)
+
