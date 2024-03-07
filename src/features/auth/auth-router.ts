@@ -84,6 +84,7 @@ export const authRouter = () => {
             const newTokenPayload = await jwtService.getPayloadByToken(token.refreshToken)
             const lastActiveDate = new Date(newTokenPayload.iat * 1000).toISOString()
             await securityService.updateLastActiveDateByDeviceId(refreshTokenPayload.deviceId, lastActiveDate)
+
             res.cookie('refreshToken', token.refreshToken, {httpOnly: true, secure: true})
             res.status(HTTP_STATUS.OK_200).json({accessToken: token.accessToken})
         } else {
@@ -121,6 +122,7 @@ export const authRouter = () => {
                 ]
             })
         }
+
         const existUserLogin = await usersService.findUserByLoginOrEmail(req.body.login)
         if (existUserLogin) {
             res.status(HTTP_STATUS.BAD_REQUEST_400).json({

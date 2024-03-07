@@ -59,8 +59,12 @@ export class PostQueryRepository {
 
     const totalCount: number = await PostModel.countDocuments(filter)
 
-    const sortedPosts: PostDBModel[] = await PostModel.find(filter).sort({[sortBy]: sortDirection})
-      .skip((pageNumber - 1) * pageSize).limit(pageSize).lean()
+    const sortedPosts: PostDBModel[] = await PostModel
+      .find(filter)
+      .sort({[sortBy]: sortDirection})
+      .skip((pageNumber - 1) * pageSize)
+      .limit(pageSize)
+      .lean()
 
     const items = sortedPosts.map(p => {
       let myStatus = LikeStatus.None

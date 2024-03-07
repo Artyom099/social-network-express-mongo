@@ -64,8 +64,8 @@ export class CommentsRepository {
 
     async updateCommentLikes(id: string, currentUserId: string, newLikeStatus: LikeStatus): Promise<boolean> {
         const comment = await CommentModel.findOne({ id })
-
         if (!comment) return false
+
         // если юзер есть в массиве, обновляем его статус
         for (const s of comment.likesInfo.statuses) {
             if (s.userId === currentUserId) {

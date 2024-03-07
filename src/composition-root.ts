@@ -41,4 +41,3 @@ export const postsController = new PostsController(
   feedbackService,
   postQueryRepository,
   commentsQueryRepository)
-
