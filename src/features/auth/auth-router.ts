@@ -104,7 +104,7 @@ export const authRouter = () => {
                     }
                 ]
             })
-        } else {    // todo добавить тест для этого пути - надо мокать ф-ю, чтобы перать сюда реальный код с почты
+        } else {
             res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
         }
     })
@@ -142,6 +142,7 @@ export const authRouter = () => {
     router.post('/registration-email-resending', rateLimitMiddleware, validationEmail, inputValidationMiddleware, async (req: Request, res: Response) => {
         // проверяем, существует ли пользователь, подтверждена ли почта, и потом отправляем код
         const existUser = await usersService.findUserByLoginOrEmail(req.body.email)
+
         if (!existUser || existUser.emailConfirmation.isConfirmed) {
             res.status(HTTP_STATUS.BAD_REQUEST_400).json({
                 errorsMessages: [
@@ -164,7 +165,7 @@ export const authRouter = () => {
     })
 
     router.get('/me', bearerAuthMiddleware, async (req: Request, res: Response) => {
-        res.status(HTTP_STATUS.OK_200).json({   // todo добавить тест для этого пути
+        res.status(HTTP_STATUS.OK_200).json({
             email: req.user!.email,
             login: req.user!.login,
             userId: req.user!.id
