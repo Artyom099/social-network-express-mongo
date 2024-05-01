@@ -1,4 +1,4 @@
-import {BlogViewModel} from "../../../infrastructure/types/types";
+import {BlogViewModel} from "../../../types";
 import {BlogModel} from "./blogs-schema";
 
 
@@ -17,7 +17,7 @@ export class BlogsRepository {
     }
 
     async getBlog(id: string): Promise<BlogViewModel | null> {
-        return BlogModel.findOne({ id },{ _id: 0, __v: 0 })
+        return BlogModel.findOne({ id }, { _id: 0, __v: 0 })
     }
 
     async updateBlog(id: string, name: string, description: string, websiteUrl: string): Promise<boolean> {

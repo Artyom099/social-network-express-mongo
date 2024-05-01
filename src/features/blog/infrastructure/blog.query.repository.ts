@@ -1,4 +1,4 @@
-import {BlogViewModel, PagingViewModel} from '../../../infrastructure/types/types';
+import {BlogViewModel, PagingViewModel} from '../../../types';
 import {BlogModel} from './blogs-schema';
 
 export class BlogQueryRepository {
@@ -10,7 +10,7 @@ export class BlogQueryRepository {
 
     const totalCount: number = await BlogModel.countDocuments(filter)
 
-    const sortedBlogs: BlogViewModel[] = await BlogModel.find(filter,{ _id: 0, __v: 0 })
+    const items: BlogViewModel[] = await BlogModel.find(filter, { _id: 0, __v: 0 })
       .sort({[sortBy]: sortDirection})
       .skip((pageNumber - 1) * pageSize)
       .limit(pageSize)
@@ -20,7 +20,7 @@ export class BlogQueryRepository {
       page: pageNumber,                                   // текущая страница
       pageSize,                                           // количество блогов на странице
       totalCount,                                         // общее количество блогов
-      items: sortedBlogs
+      items,
     }
   }
 }

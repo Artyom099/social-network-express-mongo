@@ -1,7 +1,7 @@
 import request from "supertest";
 import {HTTP_STATUS} from "../../src/infrastructure/utils/enums";
 import {app} from "../../src/main";
-import {getRefreshTokenByResponseWithTokenName} from "../../src/infrastructure/utils/utils";
+import {getRefreshTokenByResponseWithTokenName} from "../../src/infrastructure/utils/handlers";
 
 const sleep = (seconds: number) => new Promise((r) => setTimeout(r, seconds * 1000))
 
@@ -169,6 +169,7 @@ describe('/auth', () => {
 
     it('13 – /login - return 200 and login', async () => {
         const {firstUser} = expect.getState()
+
         const loginResponse = await request(app)
             .post('/auth/login')
             .send({

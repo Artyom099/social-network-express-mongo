@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import {WithId} from "mongodb";
-import {CommentBDModel} from "../../../infrastructure/types/types";
+import {CommentBDModel} from "../../../types";
 import {LikeStatus} from "../../../infrastructure/utils/enums";
 
 const LikeStatusesSchema = new mongoose.Schema<{userId: string, status: LikeStatus}>( {

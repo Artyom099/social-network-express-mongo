@@ -1,4 +1,4 @@
-import {UserViewModel, UserAccountDBModel} from "../../../infrastructure/types/types";
+import {UserViewModel, UserAccountDBModel} from "../../../types";
 import {userCollection} from "../../../infrastructure/db/db";
 
 

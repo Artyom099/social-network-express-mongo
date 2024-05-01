@@ -1,4 +1,4 @@
-import {ExpiredTokenDBModel} from "../types/types";
+import {ExpiredTokenDBModel} from "../../types";
 import {tokensRepository} from "../repositories/tokens-repository";
 
 

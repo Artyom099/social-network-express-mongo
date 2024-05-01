@@ -1,7 +1,7 @@
 import request from "supertest";
 import {app} from "../../src/main";
 import {HTTP_STATUS} from "../../src/infrastructure/utils/enums";
-import {getRefreshTokenByResponseWithTokenName} from "../../src/infrastructure/utils/utils";
+import {getRefreshTokenByResponseWithTokenName} from "../../src/infrastructure/utils/handlers";
 
 const sleep = (seconds: number) => new Promise((r) => setTimeout(r, seconds * 1000))
 

@@ -1,5 +1,5 @@
 import {Request} from 'express'
-import {LikeStatus, ResultCode, SortDirection} from "../utils/enums";
+import {LikeStatus, ResultCode, SortDirection} from "./infrastructure/utils/enums";
 
 
 // ViewModels

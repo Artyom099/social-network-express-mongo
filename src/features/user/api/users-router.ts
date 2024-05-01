@@ -2,7 +2,7 @@ import express, {Request, Response} from "express"
 import {HTTP_STATUS, SortBy, SortDirection} from "../../../infrastructure/utils/enums";
 import {usersService} from "../application/users-service"
 import {body} from "express-validator"
-import {ReqQueryType, UserGetDTO} from "../../../infrastructure/types/types"
+import {ReqQueryType, UserGetDTO} from "../../../types"
 import {basicAuthMiddleware} from '../../../infrastructure/middleware/auth-middleware';
 import {inputValidationMiddleware} from '../../../infrastructure/middleware/input-validation-middleware';
 import {UserQueryRepository} from '../infrastructure/user.query.repository';

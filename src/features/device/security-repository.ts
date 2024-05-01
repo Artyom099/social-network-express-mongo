@@ -1,5 +1,5 @@
 import {devicesCollection} from "../../infrastructure/db/db";
-import {DeviceDBModel, DeviceViewModel} from "../../infrastructure/types/types";
+import {DeviceDBModel, DeviceViewModel} from "../../types";
 
 
 export const securityRepository = {

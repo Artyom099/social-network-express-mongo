@@ -1,4 +1,4 @@
-import {DeviceViewModel} from "../../infrastructure/types/types";
+import {DeviceViewModel} from "../../types";
 import {securityRepository} from "./security-repository";
 
 

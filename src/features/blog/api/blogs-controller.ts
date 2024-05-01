@@ -6,7 +6,7 @@ import {
     PagingWithSearchDTO, ReqParamsBodyQueryType,
     ReqParamsBodyType,
     ReqQueryType, UserIdModel
-} from "../../../infrastructure/types/types";
+} from "../../../types";
 import {Request, Response} from "express";
 import {HTTP_STATUS, SortBy, SortDirection} from "../../../infrastructure/utils/enums";
 import {PostsService} from "../../post/application/posts-service";

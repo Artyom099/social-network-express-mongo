@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import {WithId} from "mongodb";
-import {PostDBModel} from "../../../infrastructure/types/types";
+import {PostDBModel} from "../../../types";
 import {LikeStatus} from "../../../infrastructure/utils/enums";
 
 const LikeStatusesSchema = new mongoose.Schema<{addedAt: Date, userId: string, status: LikeStatus, login: string}>( {

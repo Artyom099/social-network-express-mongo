@@ -1,4 +1,4 @@
-import {PostViewModel} from "../../../infrastructure/types/types";
+import {PostViewModel} from "../../../types";
 import {PostModel} from "./posts-schema";
 import {LikeStatus} from "../../../infrastructure/utils/enums";
 

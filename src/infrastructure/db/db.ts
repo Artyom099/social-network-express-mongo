@@ -4,7 +4,7 @@ import {
     IPDBModel,
     VideoViewModel,
     UserAccountDBModel, BlogViewModel, PostViewModel
-} from '../types/types';
+} from '../../types';
 import {MongoClient} from 'mongodb'
 import dotenv from 'dotenv'
 import * as mongoose from "mongoose";

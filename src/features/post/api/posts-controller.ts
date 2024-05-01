@@ -5,7 +5,7 @@ import {
     PostViewModel, ReqBodyQueryType,
     ReqBodyType, ReqParamsBodyQueryType, ReqParamsBodyType,
     UserIdModel,
-} from "../../../infrastructure/types/types";
+} from "../../../types";
 import {Request, Response} from "express";
 import {PostsService} from "../application/posts-service";
 import {HTTP_STATUS, LikeStatus, SortBy, SortDirection} from "../../../infrastructure/utils/enums";

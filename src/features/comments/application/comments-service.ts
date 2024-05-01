@@ -1,4 +1,4 @@
-import {CommentBDModel, CommentViewModel} from "../../../infrastructure/types/types";
+import {CommentBDModel, CommentViewModel} from "../../../types";
 import {CommentsRepository} from "../infrasrtucture/comments-repository";
 import {randomUUID} from "crypto";
 import {LikeStatus} from "../../../infrastructure/utils/enums";

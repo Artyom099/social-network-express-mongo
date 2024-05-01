@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt'
-import {UserViewModel, UserAccountDBModel} from "../../../infrastructure/types/types";
+import {UserViewModel, UserAccountDBModel} from "../../../types";
 import {usersRepository} from "../infrastructure/users-repository";
 import add from "date-fns/add";
 import {randomUUID} from "crypto";

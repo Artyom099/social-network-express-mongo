@@ -1,4 +1,4 @@
-import {BlogViewModel, PostViewModel} from "../../../infrastructure/types/types";
+import {BlogViewModel, PostViewModel} from "../../../types";
 import {PostsRepository} from "../infrastructure/posts-repository";
 import {randomUUID} from "crypto";
 import {LikeStatus} from "../../../infrastructure/utils/enums";

@@ -1,4 +1,4 @@
-import {CommentBDModel, CommentViewModel} from "../../../infrastructure/types/types";
+import {CommentBDModel, CommentViewModel} from "../../../types";
 import {CommentModel} from "./comments-schema";
 import {LikeStatus} from "../../../infrastructure/utils/enums";
 

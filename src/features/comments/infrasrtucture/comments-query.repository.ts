@@ -2,7 +2,7 @@ import {
   CommentBDModel,
   CommentViewModel,
   PagingViewModel,
-} from '../../../infrastructure/types/types';
+} from '../../../types';
 import {LikeStatus} from '../../../infrastructure/utils/enums';
 import {CommentModel} from './comments-schema';
 

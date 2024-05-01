@@ -1,4 +1,4 @@
-import {PagingViewModel, UserAccountDBModel} from '../../../infrastructure/types/types';
+import {PagingViewModel, UserAccountDBModel} from '../../../types';
 import {Filter} from 'mongodb';
 import {userCollection} from '../../../infrastructure/db/db';
 

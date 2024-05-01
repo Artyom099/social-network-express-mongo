@@ -1,7 +1,7 @@
 import request from "supertest";
 import {app} from "../../src/main";
 import {HTTP_STATUS, LikeStatus} from "../../src/infrastructure/utils/enums";
-import {getRefreshTokenByResponse, getRefreshTokenByResponseWithTokenName} from "../../src/infrastructure/utils/utils";
+import {getRefreshTokenByResponse, getRefreshTokenByResponseWithTokenName} from "../../src/infrastructure/utils/handlers";
 import mongoose from "mongoose";
 import {mongoURI2} from "../../src/infrastructure/db/db";
 

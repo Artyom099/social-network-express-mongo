@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import {UserViewModel, UserAccountDBModel} from "../../infrastructure/types/types";
+import {UserViewModel, UserAccountDBModel} from "../../types";
 import {usersRepository} from "../user/infrastructure/users-repository";
 import {usersService} from "../user/application/users-service";
 import {emailManager} from "../../infrastructure/email/email-manager";

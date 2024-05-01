@@ -1,14 +1,16 @@
 import {videoCollection} from "../../infrastructure/db/db";
-import {Result, VideoViewModel} from "../../infrastructure/types/types";
+import {Result, VideoViewModel} from "../../types";
 import {ResultCode} from "../../infrastructure/utils/enums";
 
 
 export const videosRepository = {
-    async findExistVideos(): Promise<VideoViewModel[]> {
+    async getVideos(): Promise<VideoViewModel[]> {
         return videoCollection.find({}, {projection: {_id: false}}).toArray()
     },
+
     async createVideo(createdVideo: VideoViewModel): Promise<VideoViewModel> {
-        await videoCollection.insertOne(createdVideo)
+        await videoCollection.insertOne(createdVideo);
+
         return {
             id: createdVideo.id,
             title: createdVideo.title,
@@ -20,17 +22,21 @@ export const videosRepository = {
             availableResolutions: createdVideo.availableResolutions
         }
     },
-    async findVideoById(videoId: string): Promise<VideoViewModel | null> {
-        const video = await videoCollection.findOne({id: videoId}, {projection: {_id: false}})
+
+    async getVideo(videoId: string): Promise<VideoViewModel | null> {
+        const video = await videoCollection.findOne({id: videoId}, {projection: {_id: false}});
+
         if (!video) return null
         else return video
     },
-    async updateVideoById(videoId: string, title: string, author: string, availableResolutions: string[],
-                canBeDownloaded: boolean, minAgeRestriction: number | null,
-                publicationDate: string): Promise<Result<boolean>> {
+
+    async updateVideo(videoId: string, title: string, author: string, availableResolutions: string[],
+                      canBeDownloaded: boolean, minAgeRestriction: number | null,
+                      publicationDate: string): Promise<Result<boolean>> {
         const updatedResult = await videoCollection.updateOne({id: videoId},
             { $set: {title: title, author: author, availableResolutions: availableResolutions,
-                canBeDownloaded: canBeDownloaded, minAgeRestriction: minAgeRestriction, publicationDate: publicationDate}})
+                canBeDownloaded: canBeDownloaded, minAgeRestriction: minAgeRestriction, publicationDate: publicationDate}});
+
         if(updatedResult.matchedCount < 1 ) {
             return {
                 data: false,
@@ -43,7 +49,8 @@ export const videosRepository = {
             }
         }
     },
-    async deleteVideoById(id: string) {
+
+    async deleteVideo(id: string) {
         return videoCollection.deleteOne({ id })
     }
 }

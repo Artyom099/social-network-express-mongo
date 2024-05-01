@@ -1,5 +1,5 @@
 import {expiredTokenCollection} from "../db/db";
-import {ExpiredTokenDBModel} from "../types/types";
+import {ExpiredTokenDBModel} from "../../types";
 
 
 export const tokensRepository = {

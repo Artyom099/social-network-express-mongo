@@ -1,5 +1,5 @@
 import {CommentsService} from "../application/comments-service";
-import {IdDTO, ReqParamsBodyType, ReqParamsType} from "../../../infrastructure/types/types";
+import {IdDTO, ReqParamsBodyType, ReqParamsType} from "../../../types";
 import {Response} from "express";
 import {HTTP_STATUS, LikeStatus} from "../../../infrastructure/utils/enums";
 

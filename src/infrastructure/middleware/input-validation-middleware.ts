@@ -1,6 +1,6 @@
 import {HTTP_STATUS} from "../utils/enums";
 import { ValidationError, validationResult } from 'express-validator';
-import {Request, Response, NextFunction} from "express";
+import {Request, Response, NextFunction} from 'express';
 
 export const inputValidationMiddleware = (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req)

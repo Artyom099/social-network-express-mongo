@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import {WithId} from "mongodb";
-import {BlogViewModel} from "../../../infrastructure/types/types";
+import {BlogViewModel} from "../../../types";
 
 
 export const BlogSchema = new mongoose.Schema<WithId<BlogViewModel>>({

@@ -1,7 +1,7 @@
 import express, {Request, Response} from "express";
 import {usersService} from "../user/application/users-service";
 import {HTTP_STATUS} from "../../infrastructure/utils/enums";
-import {AuthDTO, PassCodeDTO, ReqBodyType, UserRegDTO} from "../../infrastructure/types/types";
+import {AuthDTO, PassCodeDTO, ReqBodyType, UserRegDTO} from "../../types";
 import {body} from "express-validator";
 import {jwtService} from "../../infrastructure/application/jwt-service";
 import {authService} from "./auth-service";
