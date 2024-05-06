@@ -1,5 +1,5 @@
 import {CommentBDModel, CommentViewModel} from "../../../types";
-import {CommentModel} from "./comments-schema";
+import {CommentModel} from "../schema/comments-schema";
 import {LikeStatus} from "../../../infrastructure/utils/enums";
 
 
@@ -12,7 +12,7 @@ export class CommentsRepository {
         let likesCount = 0
         let dislikesCount = 0
 
-        comment.likesInfo.statuses.forEach(s => {
+        comment.likesInfo.statuses.forEach((s: any) => {
             if (s.userId === currentUserId) myStatus = s.status
             if (s.status === LikeStatus.Like) likesCount++
             if (s.status === LikeStatus.Dislike) dislikesCount++

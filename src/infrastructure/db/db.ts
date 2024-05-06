@@ -3,7 +3,7 @@ import {
     ExpiredTokenDBModel,
     IPDBModel,
     VideoViewModel,
-    UserAccountDBModel, BlogViewModel, PostViewModel
+    UserAccountDBModel, BlogViewModel, PostViewModel, CommentBDModel,
 } from '../../types';
 import {MongoClient} from 'mongodb'
 import dotenv from 'dotenv'
@@ -24,7 +24,7 @@ export const videoCollection = database.collection<VideoViewModel>('videos')
 export const blogCollection = database.collection<BlogViewModel>('blogs')
 export const postCollection = database.collection<PostViewModel>('posts')
 export const userCollection = database.collection<UserAccountDBModel>('users')
-// export const commentCollection = database.collection<CommentBDType>('comments')
+export const commentCollection = database.collection<CommentBDModel>('comments')
 export const expiredTokenCollection = database.collection<ExpiredTokenDBModel>('expiredTokens')
 export const apiRequestCollection = database.collection<IPDBModel>('ip')
 export const devicesCollection = database.collection<DeviceDBModel>('devices')

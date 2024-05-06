@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import {UserViewModel, UserAccountDBModel} from "../../types";
-import {usersRepository} from "../user/infrastructure/users-repository";
+import {userRepository} from "../user/infrastructure/user.repository";
 import {usersService} from "../user/application/users-service";
 import {emailManager} from "../../infrastructure/email/email-manager";
 import add from 'date-fns/add'
@@ -27,7 +27,7 @@ export const authService = {
             },
             recoveryCode: null
         }
-        const createResult = await usersRepository.createUser(newUser)
+        const createResult = await userRepository.createUser(newUser)
         try {
             // убрал await, чтобы работал rateLimitMiddleware (10 секунд)
             emailManager.sendEmailConfirmationMessage(email, newUser.emailConfirmation.confirmationCode)
@@ -40,11 +40,11 @@ export const authService = {
 
     async checkConfirmationCode(code: string): Promise<boolean> {
         // проверка кода на правильность, срок жизни и повторное использование
-        const user = await usersRepository.findUserByConfirmationCode(code)
+        const user = await userRepository.findUserByConfirmationCode(code)
         if (user && !user.emailConfirmation.isConfirmed &&
             user.emailConfirmation.confirmationCode === code &&
             user.emailConfirmation.expirationDate > new Date()) {
-            await usersRepository.updateEmailConfirmation(user.id)
+            await userRepository.updateEmailConfirmation(user.id)
             return true
         } else {
             return false
@@ -53,7 +53,7 @@ export const authService = {
 
     async updateConfirmationCode(email: string): Promise<string | null> {
         const newConfirmationCode = randomUUID()
-        await usersRepository.updateConfirmationCode(email, newConfirmationCode)
+        await userRepository.updateConfirmationCode(email, newConfirmationCode)
         try {
             // убрал await, чтобы работал rateLimitMiddleware (10 секунд)
             emailManager.sendEmailConfirmationMessage(email, newConfirmationCode)
@@ -65,7 +65,7 @@ export const authService = {
 
     async sendRecoveryCode(email: string) {
         const recoveryCode = randomUUID()
-        await usersRepository.setRecoveryCode(email, recoveryCode)
+        await userRepository.setRecoveryCode(email, recoveryCode)
         try {
             await emailManager.sendEmailRecoveryCode(email, recoveryCode)
         } catch (error) {
@@ -75,12 +75,12 @@ export const authService = {
     },
 
     async checkRecoveryCode(code: string): Promise<boolean | null> {
-        return usersRepository.findUserByRecoveryCode(code)
+        return userRepository.findUserByRecoveryCode(code)
     },
 
     async updatePassword(code: string, password: string) {
         const passwordSalt = await bcrypt.genSalt(10)
         const passwordHash = await usersService._generateHash(password, passwordSalt)
-        await usersRepository.updateSaltAndHash(code, passwordSalt, passwordHash)
+        await userRepository.updateSaltAndHash(code, passwordSalt, passwordHash)
     }
 }

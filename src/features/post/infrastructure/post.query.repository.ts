@@ -1,5 +1,5 @@
 import {PagingViewModel, PostDBModel, PostViewModel} from '../../../types';
-import {PostModel} from './posts-schema';
+import {PostModel} from '../schema/posts-schema';
 import {LikeStatus} from '../../../infrastructure/utils/enums';
 
 export class PostQueryRepository {

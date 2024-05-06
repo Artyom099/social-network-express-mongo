@@ -1,5 +1,5 @@
 import {PostViewModel} from "../../../types";
-import {PostModel} from "./posts-schema";
+import { LikeStatusesSchema, PostModel } from '../schema/posts-schema';
 import {LikeStatus} from "../../../infrastructure/utils/enums";
 
 export class PostsRepository {
@@ -12,7 +12,7 @@ export class PostsRepository {
         let dislikesCount = 0
         let newestLikes: any[] = []
 
-        post.extendedLikesInfo.statuses.forEach(p => {
+        post.extendedLikesInfo.statuses.forEach((p: any) => {
             if (p.userId === currentUserId) myStatus = p.status
             if (p.status === LikeStatus.Like) {
                 likesCount++

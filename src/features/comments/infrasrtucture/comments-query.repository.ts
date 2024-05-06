@@ -4,7 +4,7 @@ import {
   PagingViewModel,
 } from '../../../types';
 import {LikeStatus} from '../../../infrastructure/utils/enums';
-import {CommentModel} from './comments-schema';
+import {CommentModel} from '../schema/comments-schema';
 
 export class CommentsQueryRepository {
   async getSortedCommentsCurrentPost(currentUserId: string | null, postId: string, pageNumber: number, pageSize: number, sortBy: string,

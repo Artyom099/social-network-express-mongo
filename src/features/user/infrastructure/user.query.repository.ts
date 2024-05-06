@@ -17,8 +17,8 @@ export const UserQueryRepository = {
 
     const totalCount: number = await userCollection.countDocuments(filter)
 
-    const sortedUsers: UserAccountDBModel[] = await userCollection
-      .find(filter, {projection: {_id: 0, id: 1, login: '$accountData.login', email: '$accountData.email', createdAt: '$accountData.createdAt'}})
+    const items: UserAccountDBModel[] = await userCollection
+      .find(filter, { projection: { _id: 0, id: 1, login: '$accountData.login', email: '$accountData.email', createdAt: '$accountData.createdAt' } })
       .sort({[sortBy]: sortDirection})
       .skip((pageNumber - 1) * pageSize)
       .limit(pageSize)
@@ -29,7 +29,7 @@ export const UserQueryRepository = {
       page: pageNumber,                                   // текущая страница
       pageSize,                                           // количество пользователей на странице
       totalCount,                                         // общее количество пользователей
-      items: sortedUsers  //todo здесь тип TUser!
+      items,  //todo здесь тип TUser!
     }
   },
 }

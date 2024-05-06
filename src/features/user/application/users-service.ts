@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt'
 import {UserViewModel, UserAccountDBModel} from "../../../types";
-import {usersRepository} from "../infrastructure/users-repository";
+import {userRepository} from "../infrastructure/user.repository";
 import add from "date-fns/add";
 import {randomUUID} from "crypto";
 
@@ -26,11 +26,11 @@ export const usersService = {
             },
             recoveryCode: null
         }
-        return await usersRepository.createUser(dto)
+        return await userRepository.createUser(dto)
     },
 
     async checkCredentials(loginOrEmail: string, password: string): Promise<string | null> {
-        const user = await usersRepository.findUserByLoginOrEmail(loginOrEmail)
+        const user = await userRepository.findUserByLoginOrEmail(loginOrEmail)
         if (!user) return null
 
         const passwordHash = await this._generateHash(password, user.accountData.passwordSalt)
@@ -44,14 +44,14 @@ export const usersService = {
     },
 
     async findUserById(userId: string): Promise<UserViewModel | null> {
-        return usersRepository.findUserById(userId)
+        return userRepository.findUserById(userId)
     },
 
     async findUserByLoginOrEmail(LoginOrEmail: string): Promise<UserAccountDBModel | null> {
-        return usersRepository.findUserByLoginOrEmail(LoginOrEmail)
+        return userRepository.findUserByLoginOrEmail(LoginOrEmail)
     },
 
     async deleteUserById(userId: string) {
-        return usersRepository.deleteUserById(userId)
+        return userRepository.deleteUserById(userId)
     }
 }

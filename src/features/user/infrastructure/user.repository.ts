@@ -2,7 +2,7 @@ import {UserViewModel, UserAccountDBModel} from "../../../types";
 import {userCollection} from "../../../infrastructure/db/db";
 
 
-export const usersRepository = {
+export const userRepository = {
     async createUser(dto: UserAccountDBModel): Promise<UserViewModel> {
         await userCollection.insertOne(dto)
         return {
@@ -48,11 +48,17 @@ export const usersRepository = {
     },
 
     async updateConfirmationCode(email: string, code: string) {
-        await userCollection.updateOne({'accountData.email': email}, {$set: {'emailConfirmation.confirmationCode': code}})
+        await userCollection.updateOne(
+          {'accountData.email': email},
+          {$set: {'emailConfirmation.confirmationCode': code}}
+        )
     },
 
     async setRecoveryCode(email: string, recoveryCode: string) {
-        await userCollection.updateOne({'accountData.email': email}, {$set: {recoveryCode: recoveryCode}})
+        await userCollection.updateOne(
+          {'accountData.email': email},
+          {$set: {recoveryCode: recoveryCode}}
+        )
     },
 
     async findUserByRecoveryCode(recoveryCode: string): Promise<boolean | null> {
@@ -61,6 +67,9 @@ export const usersRepository = {
     },
 
     async updateSaltAndHash(recoveryCode: string, salt: string, hash: string) {
-        await userCollection.updateOne({ recoveryCode }, {$set: {'accountData.passwordSalt': salt, 'accountData.passwordHash': hash}})
+        await userCollection.updateOne(
+          { recoveryCode },
+          { $set: { 'accountData.passwordSalt': salt, 'accountData.passwordHash': hash } }
+        )
     }
 }

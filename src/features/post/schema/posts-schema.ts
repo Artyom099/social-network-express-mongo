@@ -3,7 +3,7 @@ import {WithId} from "mongodb";
 import {PostDBModel} from "../../../types";
 import {LikeStatus} from "../../../infrastructure/utils/enums";
 
-const LikeStatusesSchema = new mongoose.Schema<{addedAt: Date, userId: string, status: LikeStatus, login: string}>( {
+export const LikeStatusesSchema = new mongoose.Schema<{addedAt: Date, userId: string, status: LikeStatus, login: string}>( {
     addedAt: { type: Date, require: true },
     userId: { type: String, require: true },
     status: { type: String, enum: LikeStatus, require: true },

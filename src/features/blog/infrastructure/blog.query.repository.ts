@@ -1,5 +1,5 @@
 import {BlogViewModel, PagingViewModel} from '../../../types';
-import {BlogModel} from './blogs-schema';
+import {BlogModel} from '../schema/blogs-schema';
 
 export class BlogQueryRepository {
 
