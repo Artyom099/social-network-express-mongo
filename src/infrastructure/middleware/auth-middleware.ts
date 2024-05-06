@@ -15,7 +15,7 @@ export const bearerAuthMiddleware = async (req: Request, res: Response, next: Ne
         res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
     } else {
         req.user = await usersService.findUserById(userId)
-        // todo - req.user.id - класть в req только id, чтобы не нагружать его
+        // todo - класть в req только id, чтобы не нагружать его
         // req.userId = user.id
         return next()
     }

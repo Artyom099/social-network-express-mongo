@@ -4,11 +4,11 @@ import {ExpiredTokenDBModel} from "../../types";
 
 export const tokensRepository = {
     async addTokenToBlackList(token: string) {
-        await expiredTokenCollection.insertOne({token: token})
+        await expiredTokenCollection.insertOne({ token })
     },
 
     async checkTokenInBlackList(token: ExpiredTokenDBModel): Promise<true | null> {
-        const tokenIsExpired = await expiredTokenCollection.findOne({token: token})
+        const tokenIsExpired = await expiredTokenCollection.findOne({ token })
         if (tokenIsExpired) return true
         else return null
     }

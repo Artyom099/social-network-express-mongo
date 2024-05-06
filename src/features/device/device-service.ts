@@ -1,30 +1,30 @@
 import {DeviceViewModel} from "../../types";
-import {securityRepository} from "./security-repository";
+import {deviceRepository} from "./device-repository";
 
 
-export const securityService = {
+export const deviceService = {
     async addActiveSession(ip: string, title: string, lastActiveDate: string, deviceId: string, userId: string) {
         const createdDevice = {ip, title, lastActiveDate, deviceId, userId}
-        return await securityRepository.addActiveSession(createdDevice)
+        return await deviceRepository.createSession(createdDevice)
     },
 
     async updateLastActiveDateByDeviceId(deviceId: string, date: string) {
-        return await securityRepository.updateLastActiveDateByDeviceId(deviceId, date)
+        return await deviceRepository.updateLastActiveDate(deviceId, date)
     },
 
     async finaAllActiveSessionsByUserId(userId: string): Promise<DeviceViewModel[]> {
-        return await securityRepository.finaAllActiveSessionsByUserId(userId)
+        return await deviceRepository.getSessionsByUserId(userId)
     },
 
     async findActiveSessionByDeviceId(deviceId: string): Promise<DeviceViewModel | null> {
-        return await securityRepository.findActiveSessionByDeviceId(deviceId)
+        return await deviceRepository.getSessionByDeviceId(deviceId)
     },
 
     async deleteOtherActiveSessionsByDeviceId(deviceId: string) {
-        return await securityRepository.deleteOtherActiveSessionsByDeviceId(deviceId)
+        return await deviceRepository.deleteOtherSessions(deviceId)
     },
 
     async deleteCurrentSessionByDeviceId(deviceId: string) {
-        return await securityRepository.deleteCurrentSessionByDeviceId(deviceId)
+        return await deviceRepository.deleteSession(deviceId)
     }
 }
